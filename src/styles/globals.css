@@ -9,8 +9,8 @@
 }
 
 :root {
-    --color-bg: #080808;
-    --color-bg-raised: #0F0F0F;
+    --color-bg: #0a0810;
+    --color-bg-raised: #110e1a;
     --color-surface: rgba(255, 255, 255, 0.04);
     --color-surface-hover: rgba(255, 255, 255, 0.07);
     --color-border: rgba(255, 255, 255, 0.08);
@@ -78,6 +78,8 @@ html {
 
 body {
     background-color: var(--color-bg);
+    background-image: radial-gradient(ellipse 90% 70% at 40% 20%, #130d1f 0%, #0a0810 60%, #06050c 100%);
+    background-attachment: fixed;
     color: var(--color-text-primary);
     font-family: var(--font-body);
     font-size: var(--text-base);
@@ -141,4 +143,15 @@ video {
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
     }
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 128px 128px;
 }

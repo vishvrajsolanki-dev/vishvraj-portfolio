@@ -1,0 +1,50 @@
+.section {
+  padding: 0 6vw;
+  margin: 0 0 6rem;
+}
+
+.strip {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  padding: 2rem 2.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  transition: background 0.2s ease;
+}
+
+.stat:last-child {
+  border-right: none;
+}
+
+.stat:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.5;
+  white-space: pre-line;
+}

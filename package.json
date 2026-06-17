@@ -11,14 +11,15 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.6.1",
+    "@react-three/drei": "^9.105.0",
+    "@react-three/fiber": "^9.1.0",
     "gsap": "^3.15.0",
     "lottie-react": "^2.4.1",
-    "lucide-react": "^1.18.0",
+    "lucide-react": "^0.383.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "three": "^0.184.0"
+    "react-router-dom": "^7.17.0",
+    "three": "^0.169.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

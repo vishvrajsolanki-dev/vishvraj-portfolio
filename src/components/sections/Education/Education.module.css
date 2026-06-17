@@ -1,0 +1,273 @@
+.section {
+  padding: 6rem 6vw;
+}
+
+.sectionLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 3rem;
+}
+
+/* ── Top row: ADIT card + neural loop ── */
+.topRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 4rem;
+  margin-bottom: 3rem;
+}
+
+.institution {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.logoBox {
+  width: 72px;
+  height: 72px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.logoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 12px;
+}
+
+.degreeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.degree {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.3rem;
+}
+
+.school {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.uni {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0;
+}
+
+.duration {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.08em;
+  margin: 0.5rem 0 0;
+}
+
+/* ── Neural pulse loop ── */
+.lottieBox {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.neuralSvg {
+  width: 480px;
+  height: 160px;
+  overflow: visible;
+}
+
+.edge {
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 1.5;
+}
+
+.node {
+  fill: rgba(255, 255, 255, 0.15);
+  animation: nodePulse 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
+}
+
+@keyframes nodePulse {
+
+  0%,
+  100% {
+    fill: rgba(255, 255, 255, 0.15);
+    r: 5;
+  }
+
+  50% {
+    fill: rgba(255, 255, 255, 0.9);
+    r: 6.5;
+  }
+}
+
+.pulse {
+  fill: #ffffff;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+}
+
+/* ── Divider ── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin-bottom: 2rem;
+}
+
+/* ── Timeline cards ── */
+.colLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 1.25rem;
+}
+
+.cardTrack {
+  display: flex;
+  flex-direction: row;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 1rem;
+  cursor: grab;
+}
+
+.cardTrack::-webkit-scrollbar {
+  height: 2px;
+}
+
+.cardTrack::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.cardTrack::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
+
+.card {
+  flex-shrink: 0;
+  min-width: 280px;
+  max-width: 320px;
+  scroll-snap-align: start;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* ── Card header: logo + year/title ── */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.cardLogo {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  object-fit: contain;
+  padding: 6px;
+  flex-shrink: 0;
+}
+
+.cardHeaderText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.cardYear {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+.cardTitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.cardOrg {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0 0.75rem;
+  line-height: 1.4;
+}
+
+.cardDetail {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.cardIndex {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.04);
+  position: absolute;
+  bottom: -0.5rem;
+  right: 1rem;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.dragHint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.08em;
+  margin: 0.75rem 0 0;
+}
