@@ -2,15 +2,20 @@ import { useState, useEffect } from 'react';
 import styles from './Navbar.module.css';
 
 const links = [
-    { label: 'About', href: '#about' },
-    { label: 'Experience', href: '#experience' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'Skills', href: '#skills' },
-    { label: 'Education', href: '#education' },
-    { label: 'Certifications', href: '#certifications' },
-    { label: 'Achievements', href: '#achievements' },
-    { label: 'Building', href: '#currently-building' },
+    { label: 'About', href: 'about' },
+    { label: 'Experience', href: 'experience' },
+    { label: 'Projects', href: 'projects' },
+    { label: 'Skills', href: 'skills' },
+    { label: 'Education', href: 'education' },
+    { label: 'Certifications', href: 'certifications' },
+    { label: 'Achievements', href: 'achievements' },
+    { label: 'Building', href: 'currently-building' },
 ];
+
+function scrollTo(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -33,12 +38,19 @@ export default function Navbar() {
             <ul className={styles.links}>
                 {links.map((l) => (
                     <li key={l.href}>
-                        <a href={l.href} className={styles.link}>{l.label}</a>
+                        <button
+                            className={styles.link}
+                            onClick={() => scrollTo(l.href)}
+                        >
+                            {l.label}
+                        </button>
                     </li>
                 ))}
             </ul>
 
-            <a href="#contact" className={styles.cta}>Let's Talk</a>
+            <button className={styles.cta} onClick={() => scrollTo('contact')}>
+                Let's Talk
+            </button>
 
             {/* Mobile hamburger */}
             <button
@@ -55,18 +67,20 @@ export default function Navbar() {
             {menuOpen && (
                 <div className={styles.mobileMenu}>
                     {links.map((l) => (
-                        <a
+                        <button
                             key={l.href}
-                            href={l.href}
                             className={styles.mobileLink}
-                            onClick={() => setMenuOpen(false)}
+                            onClick={() => { scrollTo(l.href); setMenuOpen(false); }}
                         >
                             {l.label}
-                        </a>
+                        </button>
                     ))}
-                    <a href="#contact" className={styles.mobileCta} onClick={() => setMenuOpen(false)}>
+                    <button
+                        className={styles.mobileCta}
+                        onClick={() => { scrollTo('contact'); setMenuOpen(false); }}
+                    >
                         Let's Talk
-                    </a>
+                    </button>
                 </div>
             )}
         </nav>
