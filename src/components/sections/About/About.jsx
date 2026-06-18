@@ -1,4 +1,10 @@
+import { useRef } from 'react'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './About.module.css'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const facts = [
     { num: '3+', label: 'ML Internships' },
@@ -8,8 +14,70 @@ const facts = [
 ]
 
 export default function About() {
+    const sectionRef = useRef(null)
+
+    useGSAP(() => {
+        const section = sectionRef.current
+        if (!section) return
+
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: section,
+                start: 'top 80%',
+                once: true,
+            },
+        })
+
+        // Label
+        tl.fromTo(
+            section.querySelector(`.${styles.label}`),
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+        )
+
+        // Heading
+        tl.fromTo(
+            section.querySelector(`.${styles.heading}`),
+            { opacity: 0, y: 40 },
+            { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' },
+            '-=0.2'
+        )
+
+        // Bio paragraphs stagger
+        tl.fromTo(
+            section.querySelectorAll(`.${styles.bio} p`),
+            { opacity: 0, y: 24 },
+            { opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: 'power2.out' },
+            '-=0.3'
+        )
+
+        // Stat numbers stagger
+        tl.fromTo(
+            section.querySelectorAll(`.${styles.stat}`),
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: 'power2.out' },
+            '-=0.2'
+        )
+
+        // Skill clusters stagger
+        tl.fromTo(
+            section.querySelectorAll(`.${styles.cluster}`),
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out' },
+            '-=0.2'
+        )
+
+        // Photo
+        tl.fromTo(
+            section.querySelector(`.${styles.photoWrap}`),
+            { opacity: 0, scale: 0.96 },
+            { opacity: 1, scale: 1, duration: 0.9, ease: 'power2.out' },
+            0.1
+        )
+    }, { scope: sectionRef })
+
     return (
-        <section className={styles.about} id="about">
+        <section className={styles.about} id="about" ref={sectionRef}>
             <div className={styles.container}>
 
                 {/* Section label */}

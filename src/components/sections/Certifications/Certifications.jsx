@@ -1,4 +1,10 @@
-import styles from './Certifications.module.css';
+import { useRef } from 'react'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import styles from './Certifications.module.css'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const issuers = [
   {
@@ -44,11 +50,39 @@ const issuers = [
       { title: 'AI Upskilling & Internship Completion', date: 'Apr 2026', href: 'https://drive.google.com/file/d/1TOmQwsgZIQgY43x3p8x_hA3RaTk6fgdr/view?usp=sharing' },
     ],
   },
-];
+]
 
 export default function Certifications() {
+  const sectionRef = useRef(null)
+
+  useGSAP(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 80%',
+        once: true,
+      },
+    })
+
+    tl.fromTo(
+      section.querySelector(`.${styles.sectionLabel}`),
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+    )
+
+    tl.fromTo(
+      section.querySelectorAll(`.${styles.issuerCard}`),
+      { opacity: 0, y: 36 },
+      { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out' },
+      '-=0.2'
+    )
+  }, { scope: sectionRef })
+
   return (
-    <section className={styles.section} id="certifications">
+    <section className={styles.section} id="certifications" ref={sectionRef}>
       <span className={styles.sectionLabel}>08 — Certifications</span>
       <div className={styles.grid}>
         {issuers.map((issuer, i) => (
@@ -83,5 +117,5 @@ export default function Certifications() {
         ))}
       </div>
     </section>
-  );
+  )
 }

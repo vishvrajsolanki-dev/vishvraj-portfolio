@@ -1,4 +1,10 @@
-import styles from './Education.module.css';
+import { useRef } from 'react'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import styles from './Education.module.css'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const collegeCards = [
   {
@@ -43,11 +49,49 @@ const collegeCards = [
     detail: 'Started undergraduate degree in AI & Data Science. Expected graduation 2029.',
     logo: '/logos/adit.png',
   },
-];
+]
 
 export default function Education() {
+  const sectionRef = useRef(null)
+
+  useGSAP(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 80%',
+        once: true,
+      },
+    })
+
+    // Label
+    tl.fromTo(
+      section.querySelector(`.${styles.sectionLabel}`),
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+    )
+
+    // Institution block (logo + degree info) + SVG together
+    tl.fromTo(
+      section.querySelector(`.${styles.topRow}`),
+      { opacity: 0, y: 36 },
+      { opacity: 1, y: 0, duration: 0.75, ease: 'power3.out' },
+      '-=0.2'
+    )
+
+    // Cards stagger — each card slides in from right
+    tl.fromTo(
+      section.querySelectorAll(`.${styles.card}`),
+      { opacity: 0, x: 40 },
+      { opacity: 1, x: 0, duration: 0.55, stagger: 0.09, ease: 'power2.out' },
+      '-=0.3'
+    )
+  }, { scope: sectionRef })
+
   return (
-    <section className={styles.section} id="education">
+    <section className={styles.section} id="education" ref={sectionRef}>
       <span className={styles.sectionLabel}>06 — Education</span>
 
       <div className={styles.topRow}>
@@ -122,5 +166,5 @@ export default function Education() {
       </div>
       <p className={styles.dragHint}>drag to explore →</p>
     </section>
-  );
+  )
 }

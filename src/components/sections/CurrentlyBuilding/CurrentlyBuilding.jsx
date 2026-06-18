@@ -1,4 +1,10 @@
-import styles from './CurrentlyBuilding.module.css';
+import { useRef } from 'react'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import styles from './CurrentlyBuilding.module.css'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const building = [
   {
@@ -22,11 +28,46 @@ const building = [
     status: 'Active Build',
     color: '#FF6B35',
   },
-];
+]
 
 export default function CurrentlyBuilding() {
+  const sectionRef = useRef(null)
+
+  useGSAP(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 80%',
+        once: true,
+      },
+    })
+
+    tl.fromTo(
+      section.querySelector(`.${styles.sectionLabel}`),
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+    )
+
+    tl.fromTo(
+      section.querySelector(`.${styles.heading}`),
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
+      '-=0.2'
+    )
+
+    tl.fromTo(
+      section.querySelectorAll(`.${styles.card}`),
+      { opacity: 0, y: 40 },
+      { opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: 'power3.out' },
+      '-=0.2'
+    )
+  }, { scope: sectionRef })
+
   return (
-    <section className={styles.section} id="currently-building">
+    <section className={styles.section} id="currently-building" ref={sectionRef}>
       <span className={styles.sectionLabel}>09 — Currently Building</span>
       <h2 className={styles.heading}>What's Next</h2>
       <div className={styles.grid}>
@@ -47,5 +88,5 @@ export default function CurrentlyBuilding() {
         ))}
       </div>
     </section>
-  );
+  )
 }

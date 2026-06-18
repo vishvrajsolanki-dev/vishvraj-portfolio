@@ -2,10 +2,15 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { projects } from '../../../data/projects';
 import styles from './Projects.module.css';
 import * as THREE from 'three';
 import WebGLErrorBoundary from '../../ui/WebGLErrorBoundary';
+
+gsap.registerPlugin(ScrollTrigger)
 
 const sharedColor = { current: new THREE.Color('#ffffff') };
 
@@ -42,13 +47,50 @@ export default function Projects() {
     const [activeIndex, setActiveIndex] = useState(0);
     const navigate = useNavigate();
     const activeProject = projects[activeIndex];
+    const sectionRef = useRef(null);
 
     useEffect(() => {
         sharedColor.current = new THREE.Color(activeProject.canvasColor || '#ffffff');
     }, [activeProject]);
 
+    useGSAP(() => {
+        const section = sectionRef.current
+        if (!section) return
+
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: section,
+                start: 'top 80%',
+                once: true,
+            },
+        })
+
+        // Header
+        tl.fromTo(
+            section.querySelector(`.${styles.header}`),
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }
+        )
+
+        // Project rows stagger
+        tl.fromTo(
+            section.querySelectorAll(`.${styles.projectRow}`),
+            { opacity: 0, x: -24 },
+            { opacity: 1, x: 0, duration: 0.55, stagger: 0.07, ease: 'power2.out' },
+            '-=0.2'
+        )
+
+        // Canvas panel fades in
+        tl.fromTo(
+            section.querySelector(`.${styles.canvasPanel}`),
+            { opacity: 0 },
+            { opacity: 1, duration: 0.8, ease: 'power2.out' },
+            0.2
+        )
+    }, { scope: sectionRef })
+
     return (
-        <section className={styles.section} id="projects">
+        <section className={styles.section} id="projects" ref={sectionRef}>
             <div className={styles.inner}>
 
                 <div className={styles.header}>

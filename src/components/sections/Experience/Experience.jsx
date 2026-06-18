@@ -1,4 +1,10 @@
+import { useRef } from 'react'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './Experience.module.css'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const experiences = [
     {
@@ -79,8 +85,38 @@ const experiences = [
 ]
 
 export default function Experience() {
+    const sectionRef = useRef(null)
+
+    useGSAP(() => {
+        const section = sectionRef.current
+        if (!section) return
+
+        // Header
+        gsap.fromTo(
+            section.querySelector(`.${styles.header}`),
+            { opacity: 0, y: 30 },
+            {
+                opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+                scrollTrigger: { trigger: section, start: 'top 80%', once: true },
+            }
+        )
+
+        // Each entry reveals as it enters viewport
+        const entries = section.querySelectorAll(`.${styles.entry}`)
+        entries.forEach((entry) => {
+            gsap.fromTo(
+                entry,
+                { opacity: 0, y: 40 },
+                {
+                    opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+                    scrollTrigger: { trigger: entry, start: 'top 85%', once: true },
+                }
+            )
+        })
+    }, { scope: sectionRef })
+
     return (
-        <section className={styles.experience} id="experience">
+        <section className={styles.experience} id="experience" ref={sectionRef}>
             <div className={styles.container}>
                 <div className={styles.header}>
                     <span className={styles.label}>02 — Experience</span>

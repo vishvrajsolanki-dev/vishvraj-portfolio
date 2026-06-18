@@ -1,24 +1,66 @@
-import styles from './StatsBar.module.css';
+import { useRef } from 'react'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import styles from './StatsBar.module.css'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const stats = [
-  { value: '3+', label: 'ML Internships\nCompleted' },
-  { value: '5', label: 'Production Apps\nDeployed' },
-  { value: '14', label: 'Days to build\nLexis solo' },
-  { value: '99%', label: 'CNN accuracy\non MNIST' },
-  { value: '2', label: 'Hardware\nAwards' },
-];
+  { countTo: 3, suffix: '+', label: 'ML Internships\nCompleted' },
+  { countTo: 5, suffix: '', label: 'Production Apps\nDeployed' },
+  { countTo: 14, suffix: '', label: 'Days to build\nLexis solo' },
+  { countTo: 99, suffix: '%', label: 'CNN accuracy\non MNIST' },
+  { countTo: 2, suffix: '', label: 'Hardware\nAwards' },
+]
 
 export default function StatsBar() {
+  const sectionRef = useRef(null)
+
+  useGSAP(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const valueEls = section.querySelectorAll(`.${styles.value}`)
+
+    // Strip slides up
+    gsap.fromTo(
+      section.querySelector(`.${styles.strip}`),
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+        scrollTrigger: { trigger: section, start: 'top 90%', once: true },
+      }
+    )
+
+    // Count-up per .value element
+    valueEls.forEach((el, i) => {
+      const stat = stats[i]
+      const obj = { val: 0 }
+
+      gsap.to(obj, {
+        val: stat.countTo,
+        duration: 1.6,
+        ease: 'power2.out',
+        delay: i * 0.08,
+        onUpdate() {
+          el.textContent = Math.round(obj.val) + stat.suffix
+        },
+        scrollTrigger: { trigger: section, start: 'top 90%', once: true },
+      })
+    })
+  }, { scope: sectionRef })
+
   return (
-    <section className={styles.section}>
+    <section className={styles.section} ref={sectionRef}>
       <div className={styles.strip}>
         {stats.map((s, i) => (
           <div key={i} className={styles.stat}>
-            <span className={styles.value}>{s.value}</span>
+            <span className={styles.value}>0{s.suffix}</span>
             <span className={styles.label}>{s.label}</span>
           </div>
         ))}
       </div>
     </section>
-  );
+  )
 }

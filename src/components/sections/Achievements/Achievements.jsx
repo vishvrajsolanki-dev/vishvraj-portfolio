@@ -1,4 +1,10 @@
-import styles from './Achievements.module.css';
+import { useRef } from 'react'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import styles from './Achievements.module.css'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const achievements = [
   {
@@ -37,11 +43,40 @@ const achievements = [
     tags: ['Model Presentation', 'Charotar', 'Competition'],
     logo: '/logos/cems.png',
   },
-];
+]
 
 export default function Achievements() {
+  const sectionRef = useRef(null)
+
+  useGSAP(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 80%',
+        once: true,
+      },
+    })
+
+    tl.fromTo(
+      section.querySelector(`.${styles.sectionLabel}`),
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+    )
+
+    // 2x2 grid — stagger diagonally via index
+    tl.fromTo(
+      section.querySelectorAll(`.${styles.card}`),
+      { opacity: 0, y: 40, scale: 0.97 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.1, ease: 'power3.out' },
+      '-=0.2'
+    )
+  }, { scope: sectionRef })
+
   return (
-    <section className={styles.section} id="achievements">
+    <section className={styles.section} id="achievements" ref={sectionRef}>
       <span className={styles.sectionLabel}>09 — Achievements</span>
       <div className={styles.grid}>
         {achievements.map((a, i) => (
@@ -69,5 +104,5 @@ export default function Achievements() {
         ))}
       </div>
     </section>
-  );
+  )
 }
