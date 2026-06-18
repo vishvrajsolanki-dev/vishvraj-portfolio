@@ -58,6 +58,9 @@ const socials = [
   },
 ];
 
+// TODO: Replace with real Google Drive resume link
+const RESUME_URL = '#';
+
 export default function Contact() {
   return (
     <section className={styles.section} id="contact">
@@ -107,6 +110,18 @@ export default function Contact() {
               <span className={styles.arrow}>↗</span>
             </a>
           ))}
+
+          {/* Resume download — replace RESUME_URL when ready */}
+          <a
+            href={RESUME_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.contactRow}
+          >
+            <span className={styles.contactLabel}>RESUME</span>
+            <span className={styles.contactValue}>Download CV</span>
+            <span className={styles.arrow}>↓</span>
+          </a>
         </div>
       </div>
 

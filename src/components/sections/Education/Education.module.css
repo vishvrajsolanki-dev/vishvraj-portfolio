@@ -97,6 +97,7 @@
 .neuralSvg {
   width: 480px;
   height: 160px;
+  max-width: 480px;
   overflow: visible;
 }
 
@@ -270,4 +271,22 @@
   color: rgba(255, 255, 255, 0.2);
   letter-spacing: 0.08em;
   margin: 0.75rem 0 0;
+}
+
+/* ── Mobile breakpoint ── */
+@media (max-width: 768px) {
+  .topRow {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .lottieBox {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .neuralSvg {
+    width: 100%;
+    height: auto;
+  }
 }

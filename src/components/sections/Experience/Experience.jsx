@@ -65,13 +65,13 @@ const experiences = [
         bullets: [
             'Built LetterLens — handwritten character recognition on EMNIST Balanced (47 classes, 112K samples); CNN with BatchNorm + Dropout achieving 99% accuracy on MNIST; live drawing canvas on Streamlit for real-time inference.',
             'Built Heart Disease Predictor on UCI Cleveland dataset — 4-model comparative pipeline (LR, Decision Tree, Random Forest, XGBoost) with cold-start auto-build; best model (Random Forest) hit ROC-AUC 0.9637 · Accuracy 86.9% · F1 0.8852 on held-out test set.',
-            'Built Credit Scoring Model on German Credit Dataset (1,000 applicants, 48 one-hot features) — 4-model pipeline with SHAP, clean human-readable dropdowns, and a `fmt_feature()` formatter converting raw encoded column names to professional labels; Random Forest won (AUC 0.758).',
+            'Built Credit Scoring Model on German Credit Dataset (1,000 applicants, 48 one-hot features) — 4-model pipeline with SHAP, clean human-readable dropdowns, and a fmt_feature() formatter converting raw encoded column names to professional labels; Random Forest won (AUC 0.758).',
             'Engineered SHAP explainability end-to-end on deployed Streamlit apps — KernelExplainer with format-safe extraction handling SHAP 0.52.0\'s changed return format; live per-prediction feature importance charts.',
             'Deployed all apps on Streamlit Cloud with cold-start pipelines — zero committed model binaries, self-building on any fresh deploy using subprocess orchestration of preprocess → train → evaluate.',
         ],
         tags: ['Python', 'Streamlit', 'scikit-learn', 'XGBoost', 'SHAP', 'Random Forest', 'pandas', 'joblib', 'Streamlit Cloud'],
         links: [
-            { label: 'LetterLens App', url: '#' },
+            { label: 'LetterLens App', url: '#' }, // TODO: Replace with Streamlit URL when deployed
             { label: 'Heart Disease App', url: 'https://codealphaheartdiseaseprediction-ypddp926uffnkst6sagsnr.streamlit.app/' },
             { label: 'Credit Scoring App', url: 'https://codealphacreditscoringmodel-vbbirvx3mupqfimvpsnk4x.streamlit.app/' },
         ],
