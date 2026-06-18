@@ -47,10 +47,9 @@ const collegeCards = [
 
 export default function Education() {
   return (
-    <section className={styles.section}>
+    <section className={styles.section} id="education">
       <span className={styles.sectionLabel}>06 — Education</span>
 
-      {/* Top row: ADIT card + neural pulse loop */}
       <div className={styles.topRow}>
         <div className={styles.institution}>
           <div className={styles.logoBox}>
@@ -64,34 +63,22 @@ export default function Education() {
           </div>
         </div>
 
-        {/* Neural pulse — wide landscape SVG, pure CSS animation */}
         <div className={styles.lottieBox}>
           <svg viewBox="0 0 480 160" className={styles.neuralSvg} aria-hidden="true">
-            {/* ── Column 1: 2 nodes ── */}
             <circle className={styles.node} cx="60" cy="55" r="5" style={{ animationDelay: '0s' }} />
             <circle className={styles.node} cx="60" cy="105" r="5" style={{ animationDelay: '0.4s' }} />
-
-            {/* ── Column 2: 3 nodes ── */}
             <circle className={styles.node} cx="180" cy="35" r="5" style={{ animationDelay: '0.2s' }} />
             <circle className={styles.node} cx="180" cy="80" r="5" style={{ animationDelay: '0.6s' }} />
             <circle className={styles.node} cx="180" cy="125" r="5" style={{ animationDelay: '1.0s' }} />
-
-            {/* ── Column 3: 3 nodes ── */}
             <circle className={styles.node} cx="300" cy="35" r="5" style={{ animationDelay: '0.4s' }} />
             <circle className={styles.node} cx="300" cy="80" r="5" style={{ animationDelay: '0.8s' }} />
             <circle className={styles.node} cx="300" cy="125" r="5" style={{ animationDelay: '1.2s' }} />
-
-            {/* ── Column 4: 2 nodes ── */}
             <circle className={styles.node} cx="420" cy="55" r="5" style={{ animationDelay: '0.6s' }} />
             <circle className={styles.node} cx="420" cy="105" r="5" style={{ animationDelay: '1.0s' }} />
-
-            {/* ── Edges: col1 → col2 ── */}
             <line className={styles.edge} x1="65" y1="55" x2="175" y2="35" />
             <line className={styles.edge} x1="65" y1="55" x2="175" y2="80" />
             <line className={styles.edge} x1="65" y1="105" x2="175" y2="80" />
             <line className={styles.edge} x1="65" y1="105" x2="175" y2="125" />
-
-            {/* ── Edges: col2 → col3 ── */}
             <line className={styles.edge} x1="185" y1="35" x2="295" y2="35" />
             <line className={styles.edge} x1="185" y1="35" x2="295" y2="80" />
             <line className={styles.edge} x1="185" y1="80" x2="295" y2="35" />
@@ -99,55 +86,23 @@ export default function Education() {
             <line className={styles.edge} x1="185" y1="80" x2="295" y2="125" />
             <line className={styles.edge} x1="185" y1="125" x2="295" y2="80" />
             <line className={styles.edge} x1="185" y1="125" x2="295" y2="125" />
-
-            {/* ── Edges: col3 → col4 ── */}
             <line className={styles.edge} x1="305" y1="35" x2="415" y2="55" />
             <line className={styles.edge} x1="305" y1="80" x2="415" y2="55" />
             <line className={styles.edge} x1="305" y1="80" x2="415" y2="105" />
             <line className={styles.edge} x1="305" y1="125" x2="415" y2="105" />
-
-            {/* ── Pulses: one per column-to-column connection ── */}
-            {/* pulse col1→col2 top path */}
-            <circle className={styles.pulse} r="3" style={{ animationDelay: '0s' }}>
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0s"
-                path="M65,55 L175,35" />
-            </circle>
-            <circle className={styles.pulse} r="3" style={{ animationDelay: '0.6s' }}>
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.6s"
-                path="M65,105 L175,125" />
-            </circle>
-
-            {/* pulse col2→col3 */}
-            <circle className={styles.pulse} r="3" style={{ animationDelay: '0.3s' }}>
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.3s"
-                path="M185,35 L295,80" />
-            </circle>
-            <circle className={styles.pulse} r="3" style={{ animationDelay: '0.9s' }}>
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.9s"
-                path="M185,80 L295,35" />
-            </circle>
-            <circle className={styles.pulse} r="3" style={{ animationDelay: '1.4s' }}>
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.4s"
-                path="M185,125 L295,80" />
-            </circle>
-
-            {/* pulse col3→col4 */}
-            <circle className={styles.pulse} r="3" style={{ animationDelay: '0.5s' }}>
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.5s"
-                path="M305,35 L415,55" />
-            </circle>
-            <circle className={styles.pulse} r="3" style={{ animationDelay: '1.1s' }}>
-              <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.1s"
-                path="M305,125 L415,105" />
-            </circle>
+            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0s" path="M65,55 L175,35" /></circle>
+            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.6s" path="M65,105 L175,125" /></circle>
+            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.3s" path="M185,35 L295,80" /></circle>
+            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.9s" path="M185,80 L295,35" /></circle>
+            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="1.4s" path="M185,125 L295,80" /></circle>
+            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.5s" path="M305,35 L415,55" /></circle>
+            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="1.1s" path="M305,125 L415,105" /></circle>
           </svg>
         </div>
       </div>
 
-      {/* Divider */}
       <div className={styles.divider} />
 
-      {/* Horizontal snap-scroll cards */}
       <p className={styles.colLabel}>During College</p>
       <div className={styles.cardTrack}>
         {collegeCards.map((c, i) => (

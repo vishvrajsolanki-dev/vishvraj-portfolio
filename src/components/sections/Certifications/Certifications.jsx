@@ -48,7 +48,7 @@ const issuers = [
 
 export default function Certifications() {
   return (
-    <section className={styles.section}>
+    <section className={styles.section} id="certifications">
       <span className={styles.sectionLabel}>08 — Certifications</span>
       <div className={styles.grid}>
         {issuers.map((issuer, i) => (
@@ -66,7 +66,6 @@ export default function Certifications() {
               <span className={styles.issuerName}>{issuer.name}</span>
               <span className={styles.certCount}>{issuer.certs.length} cert{issuer.certs.length > 1 ? 's' : ''}</span>
             </div>
-
             <div className={styles.certList}>
               {issuer.certs.map((cert, j) => (
                 <div key={j} className={styles.certRow}>
@@ -74,12 +73,7 @@ export default function Certifications() {
                     <span className={styles.certTitle}>{cert.title}</span>
                     <span className={styles.certDate}>{cert.date}</span>
                   </div>
-                  <a
-                    href={cert.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.verifyBtn}
-                  >
+                  <a href={cert.href} target="_blank" rel="noopener noreferrer" className={styles.verifyBtn}>
                     Verify ↗
                   </a>
                 </div>

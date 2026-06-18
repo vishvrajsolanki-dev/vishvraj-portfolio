@@ -26,7 +26,7 @@ const building = [
 
 export default function CurrentlyBuilding() {
   return (
-    <section className={styles.section}>
+    <section className={styles.section} id="currently-building">
       <span className={styles.sectionLabel}>09 — Currently Building</span>
       <h2 className={styles.heading}>What's Next</h2>
       <div className={styles.grid}>

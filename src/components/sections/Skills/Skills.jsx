@@ -90,10 +90,6 @@ export default function Skills() {
         if (!section || !iframe) return;
 
         const handleMouseMove = (e) => {
-            const rect = section.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            // Send pointer position to Spline via postMessage
             iframe.contentWindow?.postMessage(
                 { type: 'mousemove', x: e.clientX, y: e.clientY },
                 '*'
@@ -105,12 +101,11 @@ export default function Skills() {
     }, []);
 
     return (
-        <section className={styles.section} ref={sectionRef}>
+        <section className={styles.section} ref={sectionRef} id="skills">
             <span className={styles.sectionLabel}>04 — Services & Skills</span>
             <h2 className={styles.heading}>What I Build</h2>
 
             <div className={styles.servicesLayout}>
-
                 <div className={styles.figureCenter}>
                     <div className={styles.splineWrapper}>
                         <iframe
@@ -139,7 +134,6 @@ export default function Skills() {
                             </TiltCard>
                         ))}
                     </div>
-
                     <div className={`${styles.cardsCol} ${styles.cardsColRight}`}>
                         {services.slice(3).map((s) => (
                             <TiltCard key={s.num}>
@@ -154,7 +148,6 @@ export default function Skills() {
                         ))}
                     </div>
                 </div>
-
             </div>
 
             <div className={styles.marqueeWrap}>

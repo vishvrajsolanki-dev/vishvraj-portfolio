@@ -41,12 +41,11 @@ const achievements = [
 
 export default function Achievements() {
   return (
-    <section className={styles.section}>
+    <section className={styles.section} id="achievements">
       <span className={styles.sectionLabel}>09 — Achievements</span>
       <div className={styles.grid}>
         {achievements.map((a, i) => (
           <div key={i} className={styles.card}>
-            {/* Card top: logo + meta */}
             <div className={styles.cardTop}>
               <div className={styles.logoWrap}>
                 <img src={a.logo} alt={a.org} className={styles.logoImg} />
@@ -56,15 +55,11 @@ export default function Achievements() {
                 <span className={styles.typeBadge}>{a.type}</span>
               </div>
             </div>
-
-            {/* Card body */}
             <div className={styles.body}>
               <h3 className={styles.title}>{a.title}</h3>
               <p className={styles.org}>{a.org}</p>
               <p className={styles.detail}>{a.detail}</p>
             </div>
-
-            {/* Tags pinned to bottom */}
             <div className={styles.tags}>
               {a.tags.map((t, j) => (
                 <span key={j} className={styles.tag}>{t}</span>
