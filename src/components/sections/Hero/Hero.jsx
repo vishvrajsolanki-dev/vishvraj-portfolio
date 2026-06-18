@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import WebGLErrorBoundary from '../ui/WebGLErrorBoundary'
+import WebGLErrorBoundary from "../../ui/WebGLErrorBoundary";
 import styles from './Hero.module.css'
 
 function AbstractHero() {
