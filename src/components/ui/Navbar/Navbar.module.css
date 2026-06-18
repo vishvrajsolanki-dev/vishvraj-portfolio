@@ -19,7 +19,6 @@
     -webkit-backdrop-filter: blur(16px);
 }
 
-/* ── Logo ── */
 .logo {
     text-decoration: none;
     display: flex;
@@ -43,7 +42,6 @@
     color: rgba(255, 255, 255, 0.4);
 }
 
-/* ── Desktop links ── */
 .links {
     display: flex;
     align-items: center;
@@ -61,6 +59,9 @@
     padding: 0.4rem 0.65rem;
     border-radius: 6px;
     transition: color 0.2s ease, background 0.2s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
 .link:hover {
@@ -68,7 +69,6 @@
     background: rgba(255, 255, 255, 0.06);
 }
 
-/* ── CTA button ── */
 .cta {
     font-family: 'Inter', sans-serif;
     font-size: 0.82rem;
@@ -81,13 +81,13 @@
     text-decoration: none;
     transition: opacity 0.2s ease;
     flex-shrink: 0;
+    cursor: pointer;
 }
 
 .cta:hover {
     opacity: 0.85;
 }
 
-/* ── Hamburger (mobile) ── */
 .hamburger {
     display: none;
     flex-direction: column;
@@ -118,7 +118,6 @@
     transform: translateY(-7px) rotate(-45deg);
 }
 
-/* ── Mobile menu ── */
 .mobileMenu {
     display: none;
     position: fixed;
@@ -141,6 +140,13 @@
     padding: 0.75rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     transition: color 0.15s ease;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
 }
 
 .mobileLink:hover {
@@ -153,11 +159,14 @@
     font-weight: 500;
     color: #000000;
     background: #ffffff;
+    border: none;
     border-radius: 999px;
     padding: 0.65rem 1.5rem;
     text-decoration: none;
     margin-top: 1rem;
     text-align: center;
+    cursor: pointer;
+    width: 100%;
 }
 
 @media (max-width: 900px) {
