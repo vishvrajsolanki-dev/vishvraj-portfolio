@@ -5,6 +5,7 @@ import { OrbitControls } from '@react-three/drei';
 import { projects } from '../../../data/projects';
 import styles from './Projects.module.css';
 import * as THREE from 'three';
+import WebGLErrorBoundary from '../../ui/WebGLErrorBoundary';
 
 const sharedColor = { current: new THREE.Color('#ffffff') };
 
@@ -122,14 +123,16 @@ export default function Projects() {
 
                     <div className={styles.canvasPanel}>
                         <div className={styles.canvasWrap}>
-                            <Canvas
-                                frameloop="always"
-                                camera={{ position: [0, 0, 3], fov: 60 }}
-                                dpr={1}
-                                gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
-                            >
-                                <ProjectMesh />
-                            </Canvas>
+                            <WebGLErrorBoundary>
+                                <Canvas
+                                    frameloop="always"
+                                    camera={{ position: [0, 0, 3], fov: 60 }}
+                                    dpr={1}
+                                    gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
+                                >
+                                    <ProjectMesh />
+                                </Canvas>
+                            </WebGLErrorBoundary>
                         </div>
                         <div className={styles.previewInfo}>
                             <h4 className={styles.previewTitle}>{activeProject.title}</h4>

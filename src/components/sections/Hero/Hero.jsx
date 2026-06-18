@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
+import WebGLErrorBoundary from '../ui/WebGLErrorBoundary'
 import styles from './Hero.module.css'
 
 function AbstractHero() {
@@ -47,14 +48,16 @@ export default function Hero() {
     return (
         <section className={styles.hero} id="hero">
             <div className={styles.canvas}>
-                <Canvas
-                    frameloop="always"
-                    camera={{ position: [0, 0, 6], fov: 45 }}
-                    dpr={1}
-                    gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
-                >
-                    <AbstractHero />
-                </Canvas>
+                <WebGLErrorBoundary>
+                    <Canvas
+                        frameloop="always"
+                        camera={{ position: [0, 0, 6], fov: 45 }}
+                        dpr={1}
+                        gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
+                    >
+                        <AbstractHero />
+                    </Canvas>
+                </WebGLErrorBoundary>
             </div>
 
             <div className={styles.content}>
