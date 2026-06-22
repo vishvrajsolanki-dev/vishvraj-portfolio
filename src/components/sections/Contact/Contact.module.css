@@ -79,6 +79,17 @@
     color: rgba(255, 255, 255, 0.5);
     text-decoration: none;
     transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    position: relative;
+}
+
+.socialIcon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
 }
 
 .socialIcon:hover {
@@ -146,4 +157,56 @@
     letter-spacing: 0.1em;
     text-align: center;
     margin: 0;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+    .section {
+        /* Reduce top padding — kills the dead space above section label */
+        padding: 3rem 6vw 4rem;
+    }
+
+    .sectionLabel {
+        margin-bottom: 2rem;
+    }
+
+    /* Stack left + right into single column */
+    .inner {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .headingLine,
+    .headingOutline {
+        font-size: clamp(2rem, 10vw, 2.8rem);
+    }
+
+    .sub br {
+        display: none;
+    }
+
+    /* Contact rows: stack label above value, remove fixed column widths */
+    /* This is the root cause of the vertical-text bug — grid-template-columns
+       forces contactValue into a 1-char-wide column when label is 100px on 390px screen */
+    .contactRow {
+        grid-template-columns: auto 1fr auto;
+        gap: 0.75rem;
+        padding: 1.1rem 0;
+    }
+
+    .contactLabel {
+        font-size: 0.6rem;
+        min-width: 64px;
+    }
+
+    .contactValue {
+        font-size: 0.85rem;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .arrow {
+        font-size: 0.9rem;
+    }
 }

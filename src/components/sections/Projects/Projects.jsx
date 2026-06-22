@@ -49,6 +49,12 @@ export default function Projects() {
     const activeProject = projects[activeIndex];
     const sectionRef = useRef(null);
 
+    // Track whether device is touch-only
+    const isTouchDevice = useRef(
+        typeof window !== 'undefined' &&
+        window.matchMedia('(hover: none) and (pointer: coarse)').matches
+    );
+
     useEffect(() => {
         sharedColor.current = new THREE.Color(activeProject.canvasColor || '#ffffff');
     }, [activeProject]);
@@ -65,14 +71,12 @@ export default function Projects() {
             },
         })
 
-        // Header
         tl.fromTo(
             section.querySelector(`.${styles.header}`),
             { opacity: 0, y: 30 },
             { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }
         )
 
-        // Project rows stagger
         tl.fromTo(
             section.querySelectorAll(`.${styles.projectRow}`),
             { opacity: 0, x: -24 },
@@ -80,7 +84,6 @@ export default function Projects() {
             '-=0.2'
         )
 
-        // Canvas panel fades in
         tl.fromTo(
             section.querySelector(`.${styles.canvasPanel}`),
             { opacity: 0 },
@@ -88,6 +91,19 @@ export default function Projects() {
             0.2
         )
     }, { scope: sectionRef })
+
+    // On touch: first tap activates, second tap navigates
+    const handleRowClick = (globalIndex, projectId) => {
+        if (isTouchDevice.current) {
+            if (activeIndex === globalIndex) {
+                navigate('/projects/' + projectId);
+            } else {
+                setActiveIndex(globalIndex);
+            }
+        } else {
+            navigate('/projects/' + projectId);
+        }
+    };
 
     return (
         <section className={styles.section} id="projects" ref={sectionRef}>
@@ -107,8 +123,8 @@ export default function Projects() {
                                 <div
                                     key={project.id}
                                     className={`${styles.projectRow} ${styles.featuredRow} ${globalIndex === activeIndex ? styles.active : ''}`}
-                                    onMouseEnter={() => setActiveIndex(globalIndex)}
-                                    onClick={() => navigate('/projects/' + project.id)}
+                                    onMouseEnter={() => !isTouchDevice.current && setActiveIndex(globalIndex)}
+                                    onClick={() => handleRowClick(globalIndex, project.id)}
                                 >
                                     <div className={styles.rowTop}>
                                         <span className={styles.projectIndex}>
@@ -143,8 +159,8 @@ export default function Projects() {
                                 <div
                                     key={project.id}
                                     className={`${styles.projectRow} ${styles.compactRow} ${globalIndex === activeIndex ? styles.active : ''}`}
-                                    onMouseEnter={() => setActiveIndex(globalIndex)}
-                                    onClick={() => navigate('/projects/' + project.id)}
+                                    onMouseEnter={() => !isTouchDevice.current && setActiveIndex(globalIndex)}
+                                    onClick={() => handleRowClick(globalIndex, project.id)}
                                 >
                                     <div className={styles.rowTop}>
                                         <span className={styles.projectIndex}>

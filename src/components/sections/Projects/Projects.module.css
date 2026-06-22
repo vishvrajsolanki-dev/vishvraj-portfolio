@@ -42,6 +42,7 @@
 .projectList {
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .projectRow {
@@ -50,6 +51,7 @@
     cursor: pointer;
     transition: background 0.2s ease;
     border-radius: 4px;
+    min-width: 0;
 }
 
 .projectRow:last-child {
@@ -76,6 +78,7 @@
     align-items: center;
     gap: 0.75rem;
     margin-bottom: 0.6rem;
+    min-width: 0;
 }
 
 .projectIndex {
@@ -83,6 +86,7 @@
     font-size: 0.7rem;
     color: rgba(255, 255, 255, 0.3);
     min-width: 24px;
+    flex-shrink: 0;
 }
 
 .projectTitle {
@@ -92,6 +96,7 @@
     color: #ffffff;
     margin: 0;
     flex: 1;
+    min-width: 0;
 }
 
 .projectTitleSmall {
@@ -101,6 +106,7 @@
     color: rgba(255, 255, 255, 0.7);
     margin: 0;
     flex: 1;
+    min-width: 0;
 }
 
 .featuredBadge {
@@ -112,12 +118,14 @@
     background: #ffffff;
     padding: 0.2rem 0.5rem;
     border-radius: 2px;
+    flex-shrink: 0;
 }
 
 .projectArrow {
     font-size: 1rem;
     color: rgba(255, 255, 255, 0.3);
     transition: color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
 }
 
 .projectRow:hover .projectArrow,
@@ -190,6 +198,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    min-width: 0;
 }
 
 .canvasWrap {
@@ -205,6 +214,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    min-width: 0;
 }
 
 .previewTitle {
@@ -221,6 +231,9 @@
     line-height: 1.65;
     color: rgba(255, 255, 255, 0.45);
     margin: 0;
+    /* prevent text overflow on mobile */
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .previewLinks {
@@ -239,10 +252,15 @@
     background: #ffffff;
     border: none;
     padding: 0.5rem 1.1rem;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 2px;
     cursor: pointer;
     transition: opacity 0.2s ease;
     letter-spacing: 0.02em;
+    box-sizing: border-box;
 }
 
 .exploreBtn:hover {
@@ -255,16 +273,39 @@
     color: rgba(255, 255, 255, 0.4);
     text-decoration: none;
     letter-spacing: 0.05em;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 8px;
     transition: color 0.2s ease;
+    box-sizing: border-box;
 }
 
 .slideLink:hover {
     color: #ffffff;
 }
 
-@media (max-width: 900px) {
+/* Mobile tap hint — only on touch devices */
+.tapHint {
+    display: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.1em;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .tapHint {
+        display: block;
+    }
+}
+
+@media (max-width: 1024px) {
     .splitLayout {
         grid-template-columns: 1fr;
+        gap: 2rem;
     }
 
     .canvasPanel {
@@ -274,5 +315,38 @@
 
     .canvasWrap {
         aspect-ratio: 16 / 9;
+    }
+
+    .inner {
+        padding: 0 1.25rem;
+    }
+
+    /* Prevent arrow from clipping on narrow screens */
+    .rowTop {
+        gap: 0.5rem;
+    }
+
+    .featuredBadge {
+        font-size: 0.55rem;
+        padding: 0.15rem 0.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .section {
+        padding: 5rem 0 4rem;
+    }
+
+    .header {
+        margin-bottom: 2rem;
+    }
+
+    .projectTitle {
+        font-size: 1.1rem;
+    }
+
+    .featuredRow {
+        padding-top: 1.25rem;
+        padding-bottom: 1.25rem;
     }
 }

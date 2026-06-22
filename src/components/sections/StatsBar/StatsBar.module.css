@@ -39,6 +39,7 @@
   color: #ffffff;
   letter-spacing: -0.03em;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .label {
@@ -47,4 +48,55 @@
   color: rgba(255, 255, 255, 0.4);
   line-height: 1.5;
   white-space: pre-line;
+}
+
+/* ── Mobile: 2-column grid instead of 5-column row ── */
+@media (max-width: 640px) {
+  .section {
+    padding: 0 4vw;
+    margin: 0 0 4rem;
+  }
+
+  .strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    flex-direction: unset;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .stat {
+    padding: 1.25rem 1.25rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  /* Right column items — remove right border */
+  .stat:nth-child(2n) {
+    border-right: none;
+  }
+
+  /* Only the true last item gets no bottom border */
+  .stat:last-child {
+    border-bottom: none;
+  }
+
+  /* Orphan 5th item — spans full width, centered,
+     with explicit top border to separate from row above */
+  .stat:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    border-right: none;
+    border-bottom: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    text-align: center;
+    align-items: center;
+  }
+
+  .value {
+    font-size: 1.8rem;
+  }
+
+  .label {
+    font-size: 0.7rem;
+  }
 }

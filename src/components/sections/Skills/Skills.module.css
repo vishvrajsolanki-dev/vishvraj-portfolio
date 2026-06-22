@@ -24,23 +24,26 @@
 }
 
 .servicesLayout {
-    position: relative;
     margin-bottom: 48px;
-    min-height: 680px;
+}
+
+/* 3-col grid: [left cards] [robot 420px] [right cards] */
+.cardsGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px minmax(0, 1fr);
+    gap: 24px;
+    align-items: center;
+    min-height: 700px;
 }
 
 .figureCenter {
-    position: absolute;
-    top: 50%;
-    left: calc(50% + 60px);
-    transform: translate(-50%, -50%);
-    width: 460px;
     height: 620px;
-    z-index: 3;
+    z-index: 10;
     pointer-events: none;
+    position: relative;
+    margin-left: -40px;
+    margin-right: -40px;
 }
-
-
 
 .splineWrapper {
     width: 100%;
@@ -48,13 +51,15 @@
     position: relative;
     overflow: visible;
     border-radius: 16px;
+    touch-action: none;
 }
 
+/* iframe fills container exactly — no bleed trick needed now that figureCenter is a real grid col */
 .splineWrapper iframe {
     position: absolute;
     top: 0;
-    left: -25%;
-    width: 150%;
+    left: -20%;
+    width: 140%;
     height: 100%;
     border: none;
     display: block;
@@ -66,29 +71,21 @@
     background: transparent !important;
 }
 
-
-.cardsGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    position: relative;
-    z-index: 2;
-    min-height: 680px;
-    align-content: center;
-}
-
 .cardsCol {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 16px;
+    align-self: center;
 }
 
+/* Left col: slight downward nudge so it doesn't float at the very top */
 .cardsColLeft {
-    padding-right: 260px;
+    padding-top: 0;
 }
 
+/* Right col: more offset for editorial stagger */
 .cardsColRight {
-    padding-left: 260px;
+    padding-top: 0;
 }
 
 .card {
@@ -201,64 +198,98 @@
 }
 
 @keyframes scrollLeft {
-    from {
-        transform: translateX(0);
-    }
-
-    to {
-        transform: translateX(-50%);
-    }
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
 }
 
 @keyframes scrollRight {
-    from {
-        transform: translateX(-50%);
-    }
-
-    to {
-        transform: translateX(0);
-    }
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0); }
 }
 
+/* ── Tablet ≤1024px: robot above, 2-col cards ── */
 @media (max-width: 1024px) {
     .section {
         padding: 60px 24px;
     }
 
-    .servicesLayout {
+    .cardsGrid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
         min-height: unset;
+        gap: 16px;
     }
 
+    /* Robot spans both columns, sits on top */
     .figureCenter {
-        position: relative;
-        top: unset;
-        left: unset;
-        transform: none;
-        width: 100%;
+        grid-column: 1 / -1;
         height: 380px;
-        margin: 0 auto 32px;
-        z-index: 1;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .cardsColLeft {
+        grid-column: 1;
+        padding-top: 0;
+    }
+
+    .cardsColRight {
+        grid-column: 2;
+        padding-top: 0;
+    }
+}
+
+/* ── Mobile ≤640px: single column ── */
+@media (max-width: 640px) {
+    .section {
+        padding: 48px 20px;
+    }
+
+    .heading {
+        font-size: 32px;
+        margin-bottom: 32px;
     }
 
     .cardsGrid {
         grid-template-columns: 1fr;
-        min-height: unset;
-        align-content: unset;
+    }
+
+    .figureCenter {
+        grid-column: 1;
+        height: 280px;
+        overflow: hidden;
+        margin-left: 0;
+    }
+
+    .splineWrapper {
+        border-radius: 12px;
+        overflow: hidden;
     }
 
     .cardsColLeft {
-        padding-right: 0;
+        grid-column: 1;
+        padding-top: 0;
     }
 
     .cardsColRight {
-        padding-left: 0;
+        grid-column: 1;
+        padding-top: 0;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .marqueeRow:nth-child(n+3) {
+        display: none;
+    }
+
+    .marqueeWrap {
+        gap: 8px;
     }
 }
 
-/* ─── Kill Spline's injected watermark DOM node ─── */
-/* Spline injects a fixed-position <a> tag directly into <body>,
-   outside any wrapper — CSS clipping can't reach it.
-   Target it globally by its known href pattern. */
+/* ─── Kill Spline watermark ─── */
 :global(a[href*="spline.design"]),
 :global(a[href*="spline"]) {
     display: none !important;

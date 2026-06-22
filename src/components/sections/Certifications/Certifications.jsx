@@ -11,6 +11,7 @@ const issuers = [
     name: 'Anthropic Academy',
     logoUrl: '/logos/anthropic.png',
     logoAlt: 'Anthropic',
+    invertLogo: true, // black logo on dark bg — needs invert
     certs: [
       { title: 'Claude 101', date: 'Jun 2026', href: 'https://verify.skilljar.com/c/6szg665kh7a6' },
       { title: 'Claude Code 101', date: 'Jun 2026', href: 'https://verify.skilljar.com/c/vpp4pc9vvj8x' },
@@ -94,7 +95,12 @@ export default function Certifications() {
                 ) : issuer.logoInitials ? (
                   <span className={styles.logoInitials}>{issuer.logoInitials}</span>
                 ) : (
-                  <img src={issuer.logoUrl} alt={issuer.logoAlt} className={styles.logoImg} />
+                  <img
+                    src={issuer.logoUrl}
+                    alt={issuer.logoAlt}
+                    className={styles.logoImg}
+                    style={issuer.logoAlt === 'Anthropic' ? { filter: 'invert(1)' } : undefined}
+                  />
                 )}
               </div>
               <span className={styles.issuerName}>{issuer.name}</span>

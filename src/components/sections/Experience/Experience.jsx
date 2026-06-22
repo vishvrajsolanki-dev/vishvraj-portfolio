@@ -77,7 +77,7 @@ const experiences = [
         ],
         tags: ['Python', 'Streamlit', 'scikit-learn', 'XGBoost', 'SHAP', 'Random Forest', 'pandas', 'joblib', 'Streamlit Cloud'],
         links: [
-            { label: 'LetterLens App', url: '#' }, // TODO: Replace with Streamlit URL when deployed
+            { label: 'LetterLens App', url: '[LETTERLENS_URL_PLACEHOLDER]' },
             { label: 'Heart Disease App', url: 'https://codealphaheartdiseaseprediction-ypddp926uffnkst6sagsnr.streamlit.app/' },
             { label: 'Credit Scoring App', url: 'https://codealphacreditscoringmodel-vbbirvx3mupqfimvpsnk4x.streamlit.app/' },
         ],

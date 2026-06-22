@@ -100,27 +100,34 @@ export default function Skills() {
         return () => section.removeEventListener('mousemove', handleMouseMove);
     }, []);
 
+    const handleTouchMove = (e) => {
+        const touch = e.touches[0];
+        const iframe = iframeRef.current;
+        if (!iframe) return;
+        const rect = iframe.getBoundingClientRect();
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+
+        // Post both stringified message for Spline custom listener and standard message
+        iframe.contentWindow?.postMessage(
+            { type: 'mousemove', x: touch.clientX, y: touch.clientY },
+            '*'
+        );
+        iframe.contentWindow?.postMessage(
+            JSON.stringify({ type: 'mousemove', x, y }),
+            '*'
+        );
+    };
+
     return (
         <section className={styles.section} ref={sectionRef} id="skills">
             <span className={styles.sectionLabel}>04 — Services & Skills</span>
             <h2 className={styles.heading}>What I Build</h2>
 
             <div className={styles.servicesLayout}>
-                <div className={styles.figureCenter}>
-                    <div className={styles.splineWrapper}>
-                        <iframe
-                            ref={iframeRef}
-                            src="https://my.spline.design/genkubgreetingrobot-XAb0RzB8mNapbMFImFTEOVrd/"
-                            frameBorder="0"
-                            title="robot"
-                            style={{ border: 'none', background: 'transparent' }}
-                            allow="autoplay"
-                        />
-                        <div className={styles.splineWatermarkKill} />
-                    </div>
-                </div>
-
                 <div className={styles.cardsGrid}>
+
+                    {/* Column 1 — left cards */}
                     <div className={`${styles.cardsCol} ${styles.cardsColLeft}`}>
                         {services.slice(0, 3).map((s) => (
                             <TiltCard key={s.num}>
@@ -134,6 +141,23 @@ export default function Skills() {
                             </TiltCard>
                         ))}
                     </div>
+
+                    {/* Column 2 — robot (center) */}
+                    <div className={styles.figureCenter}>
+                        <div className={styles.splineWrapper} onTouchMove={handleTouchMove}>
+                            <iframe
+                                ref={iframeRef}
+                                src="https://my.spline.design/genkubgreetingrobot-XAb0RzB8mNapbMFImFTEOVrd/"
+                                frameBorder="0"
+                                title="robot"
+                                style={{ border: 'none', background: 'transparent' }}
+                                allow="autoplay"
+                            />
+                            <div className={styles.splineWatermarkKill} />
+                        </div>
+                    </div>
+
+                    {/* Column 3 — right cards */}
                     <div className={`${styles.cardsCol} ${styles.cardsColRight}`}>
                         {services.slice(3).map((s) => (
                             <TiltCard key={s.num}>
@@ -147,6 +171,7 @@ export default function Skills() {
                             </TiltCard>
                         ))}
                     </div>
+
                 </div>
             </div>
 

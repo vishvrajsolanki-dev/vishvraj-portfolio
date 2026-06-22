@@ -116,7 +116,7 @@
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-text-muted);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
     white-space: nowrap;
     padding-top: 5px;
@@ -156,9 +156,10 @@
 .photoWrap {
     position: relative;
     width: 100%;
-    /* Portrait ratio — photo is taller than wide */
     aspect-ratio: 3 / 4;
     overflow: hidden;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
+    max-width: 100%;
 }
 
 .photo {
@@ -166,70 +167,56 @@
     height: 100%;
     object-fit: cover;
     object-position: center top;
-    /* Desaturate slightly to blend with monochrome editorial palette */
     filter: grayscale(20%) contrast(1.05);
     display: block;
 }
 
 /* ── Edge fades — blend photo into page bg ── */
-/* TOP — fades into page seamlessly */
 .fadeTop {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 120px;
-    background: linear-gradient(to bottom,
-            var(--color-bg) 0%,
-            transparent 100%);
+    background: linear-gradient(to bottom, var(--color-bg) 0%, transparent 100%);
     pointer-events: none;
     z-index: 2;
 }
 
-/* BOTTOM — strong fade so photo dissolves into next section */
 .fadeBottom {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     height: 200px;
-    background: linear-gradient(to top,
-            #0a0810 0%,
-            rgba(10, 8, 16, 0.7) 60%,
-            transparent 100%);
+    background: linear-gradient(to top, #0a0810 0%, rgba(10, 8, 16, 0.7) 60%, transparent 100%);
     pointer-events: none;
     z-index: 2;
 }
 
-/* RIGHT — feather into viewport edge */
 .fadeRight {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     width: 80px;
-    background: linear-gradient(to left,
-            #06050c 0%,
-            transparent 100%);
+    background: linear-gradient(to left, #06050c 0%, transparent 100%);
     pointer-events: none;
     z-index: 2;
 }
 
-/* LEFT — feather toward text column */
 .fadeLeft {
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
     width: 120px;
-    background: linear-gradient(to right,
-            #0a0810 0%,
-            transparent 100%);
+    background: linear-gradient(to right, #0a0810 0%, transparent 100%);
     pointer-events: none;
     z-index: 2;
 }
 
-/* ── Responsive ── */
+/* ── Tablet ── */
 @media (max-width: 1024px) {
     .grid {
         grid-template-columns: 1fr;
@@ -261,16 +248,96 @@
     }
 }
 
+/* ── Mobile ── */
 @media (max-width: 640px) {
+    .about {
+        background: #080808;
+    }
+
     .heading {
         font-size: clamp(2rem, 8vw, 2.8rem);
     }
 
+    /* FIX: full-width bleed on mobile — removes max-width cap so photo
+       spans viewport width with edge fades creating the bleed effect */
+    .right {
+        max-width: calc(100% + (2 * var(--space-xl)));
+        width: calc(100% + (2 * var(--space-xl)));
+        margin-left: calc(-1 * var(--space-xl));
+        margin-right: calc(-1 * var(--space-xl));
+        margin-bottom: var(--space-lg);
+        overflow: hidden;
+    }
+
+    .photoWrap {
+        aspect-ratio: 3 / 4;
+        background: #080808;
+        max-width: 100%;
+        max-height: unset;
+    }
+
+    .photo {
+        filter: grayscale(30%) contrast(1.0);
+        object-fit: cover;
+        object-position: center top;
+    }
+
+    /* Strengthen bottom fade on mobile for natural bleed into content */
+    .fadeBottom {
+        height: 140px;
+        background: linear-gradient(
+            to top,
+            #080808 0%,
+            rgba(8, 8, 8, 0.85) 50%,
+            transparent 100%
+        );
+    }
+
+    .fadeTop {
+        background: linear-gradient(
+            to bottom,
+            #080808 0%,
+            #080808 20%,
+            transparent 100%
+        );
+        height: 100px;
+    }
+
+    /* Left/right fades handle horizontal edge bleed */
+    .fadeLeft {
+        width: 60px;
+    }
+
+    .fadeRight {
+        width: 60px;
+    }
+
+    /* Stats: wrap to 2x2 grid */
     .stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: var(--space-sm);
     }
 
     .statNum {
         font-size: var(--text-2xl);
+    }
+
+    .statLabel {
+        font-size: 10px;
+    }
+
+    /* Clusters: stack label above tags */
+    .cluster {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .clusterLabel {
+        min-width: unset;
+    }
+
+    .bio p {
+        font-size: 0.9rem;
     }
 }

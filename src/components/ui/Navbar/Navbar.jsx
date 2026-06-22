@@ -63,26 +63,24 @@ export default function Navbar() {
                 <span className={`${styles.bar} ${menuOpen ? styles.barOpen3 : ''}`} />
             </button>
 
-            {/* Mobile menu */}
-            {menuOpen && (
-                <div className={styles.mobileMenu}>
-                    {links.map((l) => (
-                        <button
-                            key={l.href}
-                            className={styles.mobileLink}
-                            onClick={() => { scrollTo(l.href); setMenuOpen(false); }}
-                        >
-                            {l.label}
-                        </button>
-                    ))}
+            {/* Mobile menu — always in DOM, toggled via class */}
+            <div className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ''}`}>
+                {links.map((l) => (
                     <button
-                        className={styles.mobileCta}
-                        onClick={() => { scrollTo('contact'); setMenuOpen(false); }}
+                        key={l.href}
+                        className={styles.mobileLink}
+                        onClick={() => { scrollTo(l.href); setMenuOpen(false); }}
                     >
-                        Let's Talk
+                        {l.label}
                     </button>
-                </div>
-            )}
+                ))}
+                <button
+                    className={styles.mobileCta}
+                    onClick={() => { scrollTo('contact'); setMenuOpen(false); }}
+                >
+                    Let's Talk
+                </button>
+            </div>
         </nav>
     );
 }

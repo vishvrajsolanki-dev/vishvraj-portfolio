@@ -65,7 +65,7 @@ const socials = [
 ]
 
 // TODO: Replace with real Google Drive resume link
-const RESUME_URL = '#'
+const RESUME_URL = '[RESUME_LINK_PLACEHOLDER]'
 
 export default function Contact() {
   const sectionRef = useRef(null)
