@@ -251,7 +251,7 @@
 /* ── Mobile ── */
 @media (max-width: 640px) {
     .about {
-        background: #080808;
+        background: transparent;
     }
 
     .heading {
