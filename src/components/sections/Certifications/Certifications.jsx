@@ -1,10 +1,12 @@
-import { useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './Certifications.module.css'
 
 gsap.registerPlugin(ScrollTrigger)
+
+const AUTO_MS = 5000
 
 const MicrosoftLogo = () => (
   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22" aria-hidden="true">
@@ -162,6 +164,7 @@ function IssuerLogo({ issuer, className }) {
 
 export default function Certifications() {
   const sectionRef = useRef(null)
+  const reducedMotion = useRef(false)
   const [activeIssuerId, setActiveIssuerId] = useState('anthropic')
   const [activeCertId, setActiveCertId] = useState(certifications[0].id)
 
@@ -195,7 +198,7 @@ export default function Certifications() {
     return ordered.slice(0, Math.min(3, ordered.length))
   }, [filteredCerts, activeIndex])
 
-  const selectIssuer = (issuerId) => {
+  const selectIssuer = useCallback((issuerId) => {
     setActiveIssuerId(issuerId)
     if (issuerId === 'all') {
       setActiveCertId(certifications[0].id)
@@ -203,15 +206,31 @@ export default function Certifications() {
     }
     const first = certifications.find((cert) => cert.issuerId === issuerId)
     if (first) setActiveCertId(first.id)
-  }
+  }, [])
 
-  const selectCert = (certId) => {
+  const selectCert = useCallback((certId) => {
     setActiveCertId(certId)
     const cert = certifications.find((item) => item.id === certId)
     if (cert && activeIssuerId !== 'all' && activeIssuerId !== cert.issuerId) {
       setActiveIssuerId(cert.issuerId)
     }
-  }
+  }, [activeIssuerId])
+
+  const advanceCert = useCallback(() => {
+    if (filteredCerts.length <= 1) return
+    const next = filteredCerts[(activeIndex + 1) % filteredCerts.length]
+    if (next) setActiveCertId(next.id)
+  }, [filteredCerts, activeIndex])
+
+  useEffect(() => {
+    reducedMotion.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  }, [])
+
+  useEffect(() => {
+    if (reducedMotion.current || filteredCerts.length <= 1) return undefined
+    const id = setInterval(advanceCert, AUTO_MS)
+    return () => clearInterval(id)
+  }, [advanceCert, filteredCerts.length])
 
   useGSAP(() => {
     const section = sectionRef.current
@@ -324,10 +343,7 @@ export default function Certifications() {
                         type="button"
                         className={styles.cardHit}
                         aria-label={`Show next credential`}
-                        onClick={() => {
-                          const next = filteredCerts[(activeIndex + 1) % filteredCerts.length]
-                          if (next) selectCert(next.id)
-                        }}
+                        onClick={advanceCert}
                       />
                     ) : (
                       <button
@@ -337,6 +353,23 @@ export default function Certifications() {
                         onClick={() => selectCert(cert.id)}
                       />
                     )}
+
+                    <div className={styles.cardLogoWash} aria-hidden="true">
+                      {issuer.id === 'anthropic' ? (
+                        <span className={styles.cardLogoWashMark}>{issuer.mark}</span>
+                      ) : issuer.logoSvg ? (
+                        <span className={styles.cardLogoWashSvg}>{issuer.logoSvg}</span>
+                      ) : issuer.logoUrl ? (
+                        <img
+                          src={issuer.logoUrl}
+                          alt=""
+                          className={styles.cardLogoWashImg}
+                          style={issuer.invertLogo ? { filter: 'invert(1)' } : undefined}
+                        />
+                      ) : (
+                        <span className={styles.cardLogoWashMark}>{issuer.mark}</span>
+                      )}
+                    </div>
 
                     <div className={styles.cardTop}>
                       <div className={styles.cardMark} aria-hidden="true">
