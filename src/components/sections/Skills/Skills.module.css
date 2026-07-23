@@ -84,20 +84,20 @@
   stroke-width: 0.3;
 }
 
-/* Hub — sized so robot + margin breathe inside the ring */
+/* Hub — roomy enough that a full-body robot fits without clipping */
 .hub {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 42%;
-  height: 42%;
+  width: 50%;
+  height: 50%;
   z-index: 2;
   border-radius: 50%;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.06) 0%, transparent 65%),
-    rgba(10, 8, 16, 0.72);
+    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.05) 0%, transparent 68%),
+    rgba(10, 8, 16, 0.78);
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow:
     0 0 0 8px rgba(255, 255, 255, 0.03),
@@ -123,34 +123,43 @@
 }
 
 /*
-  Smaller robot + stronger upward/right nudge.
-  Spline scene parks the character low-left in the canvas.
+  Genku’s camera parks the character low-left in the canvas.
+  Stage pans the viewport so the full robot sits in the hub center
+  without overscaling (which was clipping the torso).
 */
-.hubRobot,
-.splineWrapper iframe {
+.splineStage {
   position: absolute;
-  top: 50%;
+  width: 118%;
+  height: 118%;
   left: 50%;
-  width: 148%;
-  height: 148%;
-  transform: translate(-47%, -62%);
-  border: none;
-  display: block;
+  top: 50%;
+  /* Right + strongly up — clears the low-left bias without cropping body */
+  transform: translate(-45%, -64%);
   pointer-events: auto;
-  background: transparent;
 }
 
+.hubRobot,
+.splineStage iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  pointer-events: auto;
+}
+
+/* Only the Spline badge corner — keep off the robot body */
 .splineWatermarkKill {
   position: absolute;
-  right: -2%;
-  bottom: -2%;
-  width: 52%;
-  height: 38%;
+  right: 0;
+  bottom: 0;
+  width: 34%;
+  height: 22%;
   background: radial-gradient(
-    ellipse at 100% 100%,
+    ellipse 120% 120% at 100% 100%,
     #0a0810 0%,
-    #0a0810 48%,
-    transparent 78%
+    #0a0810 40%,
+    transparent 72%
   );
   pointer-events: none;
   z-index: 5;
@@ -389,8 +398,8 @@
   }
 
   .hub {
-    width: 44%;
-    height: 44%;
+    width: 48%;
+    height: 48%;
   }
 
   .node {
@@ -406,16 +415,15 @@
     font-size: 0.58rem;
   }
 
-  .hubRobot,
-  .splineWrapper iframe {
-    width: 155%;
-    height: 155%;
-    transform: translate(-47%, -62%);
+  .splineStage {
+    width: 120%;
+    height: 120%;
+    transform: translate(-45%, -64%);
   }
 
   .splineWatermarkKill {
-    width: 54%;
-    height: 40%;
+    width: 36%;
+    height: 24%;
   }
 }
 

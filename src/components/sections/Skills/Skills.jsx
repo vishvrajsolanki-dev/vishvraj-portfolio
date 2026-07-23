@@ -276,13 +276,16 @@ export default function Skills() {
               <div className={styles.hub}>
                 <div className={styles.hubRing} aria-hidden="true" />
                 <div className={styles.splineWrapper} onTouchMove={handleTouchMove}>
-                  <iframe
-                    ref={iframeRef}
-                    src="https://my.spline.design/genkubgreetingrobot-XAb0RzB8mNapbMFImFTEOVrd/"
-                    title="Interactive greeting robot"
-                    className={styles.hubRobot}
-                    allow="autoplay"
-                  />
+                  {/* Stage offset frames the Genku scene so the robot reads centered */}
+                  <div className={styles.splineStage}>
+                    <iframe
+                      ref={iframeRef}
+                      src="https://my.spline.design/genkubgreetingrobot-XAb0RzB8mNapbMFImFTEOVrd/"
+                      title="Interactive greeting robot"
+                      className={styles.hubRobot}
+                      allow="autoplay"
+                    />
+                  </div>
                   <div className={styles.splineWatermarkKill} aria-hidden="true" />
                 </div>
               </div>
