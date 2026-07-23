@@ -1,352 +1,318 @@
 .section {
-    padding: 8rem 0 6rem;
-    scroll-margin-top: 5rem;
+    padding: var(--space-4xl) 0 var(--space-3xl);
+    scroll-margin-top: var(--nav-height);
 }
 
 .inner {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 var(--space-lg);
 }
 
 .header {
-    margin-bottom: 4rem;
+    margin-bottom: var(--space-2xl);
 }
 
 .sectionLabel {
     display: block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     letter-spacing: 0.15em;
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--color-text-muted);
     text-transform: uppercase;
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-sm);
 }
 
 .heading {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-display);
     font-size: clamp(2.5rem, 6vw, 5rem);
     font-weight: 700;
-    color: #ffffff;
+    color: var(--color-text-primary);
     line-height: 1.05;
     margin: 0;
 }
 
-.splitLayout {
+/* ── Zone A ── */
+.zoneA {
     display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 4rem;
+    grid-template-columns: 35% 1fr;
+    gap: var(--space-2xl);
     align-items: start;
+    opacity: 1;
+    transition: opacity 200ms ease-in-out;
 }
 
-.projectList {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
+.zoneAFading {
+    opacity: 0;
 }
 
-.projectRow {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 1.5rem 0.75rem;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    border-radius: 4px;
-    min-width: 0;
+@media (prefers-reduced-motion: reduce) {
+    .zoneA {
+        transition: none;
+    }
 }
 
-.projectRow:last-child {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.projectRow:hover,
-.projectRow.active {
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.featuredRow {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-}
-
-.compactRow {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
-
-.rowTop {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.6rem;
+.detailPanel {
+    padding: var(--space-lg) 0;
     min-width: 0;
 }
 
 .projectIndex {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.3);
-    min-width: 24px;
-    flex-shrink: 0;
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: var(--space-sm);
 }
 
 .projectTitle {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.4rem;
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
     font-weight: 600;
-    color: #ffffff;
-    margin: 0;
-    flex: 1;
-    min-width: 0;
-}
-
-.projectTitleSmall {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0;
-    flex: 1;
-    min-width: 0;
-}
-
-.featuredBadge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #080808;
-    background: #ffffff;
-    padding: 0.2rem 0.5rem;
-    border-radius: 2px;
-    flex-shrink: 0;
-}
-
-.projectArrow {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.3);
-    transition: color 0.2s ease, transform 0.2s ease;
-    flex-shrink: 0;
-}
-
-.projectRow:hover .projectArrow,
-.projectRow.active .projectArrow {
-    color: #ffffff;
-    transform: translate(2px, -2px);
+    color: var(--color-text-primary);
+    line-height: 1.1;
+    margin: 0 0 var(--space-sm);
 }
 
 .projectSubtitle {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.45);
-    margin: 0 0 0.75rem 0;
-    padding-left: 1.75rem;
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0 0 var(--space-md);
 }
 
 .tagList {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
-    padding-left: 1.75rem;
-    margin-top: 0.4rem;
+    margin-bottom: var(--space-md);
 }
 
 .tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     letter-spacing: 0.05em;
-    color: rgba(255, 255, 255, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
     padding: 0.2rem 0.5rem;
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
 }
 
 .metric {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.3);
-    padding-left: 1.75rem;
-    margin-top: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
     letter-spacing: 0.05em;
+    margin: 0 0 var(--space-lg);
+    line-height: 1.5;
 }
 
-.othersDivider {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin: 1.5rem 0 0.5rem;
-}
-
-.othersDivider::before,
-.othersDivider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.othersDivider span {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.2);
-}
-
-.canvasPanel {
-    position: sticky;
-    top: 6rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    min-width: 0;
-}
-
-.canvasWrap {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 8px;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.previewInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    min-width: 0;
-}
-
-.previewTitle {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #ffffff;
-    margin: 0;
-}
-
-.previewDesc {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.82rem;
-    line-height: 1.65;
-    color: rgba(255, 255, 255, 0.45);
-    margin: 0;
-    /* prevent text overflow on mobile */
-    overflow-wrap: break-word;
-    word-break: break-word;
-}
-
-.previewLinks {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-top: 0.25rem;
-}
-
-.exploreBtn {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #080808;
-    background: #ffffff;
-    border: none;
-    padding: 0.5rem 1.1rem;
-    min-height: 44px;
+.caseStudyBtn {
     display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    background: transparent;
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-full);
+    padding: 0.65rem 1.25rem;
+    min-height: 44px;
+    cursor: pointer;
+    transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+
+.caseStudyBtn:hover {
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+.visualColumn {
+    position: relative;
+    min-width: 0;
+}
+
+.frame {
+    border-radius: var(--radius-lg);
+    border: 0.5px solid var(--color-border);
+    background: var(--color-surface);
+    min-height: 340px;
+    overflow: hidden;
+    position: relative;
+}
+
+.frameImage {
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+}
+
+.frameFallback {
+    min-height: 340px;
+    display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 2px;
+    padding: var(--space-lg);
+}
+
+.frameFallbackTitle {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    color: var(--color-text-secondary);
+}
+
+/* Floor reflection — matches §3 values (Hero pattern not yet present; establish once) */
+.floorReflection {
+    height: 40px;
+    margin-top: var(--space-sm);
+    background: var(--color-surface);
+    border-radius: 50%;
+    opacity: 0.5;
+}
+
+/* ── Zone B — Filmstrip ── */
+.zoneB {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+}
+
+.filmCard {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm) var(--space-md);
     cursor: pointer;
-    transition: opacity 0.2s ease;
-    letter-spacing: 0.02em;
+    background: transparent;
+    border: 0.5px solid var(--color-border);
+    color: inherit;
+    text-align: left;
+    transition: border-color 200ms ease-in-out;
+    min-width: 0;
+}
+
+.filmCard:hover {
+    border-color: var(--color-border-hover);
+}
+
+.filmCardActive {
+    border: 1px solid var(--color-accent);
+}
+
+.statusDot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid var(--color-border);
     box-sizing: border-box;
+    flex-shrink: 0;
 }
 
-.exploreBtn:hover {
-    opacity: 0.85;
+.statusDotActive {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
 }
 
-.slideLink {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    color: rgba(255, 255, 255, 0.4);
-    text-decoration: none;
-    letter-spacing: 0.05em;
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
-    padding: 0 8px;
-    transition: color 0.2s ease;
-    box-sizing: border-box;
+.filmIndex {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    letter-spacing: 0.06em;
 }
 
-.slideLink:hover {
-    color: #ffffff;
+.filmName {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
 }
 
-/* Mobile tap hint — only on touch devices */
-.tapHint {
-    display: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    color: rgba(255, 255, 255, 0.2);
-    letter-spacing: 0.1em;
-    text-align: center;
-    margin-top: 0.5rem;
+.filmCardActive .filmName {
+    color: var(--color-text-primary);
 }
 
-@media (hover: none) and (pointer: coarse) {
-    .tapHint {
-        display: block;
-    }
-}
-
+/* ── Tablet ≤1024px ── */
 @media (max-width: 1024px) {
-    .splitLayout {
+    .zoneA {
         grid-template-columns: 1fr;
-        gap: 2rem;
+        gap: var(--space-xl);
     }
 
-    .canvasPanel {
-        position: static;
-        order: -1;
+    .frame,
+    .frameImage,
+    .frameFallback {
+        min-height: 260px;
+    }
+}
+
+/* ── Mobile ≤768px ── */
+@media (max-width: 768px) {
+    .section {
+        padding: var(--space-3xl) 0 var(--space-2xl);
     }
 
-    .canvasWrap {
-        aspect-ratio: 16 / 9;
+    .header {
+        margin-bottom: var(--space-xl);
     }
 
-    .inner {
-        padding: 0 1.25rem;
+    .projectTitle {
+        font-size: var(--text-3xl);
     }
 
-    /* Prevent arrow from clipping on narrow screens */
-    .rowTop {
-        gap: 0.5rem;
+    .frame,
+    .frameImage,
+    .frameFallback {
+        min-height: 200px;
     }
 
-    .featuredBadge {
-        font-size: 0.55rem;
-        padding: 0.15rem 0.4rem;
+    .floorReflection {
+        display: none;
+    }
+
+    .zoneB {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: var(--space-sm);
+        margin-top: var(--space-lg);
+        padding-bottom: var(--space-sm);
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    .filmCard {
+        flex: 0 0 120px;
+        width: 120px;
+        scroll-snap-align: start;
     }
 }
 
 @media (max-width: 480px) {
-    .section {
-        padding: 5rem 0 4rem;
+    .inner {
+        padding: 0 var(--space-md);
     }
 
-    .header {
-        margin-bottom: 2rem;
+    .heading {
+        font-size: var(--text-4xl);
     }
 
-    .projectTitle {
-        font-size: 1.1rem;
-    }
-
-    .featuredRow {
-        padding-top: 1.25rem;
-        padding-bottom: 1.25rem;
+    .detailPanel {
+        padding: var(--space-md) 0;
     }
 }
