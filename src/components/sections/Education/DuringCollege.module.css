@@ -19,7 +19,6 @@
 .beltCard {
   padding: 0 !important;
   background: transparent;
-  height: 160px;
   justify-content: stretch;
   align-items: stretch;
 }
@@ -246,10 +245,6 @@
 }
 
 @media (max-width: 768px) {
-  .beltCard {
-    height: 150px;
-  }
-
   .cardDesc {
     -webkit-line-clamp: 2;
   }
