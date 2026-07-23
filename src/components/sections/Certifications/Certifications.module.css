@@ -7,15 +7,15 @@
 
 .proof {
   position: absolute;
-  left: 50%;
-  top: 42%;
+  left: 58%;
+  top: 48%;
   transform: translate(-50%, -50%);
   font-family: var(--font-display);
-  font-size: clamp(6rem, 22vw, 16rem);
+  font-size: clamp(7rem, 24vw, 18rem);
   font-weight: 700;
   letter-spacing: -0.06em;
   line-height: 0.85;
-  color: rgba(255, 255, 255, 0.035);
+  color: rgba(255, 255, 255, 0.045);
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
@@ -219,54 +219,55 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   padding: 1.5rem 0 2rem;
 }
 
 .stackFloor {
   position: absolute;
-  left: 8%;
+  left: 5%;
   right: 5%;
-  bottom: 0.4rem;
-  height: 48%;
+  bottom: 0.2rem;
+  height: 42%;
   background:
-    radial-gradient(ellipse 70% 55% at 40% 70%, rgba(255, 255, 255, 0.08) 0%, transparent 70%),
-    linear-gradient(to top, rgba(255, 255, 255, 0.03), transparent);
-  filter: blur(18px);
+    radial-gradient(ellipse 65% 50% at 50% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 72%),
+    linear-gradient(to top, rgba(255, 255, 255, 0.04), transparent);
+  filter: blur(16px);
   pointer-events: none;
   z-index: 0;
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
 .stack {
   position: relative;
-  width: min(100%, 520px);
-  height: clamp(360px, 52vh, 440px);
-  perspective: 1400px;
+  width: min(100%, 480px);
+  height: clamp(380px, 54vh, 460px);
+  perspective: 1600px;
   transform-style: preserve-3d;
   z-index: 1;
+  margin: 0 auto;
 }
 
 .card {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  max-width: 420px;
-  height: min(100%, 400px);
-  padding: 1.5rem 1.55rem 1.35rem;
+  top: 0;
+  left: 50%;
+  width: min(100%, 400px);
+  height: min(100%, 420px);
+  padding: 1.55rem 1.6rem 1.4rem;
   display: flex;
   flex-direction: column;
-  border-radius: 18px;
+  border-radius: 20px;
   background:
-    linear-gradient(155deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 42%, rgba(14, 11, 20, 0.72) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+    linear-gradient(160deg, rgba(28, 24, 38, 0.96) 0%, rgba(16, 13, 24, 0.94) 45%, rgba(12, 10, 18, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  transform-origin: left center;
+    0 24px 60px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform-origin: center center;
   transform-style: preserve-3d;
   transition:
     transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
@@ -292,30 +293,33 @@
 .cardFront {
   z-index: 3;
   opacity: 1;
-  border-color: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.42);
   box-shadow:
-    0 28px 70px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    0 28px 70px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 0 48px rgba(255, 255, 255, 0.08);
   transform:
-    rotateY(-14deg)
-    rotateX(3deg)
-    translate3d(0, 0, 0);
+    translateX(-50%)
+    rotateY(-18deg)
+    rotateX(5deg)
+    translate3d(-6px, 0, 56px);
 }
 
 .cardBack {
   z-index: calc(2 - var(--stack-i));
-  opacity: calc(1 - (var(--stack-i) * 0.18));
+  opacity: calc(0.92 - (var(--stack-i) * 0.14));
   pointer-events: auto;
   transform:
-    rotateY(-22deg)
-    rotateX(6deg)
+    translateX(-50%)
+    rotateY(-28deg)
+    rotateX(8deg)
     translate3d(
-      calc(var(--stack-i) * 28px),
-      calc(var(--stack-i) * 10px),
-      calc(var(--stack-i) * -48px)
+      calc(var(--stack-i) * 40px),
+      calc(var(--stack-i) * 14px),
+      calc(56px - (var(--stack-i) * 64px))
     )
-    scale(calc(1 - (var(--stack-i) * 0.03)));
+    scale(calc(1 - (var(--stack-i) * 0.045)));
 }
 
 .cardHit {
@@ -344,16 +348,21 @@
 }
 
 .cardMark {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .cardLogo {
@@ -361,6 +370,14 @@
   height: 22px;
   object-fit: contain;
   display: block;
+}
+
+.cardMarkText {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fff;
 }
 
 .cardIssuer {
@@ -488,9 +505,9 @@
 .stackNav {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.45rem;
   margin-top: 1.35rem;
-  margin-left: 0.35rem;
   position: relative;
   z-index: 2;
 }
@@ -548,15 +565,23 @@
     max-width: none;
   }
 
-  .cardFront,
-  .cardBack {
+  .cardFront {
     transform:
+      translateX(-50%)
       rotateY(-8deg)
       rotateX(2deg)
+      translate3d(0, 0, 24px);
+  }
+
+  .cardBack {
+    transform:
+      translateX(-50%)
+      rotateY(-12deg)
+      rotateX(3deg)
       translate3d(
         calc(var(--stack-i, 0) * 18px),
         calc(var(--stack-i, 0) * 8px),
-        calc(var(--stack-i, 0) * -36px)
+        calc(24px - (var(--stack-i, 0) * 36px))
       );
   }
 
@@ -590,15 +615,19 @@
     height: min(100%, 420px);
   }
 
-  .cardFront,
+  .cardFront {
+    transform:
+      translateX(-50%)
+      translate3d(0, 0, 12px);
+  }
+
   .cardBack {
     transform:
-      rotateY(0deg)
-      rotateX(0deg)
+      translateX(-50%)
       translate3d(
         calc(var(--stack-i, 0) * 10px),
         calc(var(--stack-i, 0) * 10px),
-        calc(var(--stack-i, 0) * -24px)
+        calc(12px - (var(--stack-i, 0) * 24px))
       );
   }
 

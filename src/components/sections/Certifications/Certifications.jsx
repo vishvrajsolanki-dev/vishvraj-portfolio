@@ -217,7 +217,17 @@ export default function Certifications() {
     const section = sectionRef.current
     if (!section) return
 
-    const tl = gsap.timeline({
+    const label = section.querySelector(`.${styles.sectionLabel}`)
+    const stage = section.querySelector(`.${styles.stage}`)
+    if (!label || !stage) return
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    gsap.from(label, {
+      opacity: 0,
+      y: 16,
+      duration: 0.45,
+      ease: 'power2.out',
       scrollTrigger: {
         trigger: section,
         start: 'top 80%',
@@ -225,18 +235,16 @@ export default function Certifications() {
       },
     })
 
-    tl.fromTo(
-      section.querySelector(`.${styles.sectionLabel}`),
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
-    )
-
-    tl.fromTo(
-      section.querySelector(`.${styles.stage}`),
-      { opacity: 0, y: 36 },
-      { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' },
-      '-=0.2'
-    )
+    gsap.from(stage, {
+      y: 24,
+      duration: 0.65,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 80%',
+        once: true,
+      },
+    })
   }, { scope: sectionRef })
 
   return (
@@ -331,8 +339,12 @@ export default function Certifications() {
                     )}
 
                     <div className={styles.cardTop}>
-                      <div className={styles.cardMark}>
-                        <IssuerLogo issuer={issuer} className={styles.cardLogo} />
+                      <div className={styles.cardMark} aria-hidden="true">
+                        {issuer.id === 'anthropic' ? (
+                          <span className={styles.cardMarkText}>{issuer.mark}</span>
+                        ) : (
+                          <IssuerLogo issuer={issuer} className={styles.cardLogo} />
+                        )}
                       </div>
                       <span className={styles.cardIssuer}>{issuer.name}</span>
                     </div>
