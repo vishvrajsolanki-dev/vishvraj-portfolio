@@ -6,7 +6,8 @@
 }
 
 .zoneBelt {
-  height: 220px;
+  /* Tall enough for FOCAL scale(1.3) + lift without clipping neighbors */
+  height: 260px;
   overflow: visible;
 }
 
@@ -99,6 +100,10 @@
 
 .cardSlotActive {
   border: 1.5px solid var(--color-accent, #ffffff);
+}
+
+.cardSlotInactive {
+  /* inactive chrome — border set via inline style from consumer */
 }
 
 .cardSlot:hover {

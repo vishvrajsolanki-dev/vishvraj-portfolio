@@ -1,5 +1,6 @@
 .section {
   padding: 6rem 6vw;
+  overflow: visible;
 }
 
 .sectionLabel {
@@ -30,19 +31,29 @@
   object-fit: cover;
   object-position: center;
   display: block;
+  /* Photo must stay unfiltered — all darkening lives on .eduScrim only */
+  filter: none;
+  opacity: 1;
+  mix-blend-mode: normal;
+  -webkit-filter: none;
 }
 
 .eduScrim {
   position: absolute;
   inset: 0;
+  /* Overlay only — does not touch the <img>. Top stays nearly clear;
+     darkening concentrates in the bottom third for text. */
   background: linear-gradient(
     180deg,
-    rgba(10, 8, 16, 0.15) 0%,
-    rgba(10, 8, 16, 0.55) 65%,
-    rgba(10, 8, 16, 0.92) 100%
+    rgba(10, 8, 16, 0.0) 0%,
+    rgba(10, 8, 16, 0.06) 22%,
+    rgba(10, 8, 16, 0.28) 50%,
+    rgba(10, 8, 16, 0.72) 78%,
+    rgba(10, 8, 16, 0.94) 100%
   );
   pointer-events: none;
   z-index: 1;
+  mix-blend-mode: normal;
 }
 
 .eduOverlay {

@@ -10,7 +10,10 @@ import styles from './BeltCarousel.module.css'
 const FOCAL = 2
 const INACTIVE_W = 190
 const ACTIVE_W = 260
-const GAP = 14
+const FOCAL_SCALE = 1.3
+/** Rail space for scaled active card + breathing room so neighbors never sit under it. */
+const ACTIVE_SLOT_W = Math.round(ACTIVE_W * FOCAL_SCALE) + 48 // 338 + 48 = 386
+const GAP = 20
 const BELT_EASE = 'cubic-bezier(0.25, 1, 0.5, 1)'
 const BELT_MS = 1300
 const DEFAULT_AUTO_MS = 6000
@@ -34,37 +37,31 @@ function rotateLeft(arr, n = 1) {
   return [...arr.slice(k), ...arr.slice(0, k)]
 }
 
-/** Slot x-position for index i, with FOCAL using ACTIVE_W. */
+/** Layout width for slot i — FOCAL reserves room for scale(FOCAL_SCALE). */
+function slotWidth(index) {
+  return index === FOCAL ? ACTIVE_SLOT_W : INACTIVE_W
+}
+
+/** Slot x-position for index i; neighbors clear of the scaled active card. */
 function slotX(index) {
   let x = 0
   for (let i = 0; i < index; i++) {
-    x += (i === FOCAL ? ACTIVE_W : INACTIVE_W) + GAP
+    x += slotWidth(i) + GAP
   }
   return x
 }
 
 function totalRailWidth(count) {
   if (count <= 0) return 0
-  return ACTIVE_W + (count - 1) * INACTIVE_W + (count - 1) * GAP
+  let w = 0
+  for (let i = 0; i < count; i++) {
+    w += slotWidth(i) + (i < count - 1 ? GAP : 0)
+  }
+  return w
 }
 
 /**
  * Shared continuous-loop belt carousel (Projects / During College).
- *
- * @param {object} props
- * @param {Array} props.items
- * @param {(item: any, isActive: boolean, meta: object) => React.ReactNode} props.renderCard
- * @param {number} [props.autoAdvanceMs=6000]
- * @param {boolean} [props.loop=true]
- * @param {(item: any) => string} [props.getId]
- * @param {string} [props.initialActiveId]
- * @param {(id: string) => void} [props.onActiveChange]
- * @param {string} [props.ariaLabel]
- * @param {string} [props.className]
- * @param {(item: any, isActive: boolean) => string} [props.getCardClassName]
- * @param {(item: any, isActive: boolean) => object} [props.getCardStyle]
- * @param {boolean} [props.showRail=true]
- * @param {boolean} [props.showProgress=true]
  */
 export default function BeltCarousel({
   items,
@@ -173,7 +170,6 @@ export default function BeltCarousel({
     }
   }, [isMobile])
 
-  /** Advance: rotate array left; every slot re-derived from new order + index. */
   const advanceBelt = useCallback(() => {
     if (!loop && beltOrderRef.current.length === 0) return
 
@@ -277,14 +273,14 @@ export default function BeltCarousel({
                 left:
                   railOffset +
                   slotX(i) +
-                  (i === FOCAL ? ACTIVE_W : INACTIVE_W) / 2,
+                  slotWidth(i) / 2,
               }}
             />
           ))}
           <span
             className={styles.railDot}
             style={{
-              left: railOffset + slotX(FOCAL) + ACTIVE_W / 2,
+              left: railOffset + slotX(FOCAL) + slotWidth(FOCAL) / 2,
             }}
           />
         </div>
@@ -297,16 +293,20 @@ export default function BeltCarousel({
         {displayList.map((item, i) => {
           const id = getId(item)
           const isActive = useBelt ? i === FOCAL : id === activeId
-          const x = useBelt ? railOffset + slotX(i) : undefined
-          const width = useBelt
+          const layoutW = useBelt ? slotWidth(i) : undefined
+          const cardW = useBelt
             ? i === FOCAL
               ? ACTIVE_W
               : INACTIVE_W
             : undefined
+          // Center the unscaled card in its reserved slot; scale expands into the pad.
+          const x = useBelt
+            ? railOffset + slotX(i) + (layoutW - cardW) / 2
+            : undefined
 
           const transform = useBelt
             ? `translateY(${i === FOCAL && scaleReady ? -16 : 0}px) scale(${
-                i === FOCAL && scaleReady ? 1.3 : 1
+                i === FOCAL && scaleReady ? FOCAL_SCALE : 1
               })`
             : undefined
 
@@ -318,7 +318,7 @@ export default function BeltCarousel({
           const motionStyle = useBelt
             ? {
                 left: x,
-                width,
+                width: cardW,
                 transform,
                 zIndex: isActive ? 10 : 1,
                 transition: skipMotion
@@ -359,4 +359,13 @@ export default function BeltCarousel({
   )
 }
 
-export { FOCAL, INACTIVE_W, ACTIVE_W, GAP, BELT_MS, BELT_EASE }
+export {
+  FOCAL,
+  INACTIVE_W,
+  ACTIVE_W,
+  ACTIVE_SLOT_W,
+  FOCAL_SCALE,
+  GAP,
+  BELT_MS,
+  BELT_EASE,
+}

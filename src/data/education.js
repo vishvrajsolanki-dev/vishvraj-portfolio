@@ -61,8 +61,8 @@ export const duringCollege = [
   {
     id: 'cvm-hackathon',
     mediaType: 'photo',
-    // Swap to real photo when supplied
-    photoSrc: '/photos/cvm-hackathon.svg',
+    // null → full-card photo placeholder (Education-card style). Swap to real path when supplied.
+    photoSrc: null,
     date: '2026',
     title: 'CVM Hackathon',
     description: 'Represented TrackBot at a university-level hackathon.',
