@@ -6,9 +6,18 @@
 }
 
 .zoneBelt {
-  /* Tall enough for FOCAL scale(1.3) + lift without clipping neighbors */
   height: 260px;
   overflow: visible;
+}
+
+.zoneBelt .cardSlot {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: var(--belt-card-h, 140px);
+  margin-top: calc(var(--belt-card-h, 140px) / -2);
+  transform-origin: center center;
+  will-change: transform, left, width;
 }
 
 .zoneStatic {
@@ -66,17 +75,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: var(--space-sm, 0.75rem);
-}
-
-/* Fixed-slot absolute cards — position via left; transform lifts/scales FOCAL */
-.zoneBelt .cardSlot {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  height: 140px;
-  margin-top: -70px;
-  transform-origin: center center;
-  will-change: transform, left, width;
 }
 
 .cardSlot {

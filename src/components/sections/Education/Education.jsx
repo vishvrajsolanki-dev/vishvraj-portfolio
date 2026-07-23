@@ -8,11 +8,7 @@ import styles from './Education.module.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-/**
- * Swap to a real campus photo path when available, e.g. '/photos/adit-campus.jpg'.
- * When set (or education.campusPhotoSrc is set), the placeholder badge is not
- * rendered at all — one-line removal.
- */
+/** One-line swap: set education.campusPhotoSrc — placeholder removed entirely when set. */
 const CAMPUS_PHOTO_SRC = education.campusPhotoSrc
 
 function CampusPhotoPlaceholder() {
@@ -26,10 +22,20 @@ function CampusPhotoPlaceholder() {
         </svg>
       </div>
       <p className={styles.placeholderLabel}>
-        <span>Campus photo</span>
+        <span>Campus visual</span>
         <span>Placeholder</span>
       </p>
     </div>
+  )
+}
+
+function GradCapIcon() {
+  return (
+    <svg className={styles.headerIcon} viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+      <path d="M2 9l10-5 10 5-10 5L2 9z" strokeLinejoin="round" />
+      <path d="M6 11.5v4.5c0 1.5 2.5 3 6 3s6-1.5 6-3v-4.5" strokeLinecap="round" />
+      <path d="M22 9v6" strokeLinecap="round" />
+    </svg>
   )
 }
 
@@ -49,8 +55,8 @@ export default function Education() {
     })
 
     tl.fromTo(
-      section.querySelector(`.${styles.sectionLabel}`),
-      { opacity: 0, y: 20 },
+      section.querySelector(`.${styles.sectionHeader}`),
+      { opacity: 0, y: 16 },
       { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
     )
 
@@ -60,39 +66,68 @@ export default function Education() {
       { opacity: 1, y: 0, duration: 0.75, ease: 'power3.out' },
       '-=0.2'
     )
-
-    tl.fromTo(
-      section.querySelector(`.${styles.divider}`),
-      { opacity: 0, scaleX: 0.6 },
-      { opacity: 1, scaleX: 1, duration: 0.45, ease: 'power2.out' },
-      '-=0.35'
-    )
   }, { scope: sectionRef })
 
   return (
     <section className={styles.section} id="education" ref={sectionRef}>
-      <span className={styles.sectionLabel}>06 — Education</span>
-
-      {/* Education photo panel */}
-      <div className={styles.eduCard}>
-        {CAMPUS_PHOTO_SRC ? (
-          <img
-            src={CAMPUS_PHOTO_SRC}
-            alt="A D Patel Institute of Technology campus"
-            className={styles.eduPhoto}
-          />
-        ) : (
-          <CampusPhotoPlaceholder />
-        )}
-        <div className={styles.eduScrim} aria-hidden="true" />
-        <div className={styles.eduOverlay}>
-          <h2 className={styles.eduDegree}>{education.degree}</h2>
-          <p className={styles.eduSchool}>{education.institution}</p>
-          <p className={styles.eduDates}>{education.dates}</p>
-        </div>
+      {/* Reference-style header: icon + label + line + end dot */}
+      <div className={styles.sectionHeader}>
+        <GradCapIcon />
+        <span className={styles.sectionTitle}>Education</span>
+        <span className={styles.headerRule} aria-hidden="true" />
+        <span className={styles.headerDot} aria-hidden="true" />
       </div>
 
-      <div className={styles.divider} />
+      {/* Card: photo plane on top + solid info bar below */}
+      <article className={styles.eduCard}>
+        <div className={styles.visualPlane}>
+          {CAMPUS_PHOTO_SRC ? (
+            <img
+              src={CAMPUS_PHOTO_SRC}
+              alt="A D Patel Institute of Technology campus"
+              className={styles.eduPhoto}
+            />
+          ) : (
+            <CampusPhotoPlaceholder />
+          )}
+          {/* Scrim only blends photo into the info bar — top stays clear */}
+          <div className={styles.eduScrim} aria-hidden="true" />
+        </div>
+
+        <div className={styles.infoBar}>
+          <div className={styles.crestCol}>
+            <img
+              src={education.crestSrc}
+              alt=""
+              className={styles.crest}
+            />
+            <span className={styles.crestDivider} aria-hidden="true" />
+          </div>
+
+          <div className={styles.infoMain}>
+            <h2 className={styles.eduDegree}>{education.degree}</h2>
+            <p className={styles.eduUniversity}>{education.university}</p>
+            <p className={styles.eduMeta}>
+              <span className={styles.metaItem}>
+                <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
+                  <rect x="2.5" y="3.5" width="11" height="10" rx="1.5" />
+                  <path d="M2.5 6.5h11M5.5 2.5v2M10.5 2.5v2" strokeLinecap="round" />
+                </svg>
+                {education.dates}
+              </span>
+              <span className={styles.metaPipe} aria-hidden="true">|</span>
+              <span className={styles.metaItem}>
+                <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
+                  <path d="M8 14s4.5-3.6 4.5-7A4.5 4.5 0 008 2.5 4.5 4.5 0 003.5 7c0 3.4 4.5 7 4.5 7z" />
+                  <circle cx="8" cy="7" r="1.4" />
+                </svg>
+                {education.location}
+              </span>
+            </p>
+            <p className={styles.eduSchool}>{education.school}</p>
+          </div>
+        </div>
+      </article>
 
       <DuringCollege />
     </section>

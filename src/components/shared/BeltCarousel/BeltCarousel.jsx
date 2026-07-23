@@ -8,17 +8,27 @@ import {
 import styles from './BeltCarousel.module.css'
 
 const FOCAL = 2
-const INACTIVE_W = 190
-const ACTIVE_W = 260
-const FOCAL_SCALE = 1.3
-/** Rail space for scaled active card + breathing room so neighbors never sit under it. */
-const ACTIVE_SLOT_W = Math.round(ACTIVE_W * FOCAL_SCALE) + 48 // 338 + 48 = 386
-const GAP = 20
 const BELT_EASE = 'cubic-bezier(0.25, 1, 0.5, 1)'
 const BELT_MS = 1300
 const DEFAULT_AUTO_MS = 6000
 
-/** Arrange items so `activeId` sits at FOCAL (center). */
+const DEFAULT_LAYOUT = {
+  inactiveW: 190,
+  activeW: 260,
+  focalScale: 1.3,
+  slotPad: 48,
+  gap: 20,
+  cardHeight: 140,
+  lift: 16,
+  zoneHeight: 260,
+}
+
+function resolveLayout(layout) {
+  const L = { ...DEFAULT_LAYOUT, ...layout }
+  L.activeSlotW = Math.round(L.activeW * L.focalScale) + L.slotPad
+  return L
+}
+
 function orderCenteredOn(items, activeId, getId) {
   const ids = items.map(getId)
   const idx = Math.max(0, ids.indexOf(activeId))
@@ -29,7 +39,6 @@ function orderCenteredOn(items, activeId, getId) {
   return ordered
 }
 
-/** Rotate array left by n steps (first → end). Continuous loop. */
 function rotateLeft(arr, n = 1) {
   const len = arr.length
   const k = ((n % len) + len) % len
@@ -37,31 +46,28 @@ function rotateLeft(arr, n = 1) {
   return [...arr.slice(k), ...arr.slice(0, k)]
 }
 
-/** Layout width for slot i — FOCAL reserves room for scale(FOCAL_SCALE). */
-function slotWidth(index) {
-  return index === FOCAL ? ACTIVE_SLOT_W : INACTIVE_W
-}
-
-/** Slot x-position for index i; neighbors clear of the scaled active card. */
-function slotX(index) {
-  let x = 0
-  for (let i = 0; i < index; i++) {
-    x += slotWidth(i) + GAP
+function makeSlotHelpers(L) {
+  const slotWidth = (index) =>
+    index === FOCAL ? L.activeSlotW : L.inactiveW
+  const slotX = (index) => {
+    let x = 0
+    for (let i = 0; i < index; i++) x += slotWidth(i) + L.gap
+    return x
   }
-  return x
-}
-
-function totalRailWidth(count) {
-  if (count <= 0) return 0
-  let w = 0
-  for (let i = 0; i < count; i++) {
-    w += slotWidth(i) + (i < count - 1 ? GAP : 0)
+  const totalRailWidth = (count) => {
+    if (count <= 0) return 0
+    let w = 0
+    for (let i = 0; i < count; i++) {
+      w += slotWidth(i) + (i < count - 1 ? L.gap : 0)
+    }
+    return w
   }
-  return w
+  return { slotWidth, slotX, totalRailWidth }
 }
 
 /**
  * Shared continuous-loop belt carousel (Projects / During College).
+ * Pass `layout` to override sizes (e.g. portrait cinema rail).
  */
 export default function BeltCarousel({
   items,
@@ -77,7 +83,14 @@ export default function BeltCarousel({
   getCardStyle,
   showRail = true,
   showProgress = true,
+  layout: layoutProp,
 }) {
+  const L = useMemo(() => resolveLayout(layoutProp), [layoutProp])
+  const { slotWidth, slotX, totalRailWidth } = useMemo(
+    () => makeSlotHelpers(L),
+    [L]
+  )
+
   const defaultId = initialActiveId || (items[0] ? getId(items[0]) : null)
 
   const [beltOrder, setBeltOrder] = useState(() =>
@@ -248,11 +261,18 @@ export default function BeltCarousel({
     }
   }
 
+  const halfH = L.cardHeight / 2
+
   return (
     <div
       className={`${styles.zone} ${useBelt ? styles.zoneBelt : styles.zoneStatic} ${className}`}
       role="listbox"
       aria-label={ariaLabel}
+      style={
+        useBelt
+          ? { height: L.zoneHeight, '--belt-card-h': `${L.cardHeight}px` }
+          : undefined
+      }
       onMouseEnter={pauseAutoplay}
       onMouseLeave={resumeAutoplay}
       onFocusCapture={pauseAutoplay}
@@ -270,10 +290,7 @@ export default function BeltCarousel({
               key={i}
               className={styles.railTick}
               style={{
-                left:
-                  railOffset +
-                  slotX(i) +
-                  slotWidth(i) / 2,
+                left: railOffset + slotX(i) + slotWidth(i) / 2,
               }}
             />
           ))}
@@ -296,17 +313,16 @@ export default function BeltCarousel({
           const layoutW = useBelt ? slotWidth(i) : undefined
           const cardW = useBelt
             ? i === FOCAL
-              ? ACTIVE_W
-              : INACTIVE_W
+              ? L.activeW
+              : L.inactiveW
             : undefined
-          // Center the unscaled card in its reserved slot; scale expands into the pad.
           const x = useBelt
             ? railOffset + slotX(i) + (layoutW - cardW) / 2
             : undefined
 
           const transform = useBelt
-            ? `translateY(${i === FOCAL && scaleReady ? -16 : 0}px) scale(${
-                i === FOCAL && scaleReady ? FOCAL_SCALE : 1
+            ? `translateY(${i === FOCAL && scaleReady ? -L.lift : 0}px) scale(${
+                i === FOCAL && scaleReady ? L.focalScale : 1
               })`
             : undefined
 
@@ -319,6 +335,8 @@ export default function BeltCarousel({
             ? {
                 left: x,
                 width: cardW,
+                height: L.cardHeight,
+                marginTop: -halfH,
                 transform,
                 zIndex: isActive ? 10 : 1,
                 transition: skipMotion
@@ -359,13 +377,4 @@ export default function BeltCarousel({
   )
 }
 
-export {
-  FOCAL,
-  INACTIVE_W,
-  ACTIVE_W,
-  ACTIVE_SLOT_W,
-  FOCAL_SCALE,
-  GAP,
-  BELT_MS,
-  BELT_EASE,
-}
+export { FOCAL, DEFAULT_LAYOUT, BELT_MS, BELT_EASE }

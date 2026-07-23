@@ -1,9 +1,21 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import BeltCarousel from '../../shared/BeltCarousel/BeltCarousel'
 import { duringCollege } from '../../../data/education'
 import styles from './DuringCollege.module.css'
 
-const AUTOPLAY_MS = 6000
+const AUTOPLAY_MS = 6500
+
+/** Portrait cinema-rail sizes — composition from reference, site tokens only */
+const CINEMA_LAYOUT = {
+  inactiveW: 168,
+  activeW: 236,
+  focalScale: 1.32,
+  slotPad: 56,
+  gap: 28,
+  cardHeight: 300,
+  lift: 22,
+  zoneHeight: 420,
+}
 
 function DocumentLightbox({ src, alt, onClose }) {
   useEffect(() => {
@@ -45,24 +57,22 @@ function DocumentLightbox({ src, alt, onClose }) {
   )
 }
 
-/** Full-card photo placeholder — full-bleed panel, not a tiny icon badge. */
 function PhotoCardPlaceholder() {
   return (
     <div className={styles.photoPlaceholder} aria-hidden="true">
-      {/* Soft landscape silhouette so the card reads as a photo panel */}
-      <svg className={styles.photoSilhouette} viewBox="0 0 260 140" preserveAspectRatio="xMidYMid slice">
+      <svg className={styles.photoSilhouette} viewBox="0 0 240 300" preserveAspectRatio="xMidYMid slice">
         <defs>
-          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.07)" />
+          <linearGradient id="cineSky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="rgba(255,255,255,0.08)" />
             <stop offset="100%" stopColor="rgba(255,255,255,0)" />
           </linearGradient>
         </defs>
-        <rect width="260" height="140" fill="url(#sky)" />
+        <rect width="240" height="300" fill="url(#cineSky)" />
         <path
-          d="M0 98 L42 72 L78 88 L120 58 L168 82 L210 64 L260 90 L260 140 L0 140 Z"
-          fill="rgba(255,255,255,0.06)"
+          d="M0 210 L48 150 L90 185 L130 120 L175 170 L240 140 L240 300 L0 300 Z"
+          fill="rgba(255,255,255,0.05)"
         />
-        <circle cx="198" cy="42" r="16" fill="rgba(255,255,255,0.05)" />
+        <circle cx="175" cy="78" r="22" fill="rgba(255,255,255,0.04)" />
       </svg>
       <div className={styles.placeholderBadge}>
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -75,28 +85,29 @@ function PhotoCardPlaceholder() {
   )
 }
 
-function PhotoCard({ item, isActive }) {
-  const hasPhoto = Boolean(item.photoSrc)
-
+/** Shared cinema text stack: large year → title → description */
+function CinemaOverlay({ item, isActive }) {
   return (
-    <div className={`${styles.photoCard} ${isActive ? styles.photoCardActive : ''}`}>
-      {hasPhoto ? (
-        <img
-          src={item.photoSrc}
-          alt={item.title}
-          className={styles.photoBg}
-        />
+    <div className={styles.cinemaOverlay}>
+      <span className={styles.cinemaYear}>{item.year || item.date}</span>
+      <span className={styles.cinemaTitle}>{item.title}</span>
+      {isActive && item.description && (
+        <span className={styles.cinemaDesc}>{item.description}</span>
+      )}
+    </div>
+  )
+}
+
+function PhotoCard({ item, isActive }) {
+  return (
+    <div className={`${styles.cinemaCard} ${isActive ? styles.cinemaCardActive : ''}`}>
+      {item.photoSrc ? (
+        <img src={item.photoSrc} alt={item.title} className={styles.photoBg} />
       ) : (
         <PhotoCardPlaceholder />
       )}
-      <div className={styles.photoScrim} aria-hidden="true" />
-      <div className={styles.photoOverlay}>
-        <span className={styles.cardDate}>{item.date}</span>
-        <span className={styles.cardTitle}>{item.title}</span>
-        {isActive && item.description && (
-          <span className={styles.cardDesc}>{item.description}</span>
-        )}
-      </div>
+      <div className={styles.cinemaScrim} aria-hidden="true" />
+      <CinemaOverlay item={item} isActive={isActive} />
     </div>
   )
 }
@@ -105,9 +116,15 @@ function DocumentCard({ item, isActive, onOpenDocument }) {
   const hasDoc = Boolean(item.documentSrc)
 
   return (
-    <div
-      className={`${styles.docCard} ${isActive ? styles.docCardActive : ''}`}
-    >
+    <div className={`${styles.cinemaCard} ${styles.docSurface} ${isActive ? styles.cinemaCardActive : ''}`}>
+      {item.logoSrc && (
+        <img
+          src={item.logoSrc}
+          alt=""
+          className={styles.logoWatermark}
+          aria-hidden="true"
+        />
+      )}
       <div className={styles.docTop}>
         <img
           src={item.logoSrc}
@@ -140,20 +157,15 @@ function DocumentCard({ item, isActive, onOpenDocument }) {
           </span>
         )}
       </div>
-      <div className={styles.docBody}>
-        <span className={styles.cardDate}>{item.date}</span>
-        <span className={styles.cardTitle}>{item.title}</span>
-        {item.org && <span className={styles.cardOrg}>{item.org}</span>}
-        {isActive && item.description && (
-          <span className={styles.cardDesc}>{item.description}</span>
-        )}
-      </div>
+      <div className={styles.cinemaScrim} aria-hidden="true" />
+      <CinemaOverlay item={item} isActive={isActive} />
     </div>
   )
 }
 
 export default function DuringCollege() {
   const [lightbox, setLightbox] = useState(null)
+  const [activeId, setActiveId] = useState(duringCollege[0]?.id)
 
   const openDocument = useCallback((item) => {
     if (!item.documentSrc) return
@@ -164,6 +176,21 @@ export default function DuringCollege() {
   }, [])
 
   const closeLightbox = useCallback(() => setLightbox(null), [])
+
+  const timelineLabels = useMemo(
+    () =>
+      duringCollege.map((item) => ({
+        id: item.id,
+        label: ({
+          'ssip-grant': 'SSIP',
+          'codealpha-internship': 'Alpha',
+          'codsoft-internship': 'CodSoft',
+          'myjobgrow-internship': 'IITH',
+          'cvm-hackathon': 'CVM',
+        })[item.id] || item.year,
+      })),
+    []
+  )
 
   if (!duringCollege?.length) {
     return (
@@ -176,43 +203,34 @@ export default function DuringCollege() {
 
   return (
     <div className={styles.wrap}>
-      <p className={styles.colLabel}>During College</p>
+      <div className={styles.railHeader}>
+        <p className={styles.colEyebrow}>Timeline</p>
+        <h3 className={styles.colTitle}>During College</h3>
+      </div>
+
       <BeltCarousel
         items={duringCollege}
         autoAdvanceMs={AUTOPLAY_MS}
         loop
         initialActiveId={duringCollege[0].id}
+        onActiveChange={setActiveId}
         ariaLabel="During college experiences"
         className={styles.belt}
+        showRail={false}
+        showProgress={false}
+        layout={CINEMA_LAYOUT}
         getCardClassName={(item, isActive) =>
           `${styles.beltCard} ${
             item.mediaType === 'photo' ? styles.beltCardPhoto : styles.beltCardDoc
           } ${isActive ? styles.beltCardActive : ''}`
         }
-        getCardStyle={(item, isActive) => {
-          if (item.mediaType === 'photo') {
-            return {
-              background: '#110e1a',
-              borderColor: isActive
-                ? 'rgba(255,255,255,0.22)'
-                : 'rgba(255,255,255,0.08)',
-              boxShadow: isActive
-                ? '0 8px 22px rgba(0,0,0,0.35)'
-                : 'none',
-              padding: 0,
-            }
-          }
-          return {
-            background: isActive ? '#1c1626' : '#171320',
-            borderColor: isActive
-              ? 'rgba(255,255,255,0.18)'
-              : 'rgba(255,255,255,0.08)',
-            boxShadow: isActive
-              ? '0 8px 22px rgba(0,0,0,0.35)'
-              : 'none',
-            padding: 0,
-          }
-        }}
+        getCardStyle={() => ({
+          background: 'transparent',
+          borderColor: 'transparent',
+          boxShadow: 'none',
+          padding: 0,
+          borderRadius: 22,
+        })}
         renderCard={(item, isActive) =>
           item.mediaType === 'photo' ? (
             <PhotoCard item={item} isActive={isActive} />
@@ -225,6 +243,42 @@ export default function DuringCollege() {
           )
         }
       />
+
+      {/* Timeline axis under the rail */}
+      <div className={styles.timeline} aria-hidden="true">
+        <span className={styles.timelineLine} />
+        <div className={styles.timelineMarks}>
+          {timelineLabels.map((t) => (
+            <span
+              key={t.id}
+              className={`${styles.timelineMark} ${
+                t.id === activeId ? styles.timelineMarkActive : ''
+              }`}
+            >
+              <span className={styles.timelineTick} />
+              <span className={styles.timelineYear}>{t.label}</span>
+            </span>
+          ))}
+        </div>
+        <span
+          className={styles.timelineDot}
+          style={{
+            left: `${
+              (timelineLabels.findIndex((t) => t.id === activeId) /
+                Math.max(timelineLabels.length - 1, 1)) *
+              100
+            }%`,
+          }}
+        />
+      </div>
+
+      <p className={styles.dragHint}>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+          <path d="M8 12h8M7 9l-3 3 3 3M17 9l3 3-3 3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        Drag to explore
+      </p>
+
       {lightbox && (
         <DocumentLightbox
           src={lightbox.src}

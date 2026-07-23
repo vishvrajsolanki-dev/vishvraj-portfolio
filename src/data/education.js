@@ -1,14 +1,16 @@
 /**
  * Education / During College entries.
  * mediaType: "document" | "photo"
- * Swap photoSrc / documentSrc / logoSrc when real assets land.
  */
 export const education = {
   degree: 'B.Tech — AI & Data Science',
-  institution: 'A D Patel Institute of Technology · CVM University · Anand, Gujarat',
+  school: 'A D Patel Institute of Technology',
+  university: 'CVM UNIVERSITY',
+  location: 'Anand, Gujarat',
   dates: '2025 — 2029',
+  crestSrc: '/logos/adit.png',
   /**
-   * One-line swap when campus photo lands, e.g. '/photos/adit-campus.jpg'.
+   * One-line swap when campus photo lands.
    * null keeps the translucent placeholder badge.
    */
   campusPhotoSrc: '/photos/adit-campus.jpg',
@@ -19,8 +21,9 @@ export const duringCollege = [
     id: 'ssip-grant',
     mediaType: 'document',
     logoSrc: '/logos/ssip.png',
-    documentSrc: null, // add when available
+    documentSrc: null,
     date: '2026',
+    year: '2026',
     title: 'SSIP Grant — Under Review',
     org: 'State Innovation & Startup Policy Cell',
     description:
@@ -32,6 +35,7 @@ export const duringCollege = [
     logoSrc: '/logos/codealpha.png',
     documentSrc: null,
     date: 'June 2026',
+    year: '2026',
     title: 'ML Internship — CodeAlpha',
     org: 'CodeAlpha · Remote',
     description: 'Built LetterLens, a CNN digit classifier on MNIST.',
@@ -42,6 +46,7 @@ export const duringCollege = [
     logoSrc: '/logos/codsoft.png',
     documentSrc: null,
     date: 'May 2026',
+    year: '2026',
     title: 'ML Internship — CodSoft',
     org: 'CodSoft · Remote',
     description:
@@ -50,10 +55,10 @@ export const duringCollege = [
   {
     id: 'myjobgrow-internship',
     mediaType: 'document',
-    // Swap to /logos/myjobgrow.png when supplied
     logoSrc: '/logos/iith.png',
     documentSrc: null,
     date: 'Feb – Apr 2026',
+    year: '2026',
     title: 'AI & DS Internship — My Job Grow × IIT Hyderabad',
     org: 'My Job Grow · in association with IIT Hyderabad',
     description: 'Completed a 2-month hybrid AI fundamentals program.',
@@ -61,9 +66,9 @@ export const duringCollege = [
   {
     id: 'cvm-hackathon',
     mediaType: 'photo',
-    // null → full-card photo placeholder (Education-card style). Swap to real path when supplied.
     photoSrc: null,
     date: '2026',
+    year: '2026',
     title: 'CVM Hackathon',
     description: 'Represented TrackBot at a university-level hackathon.',
   },
