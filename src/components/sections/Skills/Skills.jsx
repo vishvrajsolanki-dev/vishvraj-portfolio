@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import styles from './Skills.module.css'
 
 const services = [
@@ -63,6 +63,9 @@ const services = [
     icon: 'spark',
   },
 ]
+
+const AUTO_MS = 5000
+const RESUME_IDLE_MS = 3000
 
 /** Evenly space 6 nodes on the outer ring (start at top, clockwise). */
 const NODE_ANGLES = services.map((_, i) => -90 + i * 60)
@@ -132,9 +135,46 @@ export default function Skills() {
   const iframeRef = useRef(null)
   const sectionRef = useRef(null)
   const mapRef = useRef(null)
-  const [activeId, setActiveId] = useState(services[0].id)
+  const resumeTimer = useRef(null)
+  const reducedMotion = useRef(false)
 
-  const active = services.find((s) => s.id === activeId) || services[0]
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [autoplay, setAutoplay] = useState(true)
+
+  const active = services[activeIndex]
+
+  useEffect(() => {
+    reducedMotion.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reducedMotion.current) setAutoplay(false)
+  }, [])
+
+  const noteInterference = useCallback(() => {
+    if (reducedMotion.current) return
+    setAutoplay(false)
+    if (resumeTimer.current) clearTimeout(resumeTimer.current)
+    resumeTimer.current = setTimeout(() => {
+      setAutoplay(true)
+    }, RESUME_IDLE_MS)
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (resumeTimer.current) clearTimeout(resumeTimer.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!autoplay || reducedMotion.current) return undefined
+    const id = setInterval(() => {
+      setActiveIndex((i) => (i + 1) % services.length)
+    }, AUTO_MS)
+    return () => clearInterval(id)
+  }, [autoplay])
+
+  const selectDomain = (index) => {
+    setActiveIndex(index)
+    noteInterference()
+  }
 
   useEffect(() => {
     const section = sectionRef.current
@@ -172,115 +212,108 @@ export default function Skills() {
 
   return (
     <section className={styles.section} ref={sectionRef} id="skills">
-      <span className={styles.sectionLabel}>04 — Services & Skills</span>
-      <h2 className={styles.heading}>What I Build</h2>
+      <div className={styles.inner}>
+        <span className={styles.sectionLabel}>04 — Services & Skills</span>
+        <h2 className={styles.heading}>What I Build</h2>
 
-      <div className={styles.signalLayout}>
-        {/* ── Signal map ── */}
-        <div className={styles.mapPane} ref={mapRef}>
-          <div className={styles.mapStage} aria-label="Skills signal map">
-            {/* Concentric guides */}
-            <svg className={styles.mapSvg} viewBox="0 0 100 100" aria-hidden="true">
-              <circle cx="50" cy="50" r="18" className={styles.ringDotted} />
-              <circle cx="50" cy="50" r="28" className={styles.ringDotted} />
-              <circle cx="50" cy="50" r="38" className={styles.ringSolid} />
-              {/* tick marks on outer ring */}
-              {Array.from({ length: 24 }, (_, i) => {
-                const a = ((i / 24) * 360 - 90) * (Math.PI / 180)
-                const r1 = 37.2
-                const r2 = 38.8
-                return (
-                  <line
-                    key={i}
-                    x1={50 + Math.cos(a) * r1}
-                    y1={50 + Math.sin(a) * r1}
-                    x2={50 + Math.cos(a) * r2}
-                    y2={50 + Math.sin(a) * r2}
-                    className={styles.ringTick}
+        <div className={styles.signalLayout}>
+          <div className={styles.mapPane} ref={mapRef}>
+            <div className={styles.mapStage} aria-label="Skills signal map">
+              <svg className={styles.mapSvg} viewBox="0 0 100 100" aria-hidden="true">
+                <circle cx="50" cy="50" r="18" className={styles.ringDotted} />
+                <circle cx="50" cy="50" r="28" className={styles.ringDotted} />
+                <circle cx="50" cy="50" r="38" className={styles.ringSolid} />
+                {Array.from({ length: 24 }, (_, i) => {
+                  const a = ((i / 24) * 360 - 90) * (Math.PI / 180)
+                  const r1 = 37.2
+                  const r2 = 38.8
+                  return (
+                    <line
+                      key={i}
+                      x1={50 + Math.cos(a) * r1}
+                      y1={50 + Math.sin(a) * r1}
+                      x2={50 + Math.cos(a) * r2}
+                      y2={50 + Math.sin(a) * r2}
+                      className={styles.ringTick}
+                    />
+                  )
+                })}
+              </svg>
+
+              <div className={styles.hub}>
+                <div className={styles.hubRing} aria-hidden="true" />
+                <div className={styles.splineWrapper} onTouchMove={handleTouchMove}>
+                  <iframe
+                    ref={iframeRef}
+                    src="https://my.spline.design/genkubgreetingrobot-XAb0RzB8mNapbMFImFTEOVrd/"
+                    title="Interactive greeting robot"
+                    className={styles.hubRobot}
+                    allow="autoplay"
                   />
+                  <div className={styles.splineWatermarkKill} aria-hidden="true" />
+                </div>
+              </div>
+
+              {services.map((svc, i) => {
+                const angle = NODE_ANGLES[i]
+                const rad = (angle * Math.PI) / 180
+                const r = 38
+                const x = 50 + Math.cos(rad) * r
+                const y = 50 + Math.sin(rad) * r
+                const isActive = i === activeIndex
+
+                return (
+                  <button
+                    key={svc.id}
+                    type="button"
+                    className={`${styles.node} ${isActive ? styles.nodeActive : ''}`}
+                    style={{ left: `${x}%`, top: `${y}%` }}
+                    aria-pressed={isActive}
+                    aria-label={svc.title}
+                    onClick={() => selectDomain(i)}
+                  >
+                    <span className={styles.nodeIcon}>
+                      <NodeIcon type={svc.icon} />
+                    </span>
+                    <span className={styles.nodeLabel}>{svc.short}</span>
+                  </button>
                 )
               })}
-            </svg>
+            </div>
+          </div>
 
-            {/* Center hub — interactive Spline robot */}
-            <div className={styles.hub}>
-              <div className={styles.hubRing} aria-hidden="true" />
-              <div className={styles.splineWrapper} onTouchMove={handleTouchMove}>
-                <iframe
-                  ref={iframeRef}
-                  src="https://my.spline.design/genkubgreetingrobot-XAb0RzB8mNapbMFImFTEOVrd/"
-                  title="Interactive greeting robot"
-                  style={{ border: 'none', background: 'transparent' }}
-                  allow="autoplay"
-                />
-                {/* Cover Spline watermark corner */}
-                <div className={styles.splineWatermarkKill} aria-hidden="true" />
-              </div>
+          <aside className={styles.detailPane} aria-live="polite">
+            <div className={styles.detailHeader}>
+              <span className={styles.detailNum}>{active.num}</span>
+              <h3 className={styles.detailTitle}>{active.title}</h3>
+            </div>
+            <div className={styles.detailRule} aria-hidden="true" />
+            <p className={styles.detailDesc}>{active.description}</p>
+            <p className={styles.toolsLabel}>Tools</p>
+            <div className={styles.skillTags}>
+              {active.skills.map((sk) => (
+                <span key={sk} className={styles.tag}>
+                  {sk}
+                </span>
+              ))}
             </div>
 
-            {/* Orbit nodes */}
-            {services.map((svc, i) => {
-              const angle = NODE_ANGLES[i]
-              const rad = (angle * Math.PI) / 180
-              // Position on ~38% radius ring in percentage of stage
-              const r = 38
-              const x = 50 + Math.cos(rad) * r
-              const y = 50 + Math.sin(rad) * r
-              const isActive = svc.id === activeId
-
-              return (
+            <div className={styles.mobileNav} role="tablist" aria-label="Skill categories">
+              {services.map((svc, i) => (
                 <button
                   key={svc.id}
                   type="button"
-                  className={`${styles.node} ${isActive ? styles.nodeActive : ''}`}
-                  style={{ left: `${x}%`, top: `${y}%` }}
-                  aria-pressed={isActive}
-                  aria-label={svc.title}
-                  onClick={() => setActiveId(svc.id)}
+                  role="tab"
+                  aria-selected={i === activeIndex}
+                  className={`${styles.mobileTab} ${i === activeIndex ? styles.mobileTabActive : ''}`}
+                  onClick={() => selectDomain(i)}
                 >
-                  <span className={styles.nodeIcon}>
-                    <NodeIcon type={svc.icon} />
-                  </span>
-                  <span className={styles.nodeLabel}>{svc.short}</span>
+                  {svc.short}
                 </button>
-              )
-            })}
-          </div>
+              ))}
+            </div>
+          </aside>
         </div>
-
-        {/* ── Detail panel ── */}
-        <aside className={styles.detailPane} aria-live="polite">
-          <div className={styles.detailHeader}>
-            <span className={styles.detailNum}>{active.num}</span>
-            <h3 className={styles.detailTitle}>{active.title}</h3>
-          </div>
-          <div className={styles.detailRule} aria-hidden="true" />
-          <p className={styles.detailDesc}>{active.description}</p>
-          <p className={styles.toolsLabel}>Tools</p>
-          <div className={styles.skillTags}>
-            {active.skills.map((sk) => (
-              <span key={sk} className={styles.tag}>
-                {sk}
-              </span>
-            ))}
-          </div>
-
-          {/* Mobile / a11y list of all categories */}
-          <div className={styles.mobileNav} role="tablist" aria-label="Skill categories">
-            {services.map((svc) => (
-              <button
-                key={svc.id}
-                type="button"
-                role="tab"
-                aria-selected={svc.id === activeId}
-                className={`${styles.mobileTab} ${svc.id === activeId ? styles.mobileTabActive : ''}`}
-                onClick={() => setActiveId(svc.id)}
-              >
-                {svc.short}
-              </button>
-            ))}
-          </div>
-        </aside>
       </div>
     </section>
   )
