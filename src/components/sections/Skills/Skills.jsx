@@ -217,6 +217,39 @@ export default function Skills() {
         <h2 className={styles.heading}>What I Build</h2>
 
         <div className={styles.signalLayout}>
+          {/* Content inward-left; signal map on the right */}
+          <aside className={styles.detailPane} aria-live="polite">
+            <div className={styles.detailHeader}>
+              <span className={styles.detailNum}>{active.num}</span>
+              <h3 className={styles.detailTitle}>{active.title}</h3>
+            </div>
+            <div className={styles.detailRule} aria-hidden="true" />
+            <p className={styles.detailDesc}>{active.description}</p>
+            <p className={styles.toolsLabel}>Tools</p>
+            <div className={styles.skillTags}>
+              {active.skills.map((sk) => (
+                <span key={sk} className={styles.tag}>
+                  {sk}
+                </span>
+              ))}
+            </div>
+
+            <div className={styles.mobileNav} role="tablist" aria-label="Skill categories">
+              {services.map((svc, i) => (
+                <button
+                  key={svc.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === activeIndex}
+                  className={`${styles.mobileTab} ${i === activeIndex ? styles.mobileTabActive : ''}`}
+                  onClick={() => selectDomain(i)}
+                >
+                  {svc.short}
+                </button>
+              ))}
+            </div>
+          </aside>
+
           <div className={styles.mapPane} ref={mapRef}>
             <div className={styles.mapStage} aria-label="Skills signal map">
               <svg className={styles.mapSvg} viewBox="0 0 100 100" aria-hidden="true">
@@ -281,38 +314,6 @@ export default function Skills() {
               })}
             </div>
           </div>
-
-          <aside className={styles.detailPane} aria-live="polite">
-            <div className={styles.detailHeader}>
-              <span className={styles.detailNum}>{active.num}</span>
-              <h3 className={styles.detailTitle}>{active.title}</h3>
-            </div>
-            <div className={styles.detailRule} aria-hidden="true" />
-            <p className={styles.detailDesc}>{active.description}</p>
-            <p className={styles.toolsLabel}>Tools</p>
-            <div className={styles.skillTags}>
-              {active.skills.map((sk) => (
-                <span key={sk} className={styles.tag}>
-                  {sk}
-                </span>
-              ))}
-            </div>
-
-            <div className={styles.mobileNav} role="tablist" aria-label="Skill categories">
-              {services.map((svc, i) => (
-                <button
-                  key={svc.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={i === activeIndex}
-                  className={`${styles.mobileTab} ${i === activeIndex ? styles.mobileTabActive : ''}`}
-                  onClick={() => selectDomain(i)}
-                >
-                  {svc.short}
-                </button>
-              ))}
-            </div>
-          </aside>
         </div>
       </div>
     </section>

@@ -39,31 +39,31 @@
   letter-spacing: -0.02em;
 }
 
-/* ── Signal layout: map | detail — stretch across viewport ── */
+/* ── Signal layout: detail (left) | map (right) ── */
 .signalLayout {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.85fr);
-  gap: clamp(1rem, 3vw, 3.25rem);
+  grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1.55fr);
+  gap: clamp(1rem, 2.5vw, 2.75rem);
   align-items: center;
   flex: 1;
-  min-height: min(78vh, 780px);
+  min-height: min(82vh, 820px);
 }
 
 .mapPane {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   width: 100%;
   height: 100%;
-  min-height: min(78vmin, 760px);
+  min-height: min(84vmin, 820px);
 }
 
 .mapStage {
   position: relative;
-  width: min(100%, 78vmin, 780px);
+  width: min(100%, 84vmin, 860px);
   aspect-ratio: 1;
-  margin: 0 auto;
+  margin: 0 0 0 auto;
 }
 
 .mapSvg {
@@ -131,15 +131,18 @@
   z-index: 1;
 }
 
-/* Spline scene frames the robot low — nudge up so it reads centered in the hub */
+/*
+  Spline frames the robot slightly left + low in the canvas.
+  Nudge right + up so the character reads centered in the hub.
+*/
 .hubRobot,
 .splineWrapper iframe {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 172%;
-  height: 172%;
-  transform: translate(-50%, -56%);
+  width: 185%;
+  height: 185%;
+  transform: translate(-46%, -58%);
   border: none;
   display: block;
   pointer-events: auto;
@@ -231,15 +234,16 @@
   font-weight: 600;
 }
 
-/* ── Detail panel ── */
+/* ── Detail panel (inward left) ── */
 .detailPane {
   min-width: 0;
-  padding: 0.5rem 0.25rem 0.5rem 0;
+  padding: 0.5rem 0.5rem 0.5rem 0.25rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 100%;
   min-height: 420px;
+  max-width: 42rem;
 }
 
 .detailHeader {
@@ -324,16 +328,16 @@
 
 @media (min-width: 1400px) {
   .mapStage {
-    width: min(100%, 820px);
+    width: min(100%, 900px);
   }
 
   .signalLayout {
-    gap: 3.5rem;
-    grid-template-columns: minmax(0, 1.5fr) minmax(340px, 0.8fr);
+    gap: 2.75rem;
+    grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.6fr);
   }
 
   .mapPane {
-    min-height: min(82vmin, 820px);
+    min-height: min(88vmin, 900px);
   }
 }
 
@@ -350,10 +354,13 @@
 
   .mapPane {
     min-height: unset;
+    justify-content: center;
+    order: -1;
   }
 
   .mapStage {
     width: min(100%, 560px);
+    margin: 0 auto;
   }
 
   .hub {
@@ -364,6 +371,7 @@
   .detailPane {
     min-height: unset;
     padding: 0;
+    max-width: none;
   }
 
   .detailDesc {
@@ -430,9 +438,9 @@
 
   .hubRobot,
   .splineWrapper iframe {
-    width: 180%;
-    height: 180%;
-    transform: translate(-50%, -56%);
+    width: 190%;
+    height: 190%;
+    transform: translate(-46%, -58%);
   }
 
   .splineWatermarkKill {
