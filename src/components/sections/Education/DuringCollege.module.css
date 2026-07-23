@@ -74,6 +74,31 @@
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
 }
 
+.progressSliver {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 0;
+  background: #ffffff;
+  pointer-events: none;
+  z-index: 4;
+  animation: cinemaProgress linear forwards;
+  border-radius: 0 0 22px 22px;
+}
+
+@keyframes cinemaProgress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressSliver {
+    animation: none;
+    display: none;
+  }
+}
+
 .photoBg {
   position: absolute;
   inset: 0;

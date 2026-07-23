@@ -3,7 +3,7 @@ import BeltCarousel from '../../shared/BeltCarousel/BeltCarousel'
 import { duringCollege } from '../../../data/education'
 import styles from './DuringCollege.module.css'
 
-const AUTOPLAY_MS = 6500
+const AUTOPLAY_MS = 6000 // 5–8s window — continuous loop onto each card
 
 /** Portrait cinema-rail sizes — composition from reference, site tokens only */
 const CINEMA_LAYOUT = {
@@ -98,7 +98,7 @@ function CinemaOverlay({ item, isActive }) {
   )
 }
 
-function PhotoCard({ item, isActive }) {
+function PhotoCard({ item, isActive, showProgress, cycleKey }) {
   return (
     <div className={`${styles.cinemaCard} ${isActive ? styles.cinemaCardActive : ''}`}>
       {item.photoSrc ? (
@@ -108,11 +108,19 @@ function PhotoCard({ item, isActive }) {
       )}
       <div className={styles.cinemaScrim} aria-hidden="true" />
       <CinemaOverlay item={item} isActive={isActive} />
+      {isActive && showProgress && (
+        <span
+          key={cycleKey}
+          className={styles.progressSliver}
+          style={{ animationDuration: `${AUTOPLAY_MS}ms` }}
+          aria-hidden="true"
+        />
+      )}
     </div>
   )
 }
 
-function DocumentCard({ item, isActive, onOpenDocument }) {
+function DocumentCard({ item, isActive, onOpenDocument, showProgress, cycleKey }) {
   const hasDoc = Boolean(item.documentSrc)
 
   return (
@@ -159,6 +167,14 @@ function DocumentCard({ item, isActive, onOpenDocument }) {
       </div>
       <div className={styles.cinemaScrim} aria-hidden="true" />
       <CinemaOverlay item={item} isActive={isActive} />
+      {isActive && showProgress && (
+        <span
+          key={cycleKey}
+          className={styles.progressSliver}
+          style={{ animationDuration: `${AUTOPLAY_MS}ms` }}
+          aria-hidden="true"
+        />
+      )}
     </div>
   )
 }
@@ -217,7 +233,8 @@ export default function DuringCollege() {
         ariaLabel="During college experiences"
         className={styles.belt}
         showRail={false}
-        showProgress={false}
+        showProgress
+        pauseOnHover={false}
         layout={CINEMA_LAYOUT}
         getCardClassName={(item, isActive) =>
           `${styles.beltCard} ${
@@ -231,14 +248,21 @@ export default function DuringCollege() {
           padding: 0,
           borderRadius: 22,
         })}
-        renderCard={(item, isActive) =>
+        renderCard={(item, isActive, { showProgress, cycleKey }) =>
           item.mediaType === 'photo' ? (
-            <PhotoCard item={item} isActive={isActive} />
+            <PhotoCard
+              item={item}
+              isActive={isActive}
+              showProgress={showProgress}
+              cycleKey={cycleKey}
+            />
           ) : (
             <DocumentCard
               item={item}
               isActive={isActive}
               onOpenDocument={openDocument}
+              showProgress={showProgress}
+              cycleKey={cycleKey}
             />
           )
         }

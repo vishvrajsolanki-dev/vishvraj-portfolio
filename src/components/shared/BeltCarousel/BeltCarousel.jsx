@@ -83,6 +83,7 @@ export default function BeltCarousel({
   getCardStyle,
   showRail = true,
   showProgress = true,
+  pauseOnHover = true,
   layout: layoutProp,
 }) {
   const L = useMemo(() => resolveLayout(layoutProp), [layoutProp])
