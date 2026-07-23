@@ -42,6 +42,62 @@ function hasLiveUrl(live) {
   return Boolean(live) && live !== '#'
 }
 
+/** Compact SVG marks for belt icon badges / watermarks */
+function ProjectIcon({ type, className }) {
+  const common = {
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 1.6,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+    className,
+    'aria-hidden': true,
+  }
+  if (type === 'chart') {
+    return (
+      <svg {...common}>
+        <path d="M4 19V5M4 19h16" />
+        <path d="M8 15l3-4 3 2 5-7" />
+      </svg>
+    )
+  }
+  if (type === 'robot') {
+    return (
+      <svg {...common}>
+        <rect x="6" y="8" width="12" height="10" rx="2" />
+        <circle cx="10" cy="13" r="1" fill="currentColor" stroke="none" />
+        <circle cx="14" cy="13" r="1" fill="currentColor" stroke="none" />
+        <path d="M12 4v4M9 18v2M15 18v2" />
+      </svg>
+    )
+  }
+  if (type === 'film') {
+    return (
+      <svg {...common}>
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="M7 5v14M17 5v14M3 9h4M3 15h4M17 9h4M17 15h4" />
+      </svg>
+    )
+  }
+  if (type === 'pen') {
+    return (
+      <svg {...common}>
+        <path d="M12 19l7-7 2 2-7 7H9v-2z" />
+        <path d="M16 7l2 2M14.5 5.5l2-2a1.5 1.5 0 012 2l-2 2" />
+      </svg>
+    )
+  }
+  // book (Lexis default)
+  return (
+    <svg {...common}>
+      <path d="M4 5a2 2 0 012-2h11v16H6a2 2 0 00-2 2V5z" />
+      <path d="M6 3v16" />
+    </svg>
+  )
+}
+
+
 /** Arrange projects so `activeId` sits at FOCAL (center). */
 function orderCenteredOn(activeId) {
   const ids = projects.map((p) => p.id)
@@ -416,6 +472,21 @@ export default function Projects() {
 
   return (
     <section className={styles.section} id="projects">
+      {/* Ambient fill — desktop-wide breathing room beyond content max */}
+      <span className={styles.ambientWatermark} aria-hidden="true">
+        PROJECTS
+      </span>
+      <div
+        className={`${styles.ambientBlob} ${styles.ambientBlobTR}`}
+        style={{ background: `radial-gradient(circle, ${accent.glow}1A 0%, transparent 70%)` }}
+        aria-hidden="true"
+      />
+      <div
+        className={`${styles.ambientBlob} ${styles.ambientBlobBL}`}
+        style={{ background: `radial-gradient(circle, ${accent.glow}14 0%, transparent 70%)` }}
+        aria-hidden="true"
+      />
+
       <div className={styles.inner}>
         <div className={styles.header}>
           <span className={styles.sectionLabel}>03 — Projects</span>
@@ -607,36 +678,59 @@ export default function Projects() {
                           ...(isActive
                             ? {
                                 borderColor: cardAccent.base,
-                                boxShadow: `0 8px 22px ${cardAccent.glow}2E`,
+                                boxShadow: `0 8px 22px ${cardAccent.glow}40`,
                               }
-                            : {}),
+                            : {
+                                borderColor: 'rgba(255,255,255,0.08)',
+                                boxShadow: 'none',
+                              }),
                         }
                       : isActive
                         ? {
                             borderColor: cardAccent.base,
-                            boxShadow: `0 8px 22px ${cardAccent.glow}2E`,
+                            boxShadow: `0 8px 22px ${cardAccent.glow}40`,
                           }
-                        : {}),
+                        : {
+                            borderColor: 'rgba(255,255,255,0.08)',
+                          }),
                     '--card-accent': cardAccent.base,
                   }}
                 >
+                  {/* Oversized icon watermark */}
                   <span
-                    className={styles.accentBar}
-                    style={{
-                      background: cardAccent.base,
-                      opacity: isActive ? 1 : 0,
-                    }}
+                    className={styles.iconWatermark}
+                    style={{ color: cardAccent.base }}
                     aria-hidden="true"
-                  />
-                  <span className={styles.filmIndex}>
+                  >
+                    <ProjectIcon type={project.icon} />
+                  </span>
+
+                  {project.recommended && (
+                    <span
+                      className={styles.recommendedBadge}
+                      style={{ background: cardAccent.base }}
+                    >
+                      Recommended
+                    </span>
+                  )}
+
+                  <span className={styles.iconBadge} aria-hidden="true">
+                    <ProjectIcon type={project.icon} />
+                  </span>
+
+                  <span className={styles.filmBody}>
+                    <span className={styles.filmName}>{project.title}</span>
+                    {project.tags[0] && (
+                      <span className={styles.filmTag}>{project.tags[0]}</span>
+                    )}
+                  </span>
+
+                  <span className={styles.ghostNumber} aria-hidden="true">
                     {String(
                       projects.findIndex((p) => p.id === project.id) + 1
                     ).padStart(2, '0')}
                   </span>
-                  <span className={styles.filmName}>{project.title}</span>
-                  {project.tags[0] && (
-                    <span className={styles.filmTag}>{project.tags[0]}</span>
-                  )}
+
                   {isActive && showProgress && (
                     <span
                       key={cycleKey}

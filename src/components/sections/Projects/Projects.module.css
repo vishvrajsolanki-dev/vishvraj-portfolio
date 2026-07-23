@@ -1,12 +1,73 @@
 .section {
     padding: calc(var(--space-4xl) * 1.5) 0 calc(var(--space-3xl) * 1.5);
     scroll-margin-top: var(--nav-height);
+    position: relative;
+    overflow: hidden;
 }
 
 .inner {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 var(--space-lg);
+    position: relative;
+    z-index: 1;
+}
+
+/* Desktop-only stretch — Projects section override, not global */
+@media (min-width: 1024px) {
+    .inner {
+        max-width: min(92vw, 1680px);
+    }
+}
+
+/* Ambient fill elements (visible beyond content on ultra-wide) */
+.ambientWatermark {
+    display: none;
+}
+
+.ambientBlob {
+    display: none;
+    pointer-events: none;
+    position: absolute;
+    z-index: 0;
+    transition: background 1.2s ease;
+}
+
+@media (min-width: 1024px) {
+    .ambientWatermark {
+        display: block;
+        position: absolute;
+        left: 1.5vw;
+        top: 50%;
+        transform: translateY(-50%);
+        writing-mode: vertical-rl;
+        font-family: var(--font-display);
+        font-size: clamp(3rem, 6vw, 5.5rem);
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        color: rgba(255, 255, 255, 0.04);
+        user-select: none;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .ambientBlob {
+        display: block;
+        width: min(42vw, 520px);
+        height: min(42vw, 520px);
+        border-radius: 50%;
+        filter: blur(4px);
+    }
+
+    .ambientBlobTR {
+        top: -8%;
+        right: -4%;
+    }
+
+    .ambientBlobBL {
+        bottom: -10%;
+        left: -6%;
+    }
 }
 
 .header {
@@ -411,23 +472,19 @@
 }
 
 .zoneBBelt .filmCardActive {
-    padding: var(--space-md) var(--space-lg);
-}
-
-.zoneBBelt .filmCardActive .filmIndex {
-    font-size: 0.75rem;
+    padding: var(--space-md);
 }
 
 .zoneBBelt .filmCardActive .filmName {
-    font-size: var(--text-base);
+    font-size: 0.95rem;
 }
 
 .zoneBBelt .filmCardActive .filmTag {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
 }
 
 .zoneBBelt .filmCardInactive {
-    opacity: 0.6;
+    opacity: 1; /* muted via border/colors, not overall fade */
 }
 
 .staticTrack {
@@ -441,13 +498,13 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: center;
-    gap: 0.3rem;
-    border-radius: var(--radius-sm);
-    padding: var(--space-sm) var(--space-md);
+    justify-content: flex-end;
+    gap: 0;
+    border-radius: 12px;
+    padding: 0.85rem;
     cursor: pointer;
-    background: var(--color-bg-raised);
-    border: 0.5px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     color: inherit;
     text-align: left;
     overflow: hidden;
@@ -456,35 +513,86 @@
 
 .filmCardActive {
     border: 1.5px solid var(--color-accent);
-    opacity: 1;
 }
 
 .filmCard:hover {
-    border-color: var(--color-border-hover);
+    background: rgba(255, 255, 255, 0.05);
 }
 
-.accentBar {
+/* Icon badge — Experience-card language */
+.iconBadge {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    pointer-events: none;
-    transition: opacity 200ms ease;
+    top: 0.75rem;
+    left: 0.75rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    z-index: 2;
 }
 
-.filmIndex {
+.iconBadge svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Oversized icon watermark */
+.iconWatermark {
+    position: absolute;
+    top: -18px;
+    right: -22px;
+    width: 120px;
+    height: 120px;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+    color: var(--card-accent, #fff);
+}
+
+.iconWatermark svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Recommended pill */
+.recommendedBadge {
+    position: absolute;
+    top: 0.65rem;
+    right: 0.65rem;
+    z-index: 3;
     font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
-    letter-spacing: 0.06em;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0a0810;
+    padding: 0.25rem 0.45rem;
+    border-radius: 999px;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.filmBody {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+    max-width: 100%;
+    padding-bottom: 0.15rem;
 }
 
 .filmName {
     font-family: var(--font-display);
-    font-size: var(--text-sm);
-    font-weight: 500;
-    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
     line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -492,19 +600,30 @@
     max-width: 100%;
 }
 
-.filmCardActive .filmName {
-    color: var(--color-text-primary);
-}
-
 .filmTag {
     font-family: var(--font-mono);
-    font-size: var(--text-xs);
+    font-size: 10px;
     color: var(--color-text-muted);
     line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 100%;
+}
+
+/* Ghost number — Education/Experience corner pattern */
+.ghostNumber {
+    position: absolute;
+    bottom: -0.35rem;
+    right: 0.55rem;
+    font-family: var(--font-display);
+    font-size: 34px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.05);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
 }
 
 .progressSliver {
@@ -514,6 +633,7 @@
     height: 2px;
     width: 0;
     pointer-events: none;
+    z-index: 4;
     animation: filmProgress 6s linear forwards;
 }
 
@@ -617,17 +737,25 @@
         height: 140px;
         scroll-snap-align: start;
         transform: none !important;
-        opacity: 0.6;
+        opacity: 1;
         transition: none !important;
     }
 
     .filmCardActive {
-        opacity: 1;
         flex: 0 0 220px;
         width: 220px;
         height: 155px;
         padding: var(--space-md);
         border-width: 1.5px;
+    }
+
+    .ghostNumber {
+        font-size: 28px;
+    }
+
+    .iconWatermark {
+        width: 100px;
+        height: 100px;
     }
 }
 
