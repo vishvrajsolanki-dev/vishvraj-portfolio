@@ -276,7 +276,6 @@ export default function Skills() {
               <div className={styles.hub}>
                 <div className={styles.hubRing} aria-hidden="true" />
                 <div className={styles.splineWrapper} onTouchMove={handleTouchMove}>
-                  {/* Stage offset frames the Genku scene so the robot reads centered */}
                   <div className={styles.splineStage}>
                     <iframe
                       ref={iframeRef}
@@ -286,8 +285,9 @@ export default function Skills() {
                       allow="autoplay"
                     />
                   </div>
-                  <div className={styles.splineWatermarkKill} aria-hidden="true" />
                 </div>
+                {/* Outside wrapper stacking — covers in-iframe Spline badge */}
+                <div className={styles.splineWatermarkKill} aria-hidden="true" />
               </div>
 
               {services.map((svc, i) => {

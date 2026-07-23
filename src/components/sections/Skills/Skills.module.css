@@ -104,6 +104,18 @@
     0 18px 44px rgba(0, 0, 0, 0.38);
 }
 
+.hub::after {
+  content: '';
+  position: absolute;
+  right: -4%;
+  bottom: -4%;
+  width: 36%;
+  height: 24%;
+  background: radial-gradient(ellipse at 100% 100%, #0a0810 0%, #0a0810 58%, transparent 80%);
+  pointer-events: none;
+  z-index: 31;
+}
+
 .hubRing {
   position: absolute;
   inset: -12%;
@@ -120,22 +132,30 @@
   border-radius: 50%;
   touch-action: none;
   z-index: 1;
+  isolation: isolate;
+  background: #0a0810;
+  /*
+    Spline badge is fixed iframe chrome — overlays can't cover it.
+    Smaller/higher disc clips the badge out of the visible area.
+  */
+  clip-path: circle(43% at 50% 42%);
 }
 
 /*
-  Genku’s camera parks the character low-left in the canvas.
-  Stage pans the viewport so the full robot sits in the hub center
-  without overscaling (which was clipping the torso).
+  Zoom past Genku’s built-in rings so OUR SVG dial is the only ring,
+  then pan so the character mass sits in the hub center.
 */
 .splineStage {
   position: absolute;
-  width: 118%;
-  height: 118%;
+  width: 100%;
+  height: 100%;
   left: 50%;
   top: 50%;
-  /* Right + strongly up — clears the low-left bias without cropping body */
-  transform: translate(-45%, -64%);
+  /* Center robot in clip disc (slightly lower = reads centered in full hub) */
+  transform: translate(-33.5%, -51%) scale(1.12);
+  transform-origin: center center;
   pointer-events: auto;
+  z-index: 1;
 }
 
 .hubRobot,
@@ -148,21 +168,20 @@
   pointer-events: auto;
 }
 
-/* Only the Spline badge corner — keep off the robot body */
+/* Badge-corner only — must not cover the robot torso */
 .splineWatermarkKill {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 34%;
-  height: 22%;
-  background: radial-gradient(
-    ellipse 120% 120% at 100% 100%,
-    #0a0810 0%,
-    #0a0810 40%,
-    transparent 72%
-  );
+  right: -5%;
+  bottom: -5%;
+  left: auto;
+  width: 38%;
+  height: 24%;
+  background: #0a0810;
+  border-radius: 100% 0 40% 0;
   pointer-events: none;
-  z-index: 5;
+  z-index: 30;
+  transform: translateZ(0);
+  box-shadow: -6px -6px 18px 10px #0a0810;
 }
 
 .node {
@@ -416,14 +435,19 @@
   }
 
   .splineStage {
-    width: 120%;
-    height: 120%;
-    transform: translate(-45%, -64%);
+    width: 100%;
+    height: 100%;
+    transform: translate(-33.5%, -51%) scale(1.12);
+  }
+
+  .splineWrapper {
+    clip-path: circle(43% at 50% 42%);
   }
 
   .splineWatermarkKill {
-    width: 36%;
-    height: 24%;
+    width: 42%;
+    height: 28%;
+    left: auto;
   }
 }
 
