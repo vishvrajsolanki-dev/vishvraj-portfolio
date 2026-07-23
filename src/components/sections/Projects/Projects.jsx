@@ -383,29 +383,32 @@ export default function Projects() {
     runReveal(false)
   }, [activeProjectId, runReveal])
 
-  /** Apply a new belt order + active id, with slot-then-scale sequence. */
-  const advanceBelt = useCallback(() => {
-    setBeltOrder((prev) => {
-      const wrappingId = prev[0].id
-      const next = rotateLeft(prev, 1)
+  const beltOrderRef = useRef(beltOrder)
+  beltOrderRef.current = beltOrder
 
-      // Defer sibling state updates out of the updater
-      Promise.resolve().then(() => {
-        setSkipTransitionId(wrappingId)
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => setSkipTransitionId(null))
-        })
-        setActiveProjectId(next[FOCAL].id)
-        setCycleKey((k) => k + 1)
-        if (!reduceMotion.current && !isMobile) {
-          setScaleReady(false)
-          if (scaleTimer.current) clearTimeout(scaleTimer.current)
-          scaleTimer.current = setTimeout(() => setScaleReady(true), 400)
-        } else {
-          setScaleReady(true)
-        }
-      })
-      return next
+  /** Advance: rotate array left; every slot re-derived from new order + index. */
+  const advanceBelt = useCallback(() => {
+    const prev = beltOrderRef.current
+    const wrappingId = prev[0].id
+    const next = rotateLeft(prev, 1)
+    const nextActive = next[FOCAL].id
+
+    // Batch before paint: skip wrap transition + new order + active id together
+    setSkipTransitionId(wrappingId)
+    setBeltOrder(next)
+    setActiveProjectId(nextActive)
+    setCycleKey((k) => k + 1)
+
+    if (!reduceMotion.current && !isMobile) {
+      setScaleReady(false)
+      if (scaleTimer.current) clearTimeout(scaleTimer.current)
+      scaleTimer.current = setTimeout(() => setScaleReady(true), 400)
+    } else {
+      setScaleReady(true)
+    }
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setSkipTransitionId(null))
     })
   }, [isMobile])
 
@@ -415,39 +418,39 @@ export default function Projects() {
       return
     }
 
-    setBeltOrder((prev) => {
-      let steps = 0
-      let next = prev
-      while (next[FOCAL].id !== id && steps < next.length) {
-        next = rotateLeft(next, 1)
-        steps++
-      }
-      const wrappingId = steps === 1 ? prev[0].id : null
-      const skipAll = steps > 1
+    const prev = beltOrderRef.current
+    let steps = 0
+    let next = prev
+    while (next[FOCAL].id !== id && steps < next.length) {
+      next = rotateLeft(next, 1)
+      steps++
+    }
 
-      Promise.resolve().then(() => {
-        if (skipAll) {
-          setSkipTransitionId('__all__')
-        } else if (wrappingId) {
-          setSkipTransitionId(wrappingId)
-        }
-        if (skipAll || wrappingId) {
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => setSkipTransitionId(null))
-          })
-        }
-        setActiveProjectId(id)
-        setCycleKey((k) => k + 1)
-        if (!reduceMotion.current && !isMobile) {
-          setScaleReady(false)
-          if (scaleTimer.current) clearTimeout(scaleTimer.current)
-          scaleTimer.current = setTimeout(() => setScaleReady(true), 400)
-        } else {
-          setScaleReady(true)
-        }
+    // Single-step: teleport the wrapping (old leftmost → new rightmost) card.
+    // Multi-step: skip all transitions (instant rearrange).
+    if (steps > 1) {
+      setSkipTransitionId('__all__')
+    } else if (steps === 1) {
+      setSkipTransitionId(prev[0].id)
+    }
+
+    setBeltOrder(next)
+    setActiveProjectId(id)
+    setCycleKey((k) => k + 1)
+
+    if (!reduceMotion.current && !isMobile) {
+      setScaleReady(false)
+      if (scaleTimer.current) clearTimeout(scaleTimer.current)
+      scaleTimer.current = setTimeout(() => setScaleReady(true), 400)
+    } else {
+      setScaleReady(true)
+    }
+
+    if (steps >= 1) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setSkipTransitionId(null))
       })
-      return next
-    })
+    }
   }, [isMobile])
 
   // Auto-advance every 6s
@@ -633,7 +636,11 @@ export default function Projects() {
             ref={beltRef}
           >
             {displayList.map((project, i) => {
-              const isActive = project.id === activeProjectId
+              // Belt: active = FOCAL slot index (array order is source of truth).
+              // Never special-case first/last — every slot uses the same formula.
+              const isActive = useBelt
+                ? i === FOCAL
+                : project.id === activeProjectId
               const cardAccent = project.accentColor || {
                 base: '#FFFFFF',
                 glow: project.canvasColor,
@@ -641,14 +648,14 @@ export default function Projects() {
 
               const x = useBelt ? railOffset + slotX(i) : undefined
               const width = useBelt
-                ? isActive
+                ? i === FOCAL
                   ? ACTIVE_W
                   : INACTIVE_W
                 : undefined
 
-              // left positions the slot; transform only lifts/scales so neighbors aren't crushed
+              // left from slot index; transform only lifts/scales the FOCAL card
               const transform = useBelt
-                ? `translateY(${isActive && scaleReady ? -16 : 0}px) scale(${isActive && scaleReady ? 1.3 : 1})`
+                ? `translateY(${i === FOCAL && scaleReady ? -16 : 0}px) scale(${i === FOCAL && scaleReady ? 1.3 : 1})`
                 : undefined
 
               const skipMotion =
