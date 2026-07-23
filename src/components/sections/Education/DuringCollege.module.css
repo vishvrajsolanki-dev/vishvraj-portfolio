@@ -1,0 +1,266 @@
+.wrap {
+  margin-top: 0;
+}
+
+.colLabel {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 1.25rem;
+}
+
+.belt {
+  margin-top: 0;
+}
+
+/* Override shared slot chrome for full-bleed variants */
+.beltCard {
+  padding: 0 !important;
+  background: transparent;
+  height: 160px;
+  justify-content: stretch;
+  align-items: stretch;
+}
+
+.beltCardActive {
+  /* scale handled by BeltCarousel */
+}
+
+.beltCardPhoto,
+.beltCardDoc {
+  overflow: hidden;
+}
+
+/* ── Photo variant ── */
+.photoCard {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 140px;
+  overflow: hidden;
+  border-radius: 11px;
+}
+
+.photoBg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.photoFallback {
+  position: absolute;
+  inset: 0;
+  background: #110e1a;
+}
+
+.photoScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 8, 16, 0.15) 0%,
+    rgba(10, 8, 16, 0.55) 65%,
+    rgba(10, 8, 16, 0.92) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.photoOverlay {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.photoCardActive .cardTitle {
+  font-size: 15px;
+}
+
+/* ── Document variant ── */
+.docCard {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 140px;
+  padding: 0.85rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.55rem;
+  border-radius: 11px;
+  text-align: left;
+}
+
+.docTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.logoBadge {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #ffffff;
+  object-fit: contain;
+  padding: 4px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.docThumb {
+  width: 48px;
+  height: 64px;
+  padding: 0;
+  border: 0.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: zoom-in;
+  transform: rotate(-2deg);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.docThumb:hover {
+  transform: rotate(-2deg) scale(1.05);
+}
+
+.docThumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.docBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  margin-top: auto;
+  z-index: 2;
+}
+
+/* Shared type */
+.cardDate {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+}
+
+.cardTitle {
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.beltCardActive .cardTitle {
+  font-size: 15px;
+}
+
+.cardOrg {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardDesc {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.35;
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(10, 8, 16, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  cursor: zoom-out;
+}
+
+.lightboxClose {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lightboxImg {
+  max-width: min(90vw, 720px);
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 0.5px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  cursor: default;
+}
+
+@media (max-width: 768px) {
+  .beltCard {
+    height: 150px;
+  }
+
+  .cardDesc {
+    -webkit-line-clamp: 2;
+  }
+}
+
+@media (max-width: 390px) {
+  .cardTitle {
+    font-size: 12px;
+  }
+
+  .beltCardActive .cardTitle {
+    font-size: 13px;
+  }
+}
