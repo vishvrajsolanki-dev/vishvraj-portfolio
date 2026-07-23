@@ -1,184 +1,621 @@
 .section {
-  padding: 6rem 6vw;
+  position: relative;
+  padding: clamp(4rem, 8vw, 6.5rem) 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.proof {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 22vw, 16rem);
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  line-height: 0.85;
+  color: rgba(255, 255, 255, 0.035);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  z-index: 0;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  width: min(94vw, 1240px);
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3vw, 1.5rem);
+}
+
+.header {
+  margin-bottom: clamp(2rem, 4vw, 3rem);
 }
 
 .sectionLabel {
-  font-family: 'JetBrains Mono', monospace;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-mono);
   font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.3);
-  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  display: block;
-  margin-bottom: 3rem;
+  margin-bottom: 0.85rem;
 }
 
-/* ── 2-column grid for issuer cards ── */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
-}
-
-/* Anthropic card spans full width (4 certs) */
-.grid>.issuerCard:first-child {
-  grid-column: 1 / -1;
-}
-
-.issuerCard {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 1.75rem 2rem;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-
-.issuerCard:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.14);
-}
-
-/* ── Issuer header row ── */
-.issuerHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.logoWrap {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.labelDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.12);
   flex-shrink: 0;
-  overflow: hidden;
 }
 
-.logoImg {
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
+.sectionLabel::after {
+  content: '';
+  display: block;
+  width: clamp(3rem, 8vw, 5.5rem);
+  height: 1px;
+  background: rgba(255, 255, 255, 0.18);
+  margin-left: 0.15rem;
 }
 
-.logoInitials {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.7rem;
+.heading {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.7);
-  letter-spacing: 0.05em;
+  color: #fff;
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+/* ── Stage: issuer nav (left) | card stack (right) ── */
+.stage {
+  display: grid;
+  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
+  gap: clamp(1.5rem, 5vw, 4.5rem);
+  align-items: center;
+  min-height: min(62vh, 560px);
+}
+
+/* ── Issuer sidebar ── */
+.issuerNav {
+  position: relative;
+  padding: 0.25rem 0;
+}
+
+.issuerKicker {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.32);
+  margin: 0 0 1.35rem;
+}
+
+.issuerList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  position: relative;
+}
+
+.issuerList::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 1.05rem;
+  bottom: 1.05rem;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0.06)
+  );
+  pointer-events: none;
+}
+
+.issuerBtn {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.95rem;
+  width: 100%;
+  padding: 0.7rem 0.35rem 0.7rem 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  position: relative;
+  z-index: 1;
+}
+
+.issuerDot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: none;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.issuerText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  min-width: 0;
 }
 
 .issuerName {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.95rem;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.42);
+  letter-spacing: -0.01em;
+  transition: color 0.25s ease;
+}
+
+.issuerMeta {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.22);
+  transition: color 0.25s ease;
+}
+
+.issuerBtn:hover .issuerName,
+.issuerBtn:focus-visible .issuerName {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.issuerBtn:hover .issuerDot,
+.issuerBtn:focus-visible .issuerDot {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.issuerBtn:focus-visible {
+  outline: none;
+}
+
+.issuerBtnActive .issuerDot {
+  background: #fff;
+  border-color: #fff;
+  box-shadow:
+    0 0 0 5px rgba(255, 255, 255, 0.12),
+    0 0 18px rgba(255, 255, 255, 0.28);
+  transform: scale(1.08);
+}
+
+.issuerBtnActive .issuerName {
+  color: #fff;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
-  flex: 1;
 }
 
-.certCount {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.25);
-  letter-spacing: 0.06em;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
+.issuerBtnActive .issuerMeta {
+  color: rgba(255, 255, 255, 0.4);
 }
 
-/* ── Cert rows ── */
-.certList {
+/* ── 3D card stack ── */
+.stackScene {
+  position: relative;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1.5rem 0 2rem;
 }
 
-.certRow {
+.stackFloor {
+  position: absolute;
+  left: 8%;
+  right: 5%;
+  bottom: 0.4rem;
+  height: 48%;
+  background:
+    radial-gradient(ellipse 70% 55% at 40% 70%, rgba(255, 255, 255, 0.08) 0%, transparent 70%),
+    linear-gradient(to top, rgba(255, 255, 255, 0.03), transparent);
+  filter: blur(18px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.9;
+}
+
+.stack {
+  position: relative;
+  width: min(100%, 520px);
+  height: clamp(360px, 52vh, 440px);
+  perspective: 1400px;
+  transform-style: preserve-3d;
+  z-index: 1;
+}
+
+.card {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  max-width: 420px;
+  height: min(100%, 400px);
+  padding: 1.5rem 1.55rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 42%, rgba(14, 11, 20, 0.72) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.45s ease,
+    border-color 0.35s ease,
+    box-shadow 0.45s ease;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 34%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.cardFront {
+  z-index: 3;
+  opacity: 1;
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform:
+    rotateY(-14deg)
+    rotateX(3deg)
+    translate3d(0, 0, 0);
+}
+
+.cardBack {
+  z-index: calc(2 - var(--stack-i));
+  opacity: calc(1 - (var(--stack-i) * 0.18));
+  pointer-events: auto;
+  transform:
+    rotateY(-22deg)
+    rotateX(6deg)
+    translate3d(
+      calc(var(--stack-i) * 28px),
+      calc(var(--stack-i) * 10px),
+      calc(var(--stack-i) * -48px)
+    )
+    scale(calc(1 - (var(--stack-i) * 0.03)));
+}
+
+.cardHit {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 1;
+  padding: 0;
+}
+
+.cardTop,
+.cardBody,
+.verifyBtn {
+  position: relative;
+  z-index: 2;
+}
+
+.cardTop {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  margin-bottom: 1.35rem;
 }
 
-.certRow:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+.cardMark {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.certInfo {
+.cardLogo {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+}
+
+.cardIssuer {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.cardBody {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-  flex: 1;
-  min-width: 0;
 }
 
-.certTitle {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.75);
-  line-height: 1.3;
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 2.8vw, 2rem);
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
 }
 
-.certDate {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.25);
+.cardSubtitle {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0 0 1.1rem;
+  line-height: 1.35;
+}
+
+.cardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 0.85rem;
+  margin-bottom: 1.1rem;
+}
+
+.cardDate,
+.verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
   letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.verified {
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.cardDesc {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+  max-width: 36ch;
 }
 
 .verifyBtn {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
-  padding: 0.35rem 0.75rem;
-  min-height: 44px;
+  position: relative;
+  z-index: 3;
+  margin-top: auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.55rem;
+  align-self: stretch;
+  min-height: 48px;
+  padding: 0.75rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   text-decoration: none;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-  box-sizing: border-box;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 10px 28px rgba(0, 0, 0, 0.28),
+    0 0 24px rgba(255, 255, 255, 0.06);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .verifyBtn:hover {
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.06);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.06) 100%);
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 12px 32px rgba(0, 0, 0, 0.34),
+    0 0 28px rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
 }
 
-@media (max-width: 768px) {
-  .grid {
+.cardHit {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 1;
+  padding: 0;
+}
+
+.stackNav {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1.35rem;
+  margin-left: 0.35rem;
+  position: relative;
+  z-index: 2;
+}
+
+.stackDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    width 0.2s ease;
+}
+
+.stackDotActive {
+  width: 22px;
+  border-radius: 999px;
+  background: #fff;
+  border-color: #fff;
+}
+
+@media (max-width: 900px) {
+  .proof {
+    top: 28%;
+    font-size: clamp(5rem, 28vw, 10rem);
+  }
+
+  .stage {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 2rem;
+    min-height: unset;
   }
-  .grid>.issuerCard:first-child {
-    grid-column: 1;
+
+  .issuerNav {
+    order: 2;
   }
-  .issuerCard {
-    padding: 1.25rem 1.5rem;
+
+  .stackScene {
+    order: 1;
+    padding: 0.5rem 0 1.5rem;
   }
-  .certRow {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+
+  .stack {
+    width: min(100%, 440px);
+    margin: 0 auto;
+    height: 390px;
   }
+
+  .card {
+    max-width: none;
+  }
+
+  .cardFront,
+  .cardBack {
+    transform:
+      rotateY(-8deg)
+      rotateX(2deg)
+      translate3d(
+        calc(var(--stack-i, 0) * 18px),
+        calc(var(--stack-i, 0) * 8px),
+        calc(var(--stack-i, 0) * -36px)
+      );
+  }
+
+  .issuerList {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem 1rem;
+  }
+
+  .issuerList::before {
+    display: none;
+  }
+
+  .issuerBtn {
+    padding: 0.55rem 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .inner {
+    padding: 0 5vw;
+  }
+
+  .stack {
+    height: 420px;
+    width: 100%;
+  }
+
+  .card {
+    padding: 1.25rem 1.2rem 1.15rem;
+    height: min(100%, 420px);
+  }
+
+  .cardFront,
+  .cardBack {
+    transform:
+      rotateY(0deg)
+      rotateX(0deg)
+      translate3d(
+        calc(var(--stack-i, 0) * 10px),
+        calc(var(--stack-i, 0) * 10px),
+        calc(var(--stack-i, 0) * -24px)
+      );
+  }
+
+  .cardTitle {
+    font-size: 1.45rem;
+  }
+
+  .issuerList {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .issuerDot,
+  .stackDot,
   .verifyBtn {
-    align-self: flex-start;
-    width: auto;
-    text-align: center;
+    transition: none;
   }
 }
