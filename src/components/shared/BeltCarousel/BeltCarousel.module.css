@@ -10,6 +10,12 @@
   overflow: visible;
 }
 
+/* Full-bleed cinema stretch — clip sides so cards exit left / enter right */
+.zoneStretch {
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
 .zoneBelt .cardSlot {
   position: absolute;
   top: 50%;

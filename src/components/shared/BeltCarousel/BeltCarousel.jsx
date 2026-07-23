@@ -21,6 +21,9 @@ const DEFAULT_LAYOUT = {
   cardHeight: 140,
   lift: 16,
   zoneHeight: 260,
+  /** 'center' = clustered & centered (Projects). 'stretch' = full-width L→R loop. */
+  align: 'center',
+  edgeInset: 0,
 }
 
 function resolveLayout(layout) {
@@ -46,28 +49,9 @@ function rotateLeft(arr, n = 1) {
   return [...arr.slice(k), ...arr.slice(0, k)]
 }
 
-function makeSlotHelpers(L) {
-  const slotWidth = (index) =>
-    index === FOCAL ? L.activeSlotW : L.inactiveW
-  const slotX = (index) => {
-    let x = 0
-    for (let i = 0; i < index; i++) x += slotWidth(i) + L.gap
-    return x
-  }
-  const totalRailWidth = (count) => {
-    if (count <= 0) return 0
-    let w = 0
-    for (let i = 0; i < count; i++) {
-      w += slotWidth(i) + (i < count - 1 ? L.gap : 0)
-    }
-    return w
-  }
-  return { slotWidth, slotX, totalRailWidth }
-}
-
 /**
  * Shared continuous-loop belt carousel (Projects / During College).
- * Pass `layout` to override sizes (e.g. portrait cinema rail).
+ * Pass `layout.align: 'stretch'` for full-width cinema rail (exit left → enter right).
  */
 export default function BeltCarousel({
   items,
@@ -86,11 +70,7 @@ export default function BeltCarousel({
   pauseOnHover = true,
   layout: layoutProp,
 }) {
-  const L = useMemo(() => resolveLayout(layoutProp), [layoutProp])
-  const { slotWidth, slotX, totalRailWidth } = useMemo(
-    () => makeSlotHelpers(L),
-    [L]
-  )
+  const baseL = useMemo(() => resolveLayout(layoutProp), [layoutProp])
 
   const defaultId = initialActiveId || (items[0] ? getId(items[0]) : null)
 
@@ -127,7 +107,66 @@ export default function BeltCarousel({
   beltOrderRef.current = beltOrder
 
   const useBelt = !isMobile && !reduceMotion.current
-  const railW = totalRailWidth(items.length)
+  const count = items.length
+  const stretch = baseL.align === 'stretch'
+
+  /**
+   * Stretch mode: grow card widths + gaps so the rail spans the full track.
+   * Center mode: keep fixed sizes and center the cluster.
+   */
+  const L = useMemo(() => {
+    if (!stretch || !trackWidth || count < 2) return baseL
+
+    const inset = baseL.edgeInset ?? 0
+    const available = Math.max(0, trackWidth - inset * 2)
+    const baseActiveSlot =
+      Math.round(baseL.activeW * baseL.focalScale) + baseL.slotPad
+    const baseTotal =
+      baseActiveSlot +
+      (count - 1) * baseL.inactiveW +
+      (count - 1) * baseL.gap
+
+    if (baseTotal <= 0) return baseL
+    const factor = Math.max(1, available / baseTotal)
+
+    const inactiveW = Math.round(baseL.inactiveW * factor)
+    const activeW = Math.round(baseL.activeW * factor)
+    const gap = Math.round(baseL.gap * factor)
+    const slotPad = Math.round(baseL.slotPad * factor)
+    const activeSlotW = Math.round(activeW * baseL.focalScale) + slotPad
+
+    return {
+      ...baseL,
+      inactiveW,
+      activeW,
+      gap,
+      slotPad,
+      activeSlotW,
+    }
+  }, [baseL, stretch, trackWidth, count])
+
+  const slotWidth = useCallback(
+    (index) => (index === FOCAL ? L.activeSlotW : L.inactiveW),
+    [L]
+  )
+
+  const slotX = useCallback(
+    (index) => {
+      let x = 0
+      for (let i = 0; i < index; i++) x += slotWidth(i) + L.gap
+      return x
+    },
+    [slotWidth, L.gap]
+  )
+
+  const railW = useMemo(() => {
+    if (count <= 0) return 0
+    let w = 0
+    for (let i = 0; i < count; i++) {
+      w += slotWidth(i) + (i < count - 1 ? L.gap : 0)
+    }
+    return w
+  }, [count, slotWidth, L.gap])
 
   useEffect(() => {
     const motionMq = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -162,9 +201,10 @@ export default function BeltCarousel({
   }, [useBelt, isMobile])
 
   const railOffset = useMemo(() => {
-    if (!trackWidth || !railW) return 0
+    if (!trackWidth || !railW) return L.edgeInset || 0
+    if (stretch) return L.edgeInset || 0
     return Math.max(0, (trackWidth - railW) / 2)
-  }, [trackWidth, railW])
+  }, [trackWidth, railW, stretch, L.edgeInset])
 
   const notifyActive = useCallback(
     (id) => {
@@ -184,6 +224,7 @@ export default function BeltCarousel({
     }
   }, [isMobile])
 
+  /** Advance: rotate left — leftmost exits, reappears as rightmost (continuous loop). */
   const advanceBelt = useCallback(() => {
     if (!loop && beltOrderRef.current.length === 0) return
 
@@ -192,6 +233,7 @@ export default function BeltCarousel({
     const next = rotateLeft(prev, 1)
     const nextActive = getId(next[FOCAL])
 
+    // Teleport wrapping card to the rightmost slot — no snap-back slide across
     setSkipTransitionId(wrappingId)
     setBeltOrder(next)
     notifyActive(nextActive)
@@ -266,7 +308,7 @@ export default function BeltCarousel({
 
   return (
     <div
-      className={`${styles.zone} ${useBelt ? styles.zoneBelt : styles.zoneStatic} ${className}`}
+      className={`${styles.zone} ${useBelt ? styles.zoneBelt : styles.zoneStatic} ${stretch ? styles.zoneStretch : ''} ${className}`}
       role="listbox"
       aria-label={ariaLabel}
       style={
@@ -274,14 +316,18 @@ export default function BeltCarousel({
           ? { height: L.zoneHeight, '--belt-card-h': `${L.cardHeight}px` }
           : undefined
       }
-      onMouseEnter={pauseAutoplay}
-      onMouseLeave={resumeAutoplay}
-      onFocusCapture={pauseAutoplay}
-      onBlurCapture={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget)) {
-          resumeAutoplay()
-        }
-      }}
+      onMouseEnter={pauseOnHover ? pauseAutoplay : undefined}
+      onMouseLeave={pauseOnHover ? resumeAutoplay : undefined}
+      onFocusCapture={pauseOnHover ? pauseAutoplay : undefined}
+      onBlurCapture={
+        pauseOnHover
+          ? (e) => {
+              if (!e.currentTarget.contains(e.relatedTarget)) {
+                resumeAutoplay()
+              }
+            }
+          : undefined
+      }
     >
       {useBelt && showRail && (
         <div className={styles.rail} aria-hidden="true">
@@ -327,6 +373,7 @@ export default function BeltCarousel({
               })`
             : undefined
 
+          // Wrapping card (leftmost → rightmost) skips transition = disappears L, reappears R
           const skipMotion =
             skipTransitionId === '__all__' ||
             skipTransitionId === id ||

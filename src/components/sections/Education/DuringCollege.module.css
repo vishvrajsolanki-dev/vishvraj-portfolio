@@ -1,9 +1,20 @@
 .wrap {
   margin-top: 0.5rem;
+  /* Break out of section side padding so the belt can span the viewport */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
 }
 
 .railHeader {
   margin-bottom: 1.5rem;
+  padding: 0 6vw;
+}
+
+.belt {
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+  width: 100%;
 }
 
 .colEyebrow {
@@ -28,11 +39,7 @@
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.35);
-}
-
-.belt {
-  margin-top: 0.5rem;
-  margin-bottom: 0.25rem;
+  padding: 0 6vw;
 }
 
 .beltCard {
@@ -270,9 +277,10 @@
 .timeline {
   position: relative;
   margin: 1.75rem auto 0;
-  max-width: 720px;
+  max-width: none;
+  width: auto;
   height: 48px;
-  padding: 0 0.5rem;
+  padding: 0 6vw;
 }
 
 .timelineLine {

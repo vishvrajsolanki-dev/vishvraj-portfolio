@@ -5,16 +5,18 @@ import styles from './DuringCollege.module.css'
 
 const AUTOPLAY_MS = 6000 // 5–8s window — continuous loop onto each card
 
-/** Portrait cinema-rail sizes — composition from reference, site tokens only */
+/** Portrait cinema-rail — full-width stretch, continuous L→R loop */
 const CINEMA_LAYOUT = {
-  inactiveW: 168,
-  activeW: 236,
-  focalScale: 1.32,
-  slotPad: 56,
-  gap: 28,
-  cardHeight: 300,
-  lift: 22,
-  zoneHeight: 420,
+  inactiveW: 200,
+  activeW: 280,
+  focalScale: 1.28,
+  slotPad: 48,
+  gap: 24,
+  cardHeight: 320,
+  lift: 18,
+  zoneHeight: 440,
+  align: 'stretch',
+  edgeInset: 32,
 }
 
 function DocumentLightbox({ src, alt, onClose }) {
