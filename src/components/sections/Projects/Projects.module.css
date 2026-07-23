@@ -109,7 +109,6 @@
     border-radius: var(--radius-sm);
 }
 
-/* Mini stats — mirrors StatsBar number/label pattern at panel scale */
 .statRow {
     display: flex;
     gap: var(--space-md);
@@ -216,25 +215,112 @@
     height: 100%;
     min-height: 340px;
     object-fit: cover;
-    object-position: center top;
+    object-position: center;
     display: block;
 }
 
-.frameFallback {
+/* ── Wordmark frame ── */
+.wordmarkFrame {
+    position: relative;
     min-height: 340px;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    background: var(--color-bg-raised);
+}
+
+.motifWrap {
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.motif {
+    width: 120%;
+    height: 120%;
+    position: absolute;
+    top: -10%;
+    left: -10%;
+}
+
+.motifCards {
+    animation: motifDrift 22s ease-in-out infinite alternate;
+}
+
+.motifChart {
+    animation: motifDrift 18s linear infinite alternate;
+}
+
+.motifFilm {
+    animation: motifDriftX 20s linear infinite;
+}
+
+.motifGrid {
+    animation: motifDrift 24s ease-in-out infinite alternate;
+}
+
+.scanLine {
+    animation: scanSweep 8s linear infinite;
+}
+
+@keyframes motifDrift {
+    from { transform: translate(0, 0); }
+    to { transform: translate(18px, -14px); }
+}
+
+@keyframes motifDriftX {
+    from { transform: translateX(0); }
+    to { transform: translateX(-40px); }
+}
+
+@keyframes scanSweep {
+    0% { transform: translateY(-80px); opacity: 0.3; }
+    50% { opacity: 0.8; }
+    100% { transform: translateY(80px); opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .motifCards,
+    .motifChart,
+    .motifFilm,
+    .motifGrid,
+    .scanLine {
+        animation: none;
+    }
+}
+
+.wordmarkContent {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-sm);
     padding: var(--space-lg);
 }
 
-.frameFallbackTitle {
+.wordmarkWord {
     font-family: var(--font-display);
-    font-size: var(--text-2xl);
-    color: var(--color-text-secondary);
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    color: var(--color-accent);
+    letter-spacing: 0.08em;
+    line-height: 1;
 }
 
-/* Floor reflection — matches §3 values (Hero pattern not yet present; establish once) */
+.wordmarkTagline {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    letter-spacing: 0.02em;
+}
+
 .floorReflection {
     height: 40px;
     margin-top: var(--space-sm);
@@ -243,12 +329,110 @@
     opacity: 0.5;
 }
 
-/* ── Zone B — Filmstrip ── */
+/* ── Zone B — Filmstrip / Belt ── */
 .zoneB {
+    margin-top: var(--space-xl);
+    position: relative;
+}
+
+/* Desktop belt: fixed height for active card lift — no layout shift */
+.zoneBBelt {
+    height: 160px;
+    overflow: visible;
+}
+
+.rail {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.railLine {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: var(--color-border);
+}
+
+.railTick {
+    position: absolute;
+    top: -4px;
+    width: 1px;
+    height: 9px;
+    background: var(--color-border);
+    transform: translateX(-50%);
+}
+
+.railDot {
+    position: absolute;
+    left: 50%;
+    top: -5px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+.beltTrack {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.zoneBBelt .filmCard {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 160px;
+    height: 90px;
+    margin-top: -45px; /* midline of inactive card */
+    will-change: transform;
+}
+
+.zoneBBelt .filmCardActive {
+    /* size set via GSAP scale from inactive base; padding larger for active look */
+    padding: var(--space-md) var(--space-lg);
+}
+
+.zoneBBelt .filmCardActive .filmIndex {
+    font-size: 0.7rem;
+}
+
+.zoneBBelt .filmCardActive .filmName {
+    font-size: var(--text-base);
+}
+
+.zoneBBelt .filmCardActive .filmTag {
+    font-size: 0.65rem;
+}
+
+.zoneBBelt .filmCardInactive .filmIndex {
+    font-size: var(--text-xs);
+}
+
+.zoneBBelt .filmCardInactive .filmName {
+    font-size: var(--text-sm);
+}
+
+/* Static / reduced-motion / mobile track */
+.zoneBStatic {
+    /* no fixed belt height */
+}
+
+.staticTrack {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: var(--space-sm);
-    margin-top: var(--space-xl);
 }
 
 .filmCard {
@@ -256,17 +440,30 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.35rem;
+    justify-content: center;
+    gap: 0.25rem;
     border-radius: var(--radius-sm);
-    padding: calc(var(--space-sm) + 2px) var(--space-md) var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
     cursor: pointer;
-    background: transparent;
+    background: var(--color-bg-raised);
     border: 0.5px solid var(--color-border);
     color: inherit;
     text-align: left;
-    transition: border-color 200ms ease-in-out;
-    min-width: 0;
     overflow: hidden;
+    box-sizing: border-box;
+}
+
+.filmCardInactive {
+    opacity: 0.6;
+}
+
+.zoneBStatic .filmCardInactive {
+    opacity: 0.6;
+}
+
+.zoneBStatic .filmCardActive {
+    opacity: 1;
+    border: 1px solid var(--color-accent);
 }
 
 .filmCard:hover {
@@ -275,6 +472,7 @@
 
 .filmCardActive {
     border: 1px solid var(--color-accent);
+    opacity: 1;
 }
 
 .accentBar {
@@ -284,21 +482,6 @@
     right: 0;
     height: 2px;
     pointer-events: none;
-}
-
-.statusDot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: transparent;
-    border: 1px solid var(--color-border);
-    box-sizing: border-box;
-    flex-shrink: 0;
-}
-
-.statusDotActive {
-    background: var(--color-accent);
-    border-color: var(--color-accent);
 }
 
 .filmIndex {
@@ -313,7 +496,7 @@
     font-size: var(--text-sm);
     font-weight: 500;
     color: var(--color-text-secondary);
-    line-height: 1.3;
+    line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -328,7 +511,7 @@
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-text-muted);
-    line-height: 1.3;
+    line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -367,12 +550,16 @@
 
     .frame,
     .frameImage,
-    .frameFallback {
+    .wordmarkFrame {
         min-height: 260px;
+    }
+
+    .wordmarkWord {
+        font-size: var(--text-3xl);
     }
 }
 
-/* ── Mobile ≤768px ── */
+/* ── Mobile ≤768px — scroll-snap, NO belt motion ── */
 @media (max-width: 768px) {
     .section {
         padding: var(--space-3xl) 0 var(--space-2xl);
@@ -388,29 +575,61 @@
 
     .frame,
     .frameImage,
-    .frameFallback {
+    .wordmarkFrame {
         min-height: 200px;
+    }
+
+    .wordmarkWord {
+        font-size: var(--text-2xl);
     }
 
     .floorReflection {
         display: none;
     }
 
-    .zoneB {
+    .zoneB,
+    .zoneBBelt,
+    .zoneBStatic {
+        height: auto;
+        margin-top: var(--space-lg);
+    }
+
+    .rail {
+        display: none;
+    }
+
+    .beltTrack,
+    .staticTrack {
         display: flex;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         gap: var(--space-sm);
-        margin-top: var(--space-lg);
         padding-bottom: var(--space-sm);
         -webkit-overflow-scrolling: touch;
         scrollbar-width: thin;
+        height: auto;
     }
 
+    .zoneBBelt .filmCard,
     .filmCard {
-        flex: 0 0 120px;
-        width: 120px;
+        position: relative;
+        top: auto;
+        left: auto;
+        margin-top: 0;
+        flex: 0 0 160px;
+        width: 160px;
+        height: 90px;
         scroll-snap-align: start;
+        transform: none !important;
+        opacity: 0.6;
+    }
+
+    .filmCardActive {
+        opacity: 1;
+        flex: 0 0 180px;
+        width: 180px;
+        height: 100px;
+        padding: var(--space-md);
     }
 }
 
