@@ -402,117 +402,33 @@
     opacity: 0.5;
 }
 
-/* ── Zone B — Belt rail ── */
+/* ── Zone B — project card chrome (belt motion lives in BeltCarousel) ── */
 .zoneB {
     margin-top: var(--space-2xl);
-    position: relative;
-}
-
-.zoneBBelt {
-    height: 220px;
-    overflow: visible;
-}
-
-.rail {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    height: 0;
-    transform: translateY(10px);
-    pointer-events: none;
-    z-index: 0;
-}
-
-.railLine {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 1px;
-    background: var(--color-border);
-}
-
-.railTick {
-    position: absolute;
-    top: -4px;
-    width: 1px;
-    height: 9px;
-    background: var(--color-border);
-    transform: translateX(-50%);
-}
-
-.railDot {
-    position: absolute;
-    top: -5px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--color-accent);
-    transform: translateX(-50%);
-    z-index: 2;
-}
-
-.beltTrack {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-
-/* Fixed-slot absolute cards — position via translateX, never document flow */
-.zoneBBelt .filmCard {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    height: 140px;
-    margin-top: -70px;
-    transform-origin: center center;
-    will-change: transform, left, width;
-}
-
-.zoneBBelt .filmCardActive {
-    padding: var(--space-md);
-}
-
-.zoneBBelt .filmCardActive .filmName {
-    font-size: 0.95rem;
-}
-
-.zoneBBelt .filmCardActive .filmTag {
-    font-size: 0.65rem;
-}
-
-.zoneBBelt .filmCardInactive {
-    opacity: 1; /* muted via border/colors, not overall fade */
-}
-
-.staticTrack {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: var(--space-sm);
 }
 
 .filmCard {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-end;
-    gap: 0;
-    border-radius: 12px;
-    padding: 0.85rem;
-    cursor: pointer;
+    /* motion layout from BeltCarousel.cardSlot; chrome only here */
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    color: inherit;
-    text-align: left;
-    overflow: hidden;
-    box-sizing: border-box;
+    height: 140px;
 }
 
 .filmCardActive {
     border: 1.5px solid var(--color-accent);
+    padding: var(--space-md);
+}
+
+.filmCardActive .filmName {
+    font-size: 0.95rem;
+}
+
+.filmCardActive .filmTag {
+    font-size: 0.65rem;
+}
+
+.filmCardInactive {
+    opacity: 1;
 }
 
 .filmCard:hover {
@@ -648,7 +564,7 @@
         display: none;
     }
 
-    .zoneBBelt .filmCard {
+    .filmCard {
         transition: none !important;
     }
 }
@@ -703,47 +619,16 @@
         display: none;
     }
 
-    .zoneB,
-    .zoneBBelt,
-    .zoneBStatic {
+    .zoneB {
         height: auto;
         margin-top: var(--space-lg);
     }
 
-    .rail {
-        display: none;
-    }
-
-    .beltTrack,
-    .staticTrack {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        gap: var(--space-sm);
-        padding-bottom: var(--space-sm);
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
-        height: auto;
-    }
-
-    .zoneBBelt .filmCard,
     .filmCard {
-        position: relative;
-        top: auto;
-        left: auto;
-        margin-top: 0;
-        flex: 0 0 190px;
-        width: 190px;
         height: 140px;
-        scroll-snap-align: start;
-        transform: none !important;
-        opacity: 1;
-        transition: none !important;
     }
 
     .filmCardActive {
-        flex: 0 0 220px;
-        width: 220px;
         height: 155px;
         padding: var(--space-md);
         border-width: 1.5px;

@@ -1,0 +1,178 @@
+/* Shared belt rail — motion/layout only; card chrome stays in consumers */
+
+.zone {
+  margin-top: var(--space-2xl, 2rem);
+  position: relative;
+}
+
+.zoneBelt {
+  height: 220px;
+  overflow: visible;
+}
+
+.zoneStatic {
+  height: auto;
+}
+
+.rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.railLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--color-border, rgba(255, 255, 255, 0.1));
+}
+
+.railTick {
+  position: absolute;
+  top: -4px;
+  width: 1px;
+  height: 9px;
+  background: var(--color-border, rgba(255, 255, 255, 0.1));
+  transform: translateX(-50%);
+}
+
+.railDot {
+  position: absolute;
+  top: -5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent, #ffffff);
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.beltTrack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.staticTrack {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-sm, 0.75rem);
+}
+
+/* Fixed-slot absolute cards — position via left; transform lifts/scales FOCAL */
+.zoneBelt .cardSlot {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 140px;
+  margin-top: -70px;
+  transform-origin: center center;
+  will-change: transform, left, width;
+}
+
+.cardSlot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 0;
+  border-radius: 12px;
+  padding: 0.85rem;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: inherit;
+  text-align: left;
+  overflow: hidden;
+  box-sizing: border-box;
+  font: inherit;
+}
+
+.cardSlotActive {
+  border: 1.5px solid var(--color-accent, #ffffff);
+}
+
+.cardSlot:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.cardSlot:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.45);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zoneBelt .cardSlot {
+    transition: none !important;
+  }
+}
+
+/* Mobile ≤768px — scroll-snap, NO belt motion / NO auto-advance */
+@media (max-width: 768px) {
+  .zone,
+  .zoneBelt,
+  .zoneStatic {
+    height: auto;
+    margin-top: var(--space-lg, 1.5rem);
+  }
+
+  .rail {
+    display: none;
+  }
+
+  .beltTrack,
+  .staticTrack {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: var(--space-sm, 0.75rem);
+    padding-bottom: var(--space-sm, 0.75rem);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    height: auto;
+  }
+
+  .zoneBelt .cardSlot,
+  .cardSlot {
+    position: relative;
+    top: auto;
+    left: auto !important;
+    margin-top: 0;
+    flex: 0 0 190px;
+    width: 190px !important;
+    height: 140px;
+    scroll-snap-align: start;
+    transform: none !important;
+    opacity: 1;
+    transition: none !important;
+  }
+
+  .cardSlotActive {
+    flex: 0 0 220px;
+    width: 220px !important;
+    height: 155px;
+    border-width: 1.5px;
+  }
+}
+
+@media (max-width: 390px) {
+  .zoneBelt .cardSlot,
+  .cardSlot {
+    flex: 0 0 calc(100vw - 32px);
+    width: calc(100vw - 32px) !important;
+  }
+
+  .cardSlotActive {
+    flex: 0 0 calc(100vw - 32px);
+    width: calc(100vw - 32px) !important;
+  }
+}

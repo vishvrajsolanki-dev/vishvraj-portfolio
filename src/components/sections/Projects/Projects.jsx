@@ -1,16 +1,11 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import gsap from 'gsap'
 import { projects } from '../../../data/projects'
+import BeltCarousel from '../../shared/BeltCarousel/BeltCarousel'
 import styles from './Projects.module.css'
 
 const AUTOPLAY_MS = 6000
-const FOCAL = 2 // center slot — active card always lives here
-const INACTIVE_W = 190
-const ACTIVE_W = 260
-const GAP = 14
-const BELT_EASE = 'cubic-bezier(0.25, 1, 0.5, 1)'
-const BELT_MS = 1300
 
 const defaultProject =
   projects.find((p) => p.featured) || projects[0]
@@ -96,38 +91,6 @@ function ProjectIcon({ type, className }) {
     </svg>
   )
 }
-
-
-/** Arrange projects so `activeId` sits at FOCAL (center). */
-function orderCenteredOn(activeId) {
-  const ids = projects.map((p) => p.id)
-  const idx = Math.max(0, ids.indexOf(activeId))
-  const ordered = []
-  for (let i = 0; i < ids.length; i++) {
-    ordered.push(projects[(idx - FOCAL + i + ids.length) % ids.length])
-  }
-  return ordered
-}
-
-/** Rotate array left by n steps (first → end). */
-function rotateLeft(arr, n = 1) {
-  const len = arr.length
-  const k = ((n % len) + len) % len
-  if (k === 0) return arr
-  return [...arr.slice(k), ...arr.slice(0, k)]
-}
-
-/** Slot x-position for index i, with FOCAL using ACTIVE_W. */
-function slotX(index) {
-  let x = 0
-  for (let i = 0; i < index; i++) {
-    x += (i === FOCAL ? ACTIVE_W : INACTIVE_W) + GAP
-  }
-  return x
-}
-
-const TOTAL_RAIL_W =
-  ACTIVE_W + (projects.length - 1) * INACTIVE_W + (projects.length - 1) * GAP
 
 /* ── Background motifs (SVG, CSS-animated) ── */
 function Motif({ type, color }) {
@@ -271,36 +234,14 @@ function ProjectFrame({ project }) {
 }
 
 export default function Projects() {
-  const [beltOrder, setBeltOrder] = useState(() =>
-    orderCenteredOn(defaultProject.id)
-  )
   const [activeProjectId, setActiveProjectId] = useState(defaultProject.id)
-  const [isPaused, setIsPaused] = useState(false)
-  const [cycleKey, setCycleKey] = useState(0)
-  const [scaleReady, setScaleReady] = useState(true)
-  const [skipTransitionId, setSkipTransitionId] = useState(null)
-  const [autoplayEnabled, setAutoplayEnabled] = useState(() =>
-    typeof window === 'undefined' ||
-    !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  )
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== 'undefined' &&
-    window.matchMedia('(max-width: 768px)').matches
-  )
-  const [trackWidth, setTrackWidth] = useState(0)
-
   const navigate = useNavigate()
   const reduceMotion = useRef(
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
   )
-  const activeIdRef = useRef(activeProjectId)
-  const beltRef = useRef(null)
   const detailRef = useRef(null)
-  const scaleTimer = useRef(null)
   const revealTween = useRef(null)
-
-  activeIdRef.current = activeProjectId
 
   const activeProject =
     projects.find((p) => p.id === activeProjectId) || defaultProject
@@ -310,46 +251,18 @@ export default function Projects() {
     glow: activeProject.canvasColor,
   }
 
-  const useBelt = !isMobile && !reduceMotion.current
-
   useEffect(() => {
     const motionMq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const mobileMq = window.matchMedia('(max-width: 768px)')
-
     const applyMotion = () => {
       reduceMotion.current = motionMq.matches
-      setAutoplayEnabled(!motionMq.matches)
-      if (motionMq.matches) setScaleReady(true)
     }
-    const applyMobile = () => setIsMobile(mobileMq.matches)
-
     applyMotion()
-    applyMobile()
     motionMq.addEventListener('change', applyMotion)
-    mobileMq.addEventListener('change', applyMobile)
     return () => {
       motionMq.removeEventListener('change', applyMotion)
-      mobileMq.removeEventListener('change', applyMobile)
-      if (scaleTimer.current) clearTimeout(scaleTimer.current)
       if (revealTween.current) revealTween.current.kill()
     }
   }, [])
-
-  // Measure belt track for centering the rail
-  useEffect(() => {
-    const el = beltRef.current
-    if (!el) return undefined
-    const measure = () => setTrackWidth(el.offsetWidth)
-    measure()
-    const ro = new ResizeObserver(measure)
-    ro.observe(el)
-    return () => ro.disconnect()
-  }, [useBelt, isMobile])
-
-  const railOffset = useMemo(() => {
-    if (!trackWidth) return 0
-    return Math.max(0, (trackWidth - TOTAL_RAIL_W) / 2)
-  }, [trackWidth])
 
   /* ── Staggered Zone A reveal (clip-path) ── */
   const runReveal = useCallback((instant = false) => {
@@ -382,96 +295,6 @@ export default function Projects() {
   useEffect(() => {
     runReveal(false)
   }, [activeProjectId, runReveal])
-
-  const beltOrderRef = useRef(beltOrder)
-  beltOrderRef.current = beltOrder
-
-  /** Advance: rotate array left; every slot re-derived from new order + index. */
-  const advanceBelt = useCallback(() => {
-    const prev = beltOrderRef.current
-    const wrappingId = prev[0].id
-    const next = rotateLeft(prev, 1)
-    const nextActive = next[FOCAL].id
-
-    // Batch before paint: skip wrap transition + new order + active id together
-    setSkipTransitionId(wrappingId)
-    setBeltOrder(next)
-    setActiveProjectId(nextActive)
-    setCycleKey((k) => k + 1)
-
-    if (!reduceMotion.current && !isMobile) {
-      setScaleReady(false)
-      if (scaleTimer.current) clearTimeout(scaleTimer.current)
-      scaleTimer.current = setTimeout(() => setScaleReady(true), 400)
-    } else {
-      setScaleReady(true)
-    }
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => setSkipTransitionId(null))
-    })
-  }, [isMobile])
-
-  const selectProject = useCallback((id) => {
-    if (id === activeIdRef.current) {
-      setCycleKey((k) => k + 1)
-      return
-    }
-
-    const prev = beltOrderRef.current
-    let steps = 0
-    let next = prev
-    while (next[FOCAL].id !== id && steps < next.length) {
-      next = rotateLeft(next, 1)
-      steps++
-    }
-
-    // Single-step: teleport the wrapping (old leftmost → new rightmost) card.
-    // Multi-step: skip all transitions (instant rearrange).
-    if (steps > 1) {
-      setSkipTransitionId('__all__')
-    } else if (steps === 1) {
-      setSkipTransitionId(prev[0].id)
-    }
-
-    setBeltOrder(next)
-    setActiveProjectId(id)
-    setCycleKey((k) => k + 1)
-
-    if (!reduceMotion.current && !isMobile) {
-      setScaleReady(false)
-      if (scaleTimer.current) clearTimeout(scaleTimer.current)
-      scaleTimer.current = setTimeout(() => setScaleReady(true), 400)
-    } else {
-      setScaleReady(true)
-    }
-
-    if (steps >= 1) {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setSkipTransitionId(null))
-      })
-    }
-  }, [isMobile])
-
-  // Auto-advance every 6s
-  useEffect(() => {
-    if (!autoplayEnabled || isPaused) return undefined
-    const timer = setTimeout(() => {
-      advanceBelt()
-    }, AUTOPLAY_MS)
-    return () => clearTimeout(timer)
-  }, [autoplayEnabled, isPaused, cycleKey, advanceBelt])
-
-  const pauseAutoplay = () => setIsPaused(true)
-  const resumeAutoplay = () => {
-    setIsPaused(false)
-    setCycleKey((k) => k + 1)
-  }
-
-  const showProgress = autoplayEnabled && !isPaused
-
-  // Mobile / reduced-motion: flat list in projects.js order
-  const displayList = useBelt ? beltOrder : projects
 
   return (
     <section className={styles.section} id="projects">
@@ -596,161 +419,89 @@ export default function Projects() {
           </div>
         </div>
 
-        {/* Zone B — belt / scroll-snap */}
-        <div
-          className={`${styles.zoneB} ${useBelt ? styles.zoneBBelt : styles.zoneBStatic}`}
-          role="listbox"
-          aria-label="Select project"
-          onMouseEnter={pauseAutoplay}
-          onMouseLeave={resumeAutoplay}
-          onFocusCapture={pauseAutoplay}
-          onBlurCapture={(e) => {
-            if (!e.currentTarget.contains(e.relatedTarget)) {
-              resumeAutoplay()
+        {/* Zone B — shared belt carousel */}
+        <BeltCarousel
+          items={projects}
+          autoAdvanceMs={AUTOPLAY_MS}
+          loop
+          initialActiveId={defaultProject.id}
+          onActiveChange={setActiveProjectId}
+          ariaLabel="Select project"
+          className={styles.zoneB}
+          getCardClassName={(project, isActive) =>
+            `${styles.filmCard} ${isActive ? styles.filmCardActive : styles.filmCardInactive}`
+          }
+          getCardStyle={(project, isActive) => {
+            const cardAccent = project.accentColor || {
+              base: '#FFFFFF',
+              glow: project.canvasColor,
+            }
+            return {
+              ...(isActive
+                ? {
+                    borderColor: cardAccent.base,
+                    boxShadow: `0 8px 22px ${cardAccent.glow}40`,
+                  }
+                : {
+                    borderColor: 'rgba(255,255,255,0.08)',
+                    boxShadow: 'none',
+                  }),
+              '--card-accent': cardAccent.base,
             }
           }}
-        >
-          {useBelt && (
-            <div className={styles.rail} aria-hidden="true">
-              <span className={styles.railLine} />
-              {displayList.map((_, i) => (
+          renderCard={(project, isActive, { cycleKey, showProgress }) => {
+            const cardAccent = project.accentColor || {
+              base: '#FFFFFF',
+              glow: project.canvasColor,
+            }
+            return (
+              <>
                 <span
-                  key={i}
-                  className={styles.railTick}
-                  style={{
-                    left: railOffset + slotX(i) + (i === FOCAL ? ACTIVE_W : INACTIVE_W) / 2,
-                  }}
-                />
-              ))}
-              <span
-                className={styles.railDot}
-                style={{
-                  left: railOffset + slotX(FOCAL) + ACTIVE_W / 2,
-                }}
-              />
-            </div>
-          )}
-
-          <div
-            className={useBelt ? styles.beltTrack : styles.staticTrack}
-            ref={beltRef}
-          >
-            {displayList.map((project, i) => {
-              // Belt: active = FOCAL slot index (array order is source of truth).
-              // Never special-case first/last — every slot uses the same formula.
-              const isActive = useBelt
-                ? i === FOCAL
-                : project.id === activeProjectId
-              const cardAccent = project.accentColor || {
-                base: '#FFFFFF',
-                glow: project.canvasColor,
-              }
-
-              const x = useBelt ? railOffset + slotX(i) : undefined
-              const width = useBelt
-                ? i === FOCAL
-                  ? ACTIVE_W
-                  : INACTIVE_W
-                : undefined
-
-              // left from slot index; transform only lifts/scales the FOCAL card
-              const transform = useBelt
-                ? `translateY(${i === FOCAL && scaleReady ? -16 : 0}px) scale(${i === FOCAL && scaleReady ? 1.3 : 1})`
-                : undefined
-
-              const skipMotion =
-                skipTransitionId === '__all__' ||
-                skipTransitionId === project.id ||
-                reduceMotion.current
-
-              return (
-                <button
-                  key={project.id}
-                  type="button"
-                  role="option"
-                  aria-selected={isActive}
-                  aria-current={isActive ? 'true' : undefined}
-                  className={`${styles.filmCard} ${isActive ? styles.filmCardActive : styles.filmCardInactive}`}
-                  onClick={() => selectProject(project.id)}
-                  style={{
-                    ...(useBelt
-                      ? {
-                          left: x,
-                          width,
-                          transform,
-                          zIndex: isActive ? 10 : 1,
-                          transition: skipMotion
-                            ? 'none'
-                            : `left ${BELT_MS}ms ${BELT_EASE}, transform ${BELT_MS}ms ${BELT_EASE}, width 500ms ${BELT_EASE}, box-shadow ${BELT_MS}ms ${BELT_EASE}, border-color ${BELT_MS}ms ${BELT_EASE}`,
-                          ...(isActive
-                            ? {
-                                borderColor: cardAccent.base,
-                                boxShadow: `0 8px 22px ${cardAccent.glow}40`,
-                              }
-                            : {
-                                borderColor: 'rgba(255,255,255,0.08)',
-                                boxShadow: 'none',
-                              }),
-                        }
-                      : isActive
-                        ? {
-                            borderColor: cardAccent.base,
-                            boxShadow: `0 8px 22px ${cardAccent.glow}40`,
-                          }
-                        : {
-                            borderColor: 'rgba(255,255,255,0.08)',
-                          }),
-                    '--card-accent': cardAccent.base,
-                  }}
+                  className={styles.iconWatermark}
+                  style={{ color: cardAccent.base }}
+                  aria-hidden="true"
                 >
-                  {/* Oversized icon watermark */}
+                  <ProjectIcon type={project.icon} />
+                </span>
+
+                {project.recommended && (
                   <span
-                    className={styles.iconWatermark}
-                    style={{ color: cardAccent.base }}
-                    aria-hidden="true"
+                    className={styles.recommendedBadge}
+                    style={{ background: cardAccent.base }}
                   >
-                    <ProjectIcon type={project.icon} />
+                    Recommended
                   </span>
+                )}
 
-                  {project.recommended && (
-                    <span
-                      className={styles.recommendedBadge}
-                      style={{ background: cardAccent.base }}
-                    >
-                      Recommended
-                    </span>
+                <span className={styles.iconBadge} aria-hidden="true">
+                  <ProjectIcon type={project.icon} />
+                </span>
+
+                <span className={styles.filmBody}>
+                  <span className={styles.filmName}>{project.title}</span>
+                  {project.tags[0] && (
+                    <span className={styles.filmTag}>{project.tags[0]}</span>
                   )}
+                </span>
 
-                  <span className={styles.iconBadge} aria-hidden="true">
-                    <ProjectIcon type={project.icon} />
-                  </span>
+                <span className={styles.ghostNumber} aria-hidden="true">
+                  {String(
+                    projects.findIndex((p) => p.id === project.id) + 1
+                  ).padStart(2, '0')}
+                </span>
 
-                  <span className={styles.filmBody}>
-                    <span className={styles.filmName}>{project.title}</span>
-                    {project.tags[0] && (
-                      <span className={styles.filmTag}>{project.tags[0]}</span>
-                    )}
-                  </span>
-
-                  <span className={styles.ghostNumber} aria-hidden="true">
-                    {String(
-                      projects.findIndex((p) => p.id === project.id) + 1
-                    ).padStart(2, '0')}
-                  </span>
-
-                  {isActive && showProgress && (
-                    <span
-                      key={cycleKey}
-                      className={styles.progressSliver}
-                      style={{ background: cardAccent.base }}
-                      aria-hidden="true"
-                    />
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        </div>
+                {isActive && showProgress && (
+                  <span
+                    key={cycleKey}
+                    className={styles.progressSliver}
+                    style={{ background: cardAccent.base }}
+                    aria-hidden="true"
+                  />
+                )}
+              </>
+            )
+          }}
+        />
       </div>
     </section>
   )
