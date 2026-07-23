@@ -6,6 +6,12 @@ import styles from './Education.module.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
+/**
+ * Swap to a real campus photo path when available, e.g. '/photos/adit-campus.jpg'.
+ * When set, the placeholder badge is not rendered at all (one-line removal).
+ */
+const CAMPUS_PHOTO_SRC = null
+
 const collegeCards = [
   {
     year: '2026',
@@ -42,14 +48,25 @@ const collegeCards = [
     detail: 'Represented TrackBot AGV at the university-level hackathon. Reached finals.',
     logo: '/logos/adit.png',
   },
-  {
-    year: '2025',
-    title: 'B.Tech AI & Data Science Began',
-    org: 'A D Patel Institute of Technology, CVM University',
-    detail: 'Started undergraduate degree in AI & Data Science. Expected graduation 2029.',
-    logo: '/logos/adit.png',
-  },
 ]
+
+function CampusPhotoPlaceholder() {
+  return (
+    <div className={styles.photoPlaceholder}>
+      <div className={styles.placeholderBadge} aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <rect x="3" y="5" width="18" height="14" rx="2" />
+          <circle cx="8.5" cy="10" r="1.5" />
+          <path d="M21 16l-5.5-5.5L9 17" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+      <p className={styles.placeholderLabel}>
+        <span>Campus photo</span>
+        <span>Placeholder</span>
+      </p>
+    </div>
+  )
+}
 
 export default function Education() {
   const sectionRef = useRef(null)
@@ -66,22 +83,19 @@ export default function Education() {
       },
     })
 
-    // Label
     tl.fromTo(
       section.querySelector(`.${styles.sectionLabel}`),
       { opacity: 0, y: 20 },
       { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
     )
 
-    // Institution block (logo + degree info) + SVG together
     tl.fromTo(
-      section.querySelector(`.${styles.topRow}`),
+      section.querySelector(`.${styles.eduCard}`),
       { opacity: 0, y: 36 },
       { opacity: 1, y: 0, duration: 0.75, ease: 'power3.out' },
       '-=0.2'
     )
 
-    // Cards stagger — each card slides in from right
     tl.fromTo(
       section.querySelectorAll(`.${styles.card}`),
       { opacity: 0, x: 40 },
@@ -94,54 +108,24 @@ export default function Education() {
     <section className={styles.section} id="education" ref={sectionRef}>
       <span className={styles.sectionLabel}>06 — Education</span>
 
-      <div className={styles.topRow}>
-        <div className={styles.institution}>
-          <div className={styles.logoBox}>
-            <img src="/logos/adit.png" alt="ADIT logo" className={styles.logoImg} />
-          </div>
-          <div className={styles.degreeInfo}>
-            <h2 className={styles.degree}>B.Tech — AI & Data Science</h2>
-            <p className={styles.school}>A D Patel Institute of Technology</p>
-            <p className={styles.uni}>CVM University · Anand, Gujarat</p>
-            <p className={styles.duration}>2025 — 2029</p>
-          </div>
-        </div>
-
-        <div className={styles.lottieBox}>
-          <svg viewBox="0 0 480 160" className={styles.neuralSvg} aria-hidden="true">
-            <circle className={styles.node} cx="60" cy="55" r="5" style={{ animationDelay: '0s' }} />
-            <circle className={styles.node} cx="60" cy="105" r="5" style={{ animationDelay: '0.4s' }} />
-            <circle className={styles.node} cx="180" cy="35" r="5" style={{ animationDelay: '0.2s' }} />
-            <circle className={styles.node} cx="180" cy="80" r="5" style={{ animationDelay: '0.6s' }} />
-            <circle className={styles.node} cx="180" cy="125" r="5" style={{ animationDelay: '1.0s' }} />
-            <circle className={styles.node} cx="300" cy="35" r="5" style={{ animationDelay: '0.4s' }} />
-            <circle className={styles.node} cx="300" cy="80" r="5" style={{ animationDelay: '0.8s' }} />
-            <circle className={styles.node} cx="300" cy="125" r="5" style={{ animationDelay: '1.2s' }} />
-            <circle className={styles.node} cx="420" cy="55" r="5" style={{ animationDelay: '0.6s' }} />
-            <circle className={styles.node} cx="420" cy="105" r="5" style={{ animationDelay: '1.0s' }} />
-            <line className={styles.edge} x1="65" y1="55" x2="175" y2="35" />
-            <line className={styles.edge} x1="65" y1="55" x2="175" y2="80" />
-            <line className={styles.edge} x1="65" y1="105" x2="175" y2="80" />
-            <line className={styles.edge} x1="65" y1="105" x2="175" y2="125" />
-            <line className={styles.edge} x1="185" y1="35" x2="295" y2="35" />
-            <line className={styles.edge} x1="185" y1="35" x2="295" y2="80" />
-            <line className={styles.edge} x1="185" y1="80" x2="295" y2="35" />
-            <line className={styles.edge} x1="185" y1="80" x2="295" y2="80" />
-            <line className={styles.edge} x1="185" y1="80" x2="295" y2="125" />
-            <line className={styles.edge} x1="185" y1="125" x2="295" y2="80" />
-            <line className={styles.edge} x1="185" y1="125" x2="295" y2="125" />
-            <line className={styles.edge} x1="305" y1="35" x2="415" y2="55" />
-            <line className={styles.edge} x1="305" y1="80" x2="415" y2="55" />
-            <line className={styles.edge} x1="305" y1="80" x2="415" y2="105" />
-            <line className={styles.edge} x1="305" y1="125" x2="415" y2="105" />
-            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0s" path="M65,55 L175,35" /></circle>
-            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.6s" path="M65,105 L175,125" /></circle>
-            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.3s" path="M185,35 L295,80" /></circle>
-            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.9s" path="M185,80 L295,35" /></circle>
-            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="1.4s" path="M185,125 L295,80" /></circle>
-            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.5s" path="M305,35 L415,55" /></circle>
-            <circle className={styles.pulse} r="3"><animateMotion dur="1.8s" repeatCount="indefinite" begin="1.1s" path="M305,125 L415,105" /></circle>
-          </svg>
+      {/* Education photo panel */}
+      <div className={styles.eduCard}>
+        {CAMPUS_PHOTO_SRC ? (
+          <img
+            src={CAMPUS_PHOTO_SRC}
+            alt="A D Patel Institute of Technology campus"
+            className={styles.eduPhoto}
+          />
+        ) : (
+          <CampusPhotoPlaceholder />
+        )}
+        <div className={styles.eduScrim} aria-hidden="true" />
+        <div className={styles.eduOverlay}>
+          <h2 className={styles.eduDegree}>B.Tech — AI & Data Science</h2>
+          <p className={styles.eduSchool}>
+            A D Patel Institute of Technology · CVM University · Anand, Gujarat
+          </p>
+          <p className={styles.eduDates}>2025 — 2029</p>
         </div>
       </div>
 
@@ -150,7 +134,7 @@ export default function Education() {
       <p className={styles.colLabel}>During College</p>
       <div className={styles.cardTrack}>
         {collegeCards.map((c, i) => (
-          <div key={i} className={styles.card}>
+          <div key={c.title} className={styles.card}>
             <div className={styles.cardHeader}>
               {c.logo && <img src={c.logo} alt="" className={styles.cardLogo} />}
               <div className={styles.cardHeaderText}>

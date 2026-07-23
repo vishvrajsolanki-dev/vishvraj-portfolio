@@ -3,133 +3,124 @@
 }
 
 .sectionLabel {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.3);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   display: block;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
-/* ── Top row: ADIT card + neural loop ── */
-.topRow {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 4rem;
-  margin-bottom: 3rem;
-}
-
-.institution {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 1.5rem;
-  flex: 1;
-}
-
-.logoBox {
-  width: 72px;
-  height: 72px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+/* ── Education photo panel ── */
+.eduCard {
+  position: relative;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.04);
-  flex-shrink: 0;
   overflow: hidden;
+  height: clamp(280px, 34vw, 380px);
+  background: #110e1a;
+  margin-bottom: 3rem;
 }
 
-.logoImg {
+.eduPhoto {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: 12px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
-.degreeInfo {
+.eduScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 8, 16, 0.15) 0%,
+    rgba(10, 8, 16, 0.55) 65%,
+    rgba(10, 8, 16, 0.92) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.eduOverlay {
+  position: absolute;
+  left: 24px;
+  bottom: 20px;
+  right: 24px;
+  z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0;
 }
 
-.degree {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
+.eduDegree {
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: 18px;
+  font-weight: 500;
   color: #ffffff;
-  letter-spacing: -0.02em;
-  margin: 0 0 0.3rem;
+  margin: 0;
+  line-height: 1.3;
 }
 
-.school {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.95rem;
+.eduSchool {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.6);
-  margin: 0;
+  margin: 4px 0 0;
+  line-height: 1.4;
 }
 
-.uni {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.35);
-  margin: 0;
+.eduDates {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 6px 0 0;
+  letter-spacing: 0.04em;
 }
 
-.duration {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.25);
-  letter-spacing: 0.08em;
-  margin: 0.5rem 0 0;
+/* Placeholder — isolated; remove when CAMPUS_PHOTO_SRC is set */
+.photoPlaceholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 40%, rgba(255, 255, 255, 0.04) 0%, transparent 70%),
+    #110e1a;
 }
 
-/* ── Neural pulse loop ── */
-.lottieBox {
-  flex-shrink: 0;
+.placeholderBadge {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 0.5px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: rgba(255, 255, 255, 0.55);
 }
 
-.neuralSvg {
-  width: 480px;
-  height: 160px;
-  max-width: 480px;
-  overflow: visible;
-}
-
-.edge {
-  stroke: rgba(255, 255, 255, 0.1);
-  stroke-width: 1.5;
-}
-
-.node {
-  fill: rgba(255, 255, 255, 0.15);
-  animation: nodePulse 2.4s ease-in-out infinite;
-  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
-}
-
-@keyframes nodePulse {
-
-  0%,
-  100% {
-    fill: rgba(255, 255, 255, 0.15);
-    r: 5;
-  }
-
-  50% {
-    fill: rgba(255, 255, 255, 0.9);
-    r: 6.5;
-  }
-}
-
-.pulse {
-  fill: #ffffff;
-  opacity: 0.9;
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+.placeholderLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.4;
 }
 
 /* ── Divider ── */
@@ -140,9 +131,9 @@
   margin-bottom: 2rem;
 }
 
-/* ── Timeline cards ── */
+/* ── During College (temporary scroll row — replaced by belt in commit 3) ── */
 .colLabel {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.25);
   letter-spacing: 0.1em;
@@ -193,7 +184,6 @@
   border-color: rgba(255, 255, 255, 0.14);
 }
 
-/* ── Card header: logo + year/title ── */
 .cardHeader {
   display: flex;
   align-items: center;
@@ -220,7 +210,7 @@
 }
 
 .cardYear {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: 0.68rem;
   color: rgba(255, 255, 255, 0.3);
   letter-spacing: 0.08em;
@@ -228,7 +218,7 @@
 }
 
 .cardTitle {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
   font-size: 1rem;
   font-weight: 600;
   color: #ffffff;
@@ -237,7 +227,7 @@
 }
 
 .cardOrg {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body, 'Inter', sans-serif);
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.4);
   margin: 0 0 0.75rem;
@@ -245,7 +235,7 @@
 }
 
 .cardDetail {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body, 'Inter', sans-serif);
   font-size: 0.82rem;
   color: rgba(255, 255, 255, 0.6);
   margin: 0;
@@ -253,7 +243,7 @@
 }
 
 .cardIndex {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
   font-size: 3.5rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.04);
@@ -266,27 +256,42 @@
 }
 
 .dragHint {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: 0.68rem;
   color: rgba(255, 255, 255, 0.2);
   letter-spacing: 0.08em;
   margin: 0.75rem 0 0;
 }
 
-/* ── Mobile breakpoint ── */
-@media (max-width: 768px) {
-  .topRow {
-    flex-direction: column;
-    gap: 2rem;
+@media (max-width: 1023px) {
+  .eduCard {
+    height: clamp(220px, 40vw, 300px);
+  }
+}
+
+@media (max-width: 767px) {
+  .eduCard {
+    height: 220px;
   }
 
-  .lottieBox {
-    width: 100%;
-    overflow: hidden;
+  .eduOverlay {
+    left: 16px;
+    bottom: 16px;
+    right: 16px;
   }
 
-  .neuralSvg {
-    width: 100%;
-    height: auto;
+  .eduDegree {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 390px) {
+  .eduOverlay {
+    left: 16px;
+    bottom: 16px;
+  }
+
+  .eduDegree {
+    font-size: 16px;
   }
 }
