@@ -11,7 +11,7 @@ export const education = {
    * One-line swap when campus photo lands, e.g. '/photos/adit-campus.jpg'.
    * null keeps the translucent placeholder badge.
    */
-  campusPhotoSrc: null,
+  campusPhotoSrc: '/photos/adit-campus.jpg',
 }
 
 export const duringCollege = [
