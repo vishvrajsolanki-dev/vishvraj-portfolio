@@ -1,12 +1,16 @@
-import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import gsap from 'gsap'
 import { projects } from '../../../data/projects'
 import styles from './Projects.module.css'
 
 const AUTOPLAY_MS = 6000
-const DRIFT_LOOP_S = 36 // ambient full-loop duration (~30–40s)
-const INACTIVE_W = 160
+const FOCAL = 2 // center slot — active card always lives here
+const INACTIVE_W = 190
+const ACTIVE_W = 260
+const GAP = 14
+const BELT_EASE = 'cubic-bezier(0.25, 1, 0.5, 1)'
+const BELT_MS = 1300
 
 const defaultProject =
   projects.find((p) => p.featured) || projects[0]
@@ -37,6 +41,37 @@ const WORDMARKS = {
 function hasLiveUrl(live) {
   return Boolean(live) && live !== '#'
 }
+
+/** Arrange projects so `activeId` sits at FOCAL (center). */
+function orderCenteredOn(activeId) {
+  const ids = projects.map((p) => p.id)
+  const idx = Math.max(0, ids.indexOf(activeId))
+  const ordered = []
+  for (let i = 0; i < ids.length; i++) {
+    ordered.push(projects[(idx - FOCAL + i + ids.length) % ids.length])
+  }
+  return ordered
+}
+
+/** Rotate array left by n steps (first → end). */
+function rotateLeft(arr, n = 1) {
+  const len = arr.length
+  const k = ((n % len) + len) % len
+  if (k === 0) return arr
+  return [...arr.slice(k), ...arr.slice(0, k)]
+}
+
+/** Slot x-position for index i, with FOCAL using ACTIVE_W. */
+function slotX(index) {
+  let x = 0
+  for (let i = 0; i < index; i++) {
+    x += (i === FOCAL ? ACTIVE_W : INACTIVE_W) + GAP
+  }
+  return x
+}
+
+const TOTAL_RAIL_W =
+  ACTIVE_W + (projects.length - 1) * INACTIVE_W + (projects.length - 1) * GAP
 
 /* ── Background motifs (SVG, CSS-animated) ── */
 function Motif({ type, color }) {
@@ -91,7 +126,6 @@ function Motif({ type, color }) {
       </svg>
     )
   }
-  // grid / pixel-scan
   return (
     <svg className={`${styles.motif} ${styles.motifGrid}`} viewBox="0 0 400 280" aria-hidden="true">
       {Array.from({ length: 8 }, (_, row) =>
@@ -113,45 +147,82 @@ function Motif({ type, color }) {
   )
 }
 
+function DotGrid() {
+  return (
+    <svg className={styles.dotGrid} aria-hidden="true">
+      <defs>
+        <pattern id="projDotGrid" width="16" height="16" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="0.7" fill="rgba(255,255,255,0.18)" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#projDotGrid)" />
+    </svg>
+  )
+}
+
 function ProjectFrame({ project }) {
   const wordmark = WORDMARKS[project.id]
+  const glow = project.accentColor?.glow || project.canvasColor
 
   if (project.id === 'trackbot-agv' && project.screenshotUrl) {
     return (
-      <img
-        src={project.screenshotUrl}
-        alt={`${project.title} concept render`}
-        className={styles.frameImage}
-      />
-    )
-  }
-
-  if (!wordmark) {
-    return (
-      <div className={styles.wordmarkFrame}>
-        <span className={styles.wordmarkWord}>{project.title}</span>
-      </div>
+      <>
+        <div
+          className={styles.frameGlow}
+          style={{
+            background: `
+              radial-gradient(ellipse 70% 55% at 30% 20%, ${glow}33 0%, transparent 55%),
+              radial-gradient(ellipse 60% 50% at 80% 80%, ${glow}22 0%, transparent 50%)
+            `,
+          }}
+          aria-hidden="true"
+        />
+        <img
+          src={project.screenshotUrl}
+          alt={`${project.title} concept render`}
+          className={styles.frameImage}
+        />
+      </>
     )
   }
 
   return (
     <div className={styles.wordmarkFrame}>
+      <div
+        className={styles.frameGlow}
+        style={{
+          background: `
+            radial-gradient(ellipse 70% 55% at 30% 20%, ${glow}40 0%, transparent 55%),
+            radial-gradient(ellipse 60% 50% at 80% 80%, ${glow}28 0%, transparent 50%)
+          `,
+        }}
+        aria-hidden="true"
+      />
+      <DotGrid />
       <div className={styles.motifWrap} style={{ color: project.canvasColor }}>
-        <Motif type={wordmark.motif} color={project.canvasColor} />
+        {wordmark && <Motif type={wordmark.motif} color={project.canvasColor} />}
       </div>
       <div className={styles.wordmarkContent}>
-        <span className={styles.wordmarkWord}>{wordmark.word}</span>
-        <span className={styles.wordmarkTagline}>{wordmark.tagline}</span>
+        <span className={styles.wordmarkWord}>
+          {wordmark?.word || project.title}
+        </span>
+        {wordmark && (
+          <span className={styles.wordmarkTagline}>{wordmark.tagline}</span>
+        )}
       </div>
     </div>
   )
 }
 
 export default function Projects() {
+  const [beltOrder, setBeltOrder] = useState(() =>
+    orderCenteredOn(defaultProject.id)
+  )
   const [activeProjectId, setActiveProjectId] = useState(defaultProject.id)
-  const [fading, setFading] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const [cycleKey, setCycleKey] = useState(0)
+  const [scaleReady, setScaleReady] = useState(true)
+  const [skipTransitionId, setSkipTransitionId] = useState(null)
   const [autoplayEnabled, setAutoplayEnabled] = useState(() =>
     typeof window === 'undefined' ||
     !window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -160,22 +231,30 @@ export default function Projects() {
     typeof window !== 'undefined' &&
     window.matchMedia('(max-width: 768px)').matches
   )
+  const [trackWidth, setTrackWidth] = useState(0)
 
   const navigate = useNavigate()
-  const fadeTimer = useRef(null)
   const reduceMotion = useRef(
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
   )
   const activeIdRef = useRef(activeProjectId)
   const beltRef = useRef(null)
-  const cardRefs = useRef({})
-  const driftTweens = useRef({})
-  const activateTween = useRef(null)
-  const prevActiveRef = useRef(null)
-  const beltInitRef = useRef(false)
+  const detailRef = useRef(null)
+  const scaleTimer = useRef(null)
+  const revealTween = useRef(null)
 
   activeIdRef.current = activeProjectId
+
+  const activeProject =
+    projects.find((p) => p.id === activeProjectId) || defaultProject
+  const miniStats = (activeProject.details?.metrics || []).slice(0, 3)
+  const accent = activeProject.accentColor || {
+    base: '#FFFFFF',
+    glow: activeProject.canvasColor,
+  }
+
+  const useBelt = !isMobile && !reduceMotion.current
 
   useEffect(() => {
     const motionMq = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -184,6 +263,7 @@ export default function Projects() {
     const applyMotion = () => {
       reduceMotion.current = motionMq.matches
       setAutoplayEnabled(!motionMq.matches)
+      if (motionMq.matches) setScaleReady(true)
     }
     const applyMobile = () => setIsMobile(mobileMq.matches)
 
@@ -191,54 +271,137 @@ export default function Projects() {
     applyMobile()
     motionMq.addEventListener('change', applyMotion)
     mobileMq.addEventListener('change', applyMobile)
-
     return () => {
       motionMq.removeEventListener('change', applyMotion)
       mobileMq.removeEventListener('change', applyMobile)
-      if (fadeTimer.current) clearTimeout(fadeTimer.current)
+      if (scaleTimer.current) clearTimeout(scaleTimer.current)
+      if (revealTween.current) revealTween.current.kill()
     }
   }, [])
 
-  const activeProject =
-    projects.find((p) => p.id === activeProjectId) || defaultProject
-  const activeIndex = projects.findIndex((p) => p.id === activeProject.id)
-  const miniStats = (activeProject.details?.metrics || []).slice(0, 3)
+  // Measure belt track for centering the rail
+  useEffect(() => {
+    const el = beltRef.current
+    if (!el) return undefined
+    const measure = () => setTrackWidth(el.offsetWidth)
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [useBelt, isMobile])
 
-  const useBelt =
-    !isMobile && autoplayEnabled && !reduceMotion.current
+  const railOffset = useMemo(() => {
+    if (!trackWidth) return 0
+    return Math.max(0, (trackWidth - TOTAL_RAIL_W) / 2)
+  }, [trackWidth])
 
-  const applyProjectChange = useCallback((id) => {
-    if (id === activeIdRef.current) return
+  /* ── Staggered Zone A reveal (clip-path) ── */
+  const runReveal = useCallback((instant = false) => {
+    const root = detailRef.current
+    if (!root) return
+    const parts = root.querySelectorAll('[data-reveal]')
+    if (!parts.length) return
 
-    if (reduceMotion.current) {
-      setActiveProjectId(id)
+    if (revealTween.current) revealTween.current.kill()
+
+    if (instant || reduceMotion.current) {
+      gsap.set(parts, { clearProps: 'clipPath,y,opacity' })
       return
     }
 
-    setFading(true)
-    if (fadeTimer.current) clearTimeout(fadeTimer.current)
-    fadeTimer.current = setTimeout(() => {
-      setActiveProjectId(id)
-      setFading(false)
-    }, 160)
+    gsap.set(parts, {
+      clipPath: 'inset(100% 0 0 0)',
+      y: 18,
+      opacity: 1,
+    })
+    revealTween.current = gsap.to(parts, {
+      clipPath: 'inset(0% 0 0 0)',
+      y: 0,
+      duration: 0.55,
+      stagger: 0.08,
+      ease: 'power3.out',
+    })
   }, [])
 
-  const selectProject = useCallback((id) => {
-    applyProjectChange(id)
-    setCycleKey((k) => k + 1)
-  }, [applyProjectChange])
+  useEffect(() => {
+    runReveal(false)
+  }, [activeProjectId, runReveal])
 
-  // Auto-advance every 6s (timing logic from enhancements — unchanged)
+  /** Apply a new belt order + active id, with slot-then-scale sequence. */
+  const advanceBelt = useCallback(() => {
+    setBeltOrder((prev) => {
+      const wrappingId = prev[0].id
+      const next = rotateLeft(prev, 1)
+
+      // Defer sibling state updates out of the updater
+      Promise.resolve().then(() => {
+        setSkipTransitionId(wrappingId)
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => setSkipTransitionId(null))
+        })
+        setActiveProjectId(next[FOCAL].id)
+        setCycleKey((k) => k + 1)
+        if (!reduceMotion.current && !isMobile) {
+          setScaleReady(false)
+          if (scaleTimer.current) clearTimeout(scaleTimer.current)
+          scaleTimer.current = setTimeout(() => setScaleReady(true), 400)
+        } else {
+          setScaleReady(true)
+        }
+      })
+      return next
+    })
+  }, [isMobile])
+
+  const selectProject = useCallback((id) => {
+    if (id === activeIdRef.current) {
+      setCycleKey((k) => k + 1)
+      return
+    }
+
+    setBeltOrder((prev) => {
+      let steps = 0
+      let next = prev
+      while (next[FOCAL].id !== id && steps < next.length) {
+        next = rotateLeft(next, 1)
+        steps++
+      }
+      const wrappingId = steps === 1 ? prev[0].id : null
+      const skipAll = steps > 1
+
+      Promise.resolve().then(() => {
+        if (skipAll) {
+          setSkipTransitionId('__all__')
+        } else if (wrappingId) {
+          setSkipTransitionId(wrappingId)
+        }
+        if (skipAll || wrappingId) {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => setSkipTransitionId(null))
+          })
+        }
+        setActiveProjectId(id)
+        setCycleKey((k) => k + 1)
+        if (!reduceMotion.current && !isMobile) {
+          setScaleReady(false)
+          if (scaleTimer.current) clearTimeout(scaleTimer.current)
+          scaleTimer.current = setTimeout(() => setScaleReady(true), 400)
+        } else {
+          setScaleReady(true)
+        }
+      })
+      return next
+    })
+  }, [isMobile])
+
+  // Auto-advance every 6s
   useEffect(() => {
     if (!autoplayEnabled || isPaused) return undefined
     const timer = setTimeout(() => {
-      const idx = projects.findIndex((p) => p.id === activeIdRef.current)
-      const next = projects[(idx + 1) % projects.length]
-      applyProjectChange(next.id)
-      setCycleKey((k) => k + 1)
+      advanceBelt()
     }, AUTOPLAY_MS)
     return () => clearTimeout(timer)
-  }, [autoplayEnabled, isPaused, cycleKey, applyProjectChange])
+  }, [autoplayEnabled, isPaused, cycleKey, advanceBelt])
 
   const pauseAutoplay = () => setIsPaused(true)
   const resumeAutoplay = () => {
@@ -248,138 +411,8 @@ export default function Projects() {
 
   const showProgress = autoplayEnabled && !isPaused
 
-  /* ── Belt: ambient drift + activation (desktop/tablet only) ── */
-  const killDrift = (id) => {
-    if (driftTweens.current[id]) {
-      driftTweens.current[id].kill()
-      delete driftTweens.current[id]
-    }
-  }
-
-  const startDrift = useCallback((id, fromX, trackW) => {
-    const el = cardRefs.current[id]
-    if (!el || !trackW) return
-    killDrift(id)
-
-    const wrap = trackW + INACTIVE_W
-    let x = fromX
-    while (x > trackW) x -= wrap
-    while (x < -INACTIVE_W) x += wrap
-
-    gsap.set(el, {
-      x,
-      y: 0,
-      scale: 1,
-      opacity: 0.6,
-      zIndex: 1,
-    })
-
-    driftTweens.current[id] = gsap.to(el, {
-      x: `+=${wrap}`,
-      duration: DRIFT_LOOP_S,
-      ease: 'none',
-      repeat: -1,
-      modifiers: {
-        x: gsap.utils.unitize((val) => {
-          const n = parseFloat(val)
-          const range = trackW + INACTIVE_W
-          return ((n + INACTIVE_W) % range + range) % range - INACTIVE_W
-        }),
-      },
-    })
-  }, [])
-
-  const activateCard = useCallback((id, trackW, instant = false) => {
-    const el = cardRefs.current[id]
-    if (!el || !trackW) return
-    killDrift(id)
-    if (activateTween.current) activateTween.current.kill()
-
-    // Position so card center sits at track center (scale grows from center)
-    const centerX = trackW / 2 - INACTIVE_W / 2
-    const props = {
-      x: centerX,
-      y: -16,
-      scale: 1.3,
-      opacity: 1,
-      zIndex: 10,
-      duration: instant ? 0 : 0.55,
-      ease: 'power3.out',
-    }
-    if (instant) {
-      gsap.set(el, props)
-    } else {
-      activateTween.current = gsap.to(el, props)
-    }
-  }, [])
-
-  useLayoutEffect(() => {
-    if (!useBelt) {
-      Object.keys(driftTweens.current).forEach(killDrift)
-      if (activateTween.current) activateTween.current.kill()
-      projects.forEach((p) => {
-        const el = cardRefs.current[p.id]
-        if (el) gsap.set(el, { clearProps: 'transform,opacity,zIndex' })
-      })
-      beltInitRef.current = false
-      prevActiveRef.current = null
-      return undefined
-    }
-
-    const belt = beltRef.current
-    if (!belt) return undefined
-
-    const trackW = belt.offsetWidth
-    if (trackW < 100) return undefined
-
-    const activeId = activeProjectId
-    const prevId = prevActiveRef.current
-
-    if (!beltInitRef.current) {
-      // Initial layout: Lexis centered, others distributed on the rail
-      const inactive = projects.filter((p) => p.id !== activeId)
-      inactive.forEach((p, i) => {
-        const slot = (i + 0.5) / inactive.length
-        const fromX = slot * trackW - INACTIVE_W / 2
-        startDrift(p.id, fromX, trackW)
-      })
-      activateCard(activeId, trackW, true)
-      beltInitRef.current = true
-      prevActiveRef.current = activeId
-    } else if (prevId && prevId !== activeId) {
-      // Swap: previous rejoins drift; new activates to center
-      const prevX = gsap.getProperty(cardRefs.current[prevId], 'x')
-      const rejoinX =
-        typeof prevX === 'number' ? prevX : -INACTIVE_W + 20
-      startDrift(prevId, rejoinX, trackW)
-      activateCard(activeId, trackW, false)
-      prevActiveRef.current = activeId
-    }
-
-    const onResize = () => {
-      const w = belt.offsetWidth
-      if (w < 100) return
-      const inactive = projects.filter((p) => p.id !== activeIdRef.current)
-      inactive.forEach((p, i) => {
-        const slot = (i + 0.5) / inactive.length
-        startDrift(p.id, slot * w - INACTIVE_W / 2, w)
-      })
-      activateCard(activeIdRef.current, w, true)
-    }
-
-    window.addEventListener('resize', onResize)
-    return () => {
-      window.removeEventListener('resize', onResize)
-    }
-  }, [useBelt, activeProjectId, startDrift, activateCard])
-
-  // Kill all belt tweens on unmount
-  useEffect(() => {
-    return () => {
-      Object.keys(driftTweens.current).forEach(killDrift)
-      if (activateTween.current) activateTween.current.kill()
-    }
-  }, [])
+  // Mobile / reduced-motion: flat list in projects.js order
+  const displayList = useBelt ? beltOrder : projects
 
   return (
     <section className={styles.section} id="projects">
@@ -389,20 +422,26 @@ export default function Projects() {
           <h2 className={styles.heading}>Selected Work</h2>
         </div>
 
-        {/* Zone A — left panel locked from enhancements; frame reworked */}
-        <div
-          className={`${styles.zoneA} ${fading ? styles.zoneAFading : ''}`}
-        >
-          <div className={styles.detailPanel}>
-            <span className={styles.projectIndex}>
-              {String(activeIndex + 1).padStart(2, '0')}
+        {/* Zone A */}
+        <div className={styles.zoneA}>
+          <div className={styles.detailPanel} ref={detailRef}>
+            <span className={styles.projectIndex} data-reveal>
+              {String(
+                projects.findIndex((p) => p.id === activeProject.id) + 1
+              ).padStart(2, '0')}
             </span>
-            <h3 className={styles.projectTitle}>{activeProject.title}</h3>
-            <p className={styles.projectSubtitle}>{activeProject.subtitle}</p>
+            <h3 className={styles.projectTitle} data-reveal>
+              {activeProject.title}
+            </h3>
+            <p className={styles.projectSubtitle} data-reveal>
+              {activeProject.subtitle}
+            </p>
             {activeProject.description && (
-              <p className={styles.description}>{activeProject.description}</p>
+              <p className={styles.description} data-reveal>
+                {activeProject.description}
+              </p>
             )}
-            <div className={styles.tagList}>
+            <div className={styles.tagList} data-reveal>
               {activeProject.tags.map((tag) => (
                 <span key={tag} className={styles.tag}>
                   {tag}
@@ -411,7 +450,7 @@ export default function Projects() {
             </div>
 
             {miniStats.length > 0 && (
-              <div className={styles.statRow}>
+              <div className={styles.statRow} data-reveal>
                 {miniStats.map((m) => (
                   <div key={`${m.value}-${m.label}`} className={styles.miniStat}>
                     <span className={styles.miniStatValue}>{m.value}</span>
@@ -421,20 +460,14 @@ export default function Projects() {
               </div>
             )}
 
-            <div className={styles.actionRow}>
+            <div className={styles.actionRow} data-reveal>
               <button
                 type="button"
                 className={styles.caseStudyBtn}
                 onClick={() => navigate(`/projects/${activeProject.id}`)}
               >
                 View case study
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  aria-hidden="true"
-                >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                   <path
                     d="M3 7h8M7 3l4 4-4 4"
                     stroke="currentColor"
@@ -479,14 +512,17 @@ export default function Projects() {
           </div>
 
           <div className={styles.visualColumn}>
-            <div className={styles.frame}>
+            <div
+              className={styles.frame}
+              style={{ '--accent-glow': accent.glow, '--accent-base': accent.base }}
+            >
               <ProjectFrame project={activeProject} />
             </div>
             <div className={styles.floorReflection} aria-hidden="true" />
           </div>
         </div>
 
-        {/* Zone B — belt (desktop) / scroll-snap (mobile) */}
+        {/* Zone B — belt / scroll-snap */}
         <div
           className={`${styles.zoneB} ${useBelt ? styles.zoneBBelt : styles.zoneBStatic}`}
           role="listbox"
@@ -503,14 +539,21 @@ export default function Projects() {
           {useBelt && (
             <div className={styles.rail} aria-hidden="true">
               <span className={styles.railLine} />
-              {projects.map((_, i) => (
+              {displayList.map((_, i) => (
                 <span
                   key={i}
                   className={styles.railTick}
-                  style={{ left: `${((i + 0.5) / projects.length) * 100}%` }}
+                  style={{
+                    left: railOffset + slotX(i) + (i === FOCAL ? ACTIVE_W : INACTIVE_W) / 2,
+                  }}
                 />
               ))}
-              <span className={styles.railDot} />
+              <span
+                className={styles.railDot}
+                style={{
+                  left: railOffset + slotX(FOCAL) + ACTIVE_W / 2,
+                }}
+              />
             </div>
           )}
 
@@ -518,8 +561,30 @@ export default function Projects() {
             className={useBelt ? styles.beltTrack : styles.staticTrack}
             ref={beltRef}
           >
-            {projects.map((project, i) => {
+            {displayList.map((project, i) => {
               const isActive = project.id === activeProjectId
+              const cardAccent = project.accentColor || {
+                base: '#FFFFFF',
+                glow: project.canvasColor,
+              }
+
+              const x = useBelt ? railOffset + slotX(i) : undefined
+              const width = useBelt
+                ? isActive
+                  ? ACTIVE_W
+                  : INACTIVE_W
+                : undefined
+
+              // left positions the slot; transform only lifts/scales so neighbors aren't crushed
+              const transform = useBelt
+                ? `translateY(${isActive && scaleReady ? -16 : 0}px) scale(${isActive && scaleReady ? 1.3 : 1})`
+                : undefined
+
+              const skipMotion =
+                skipTransitionId === '__all__' ||
+                skipTransitionId === project.id ||
+                reduceMotion.current
+
               return (
                 <button
                   key={project.id}
@@ -527,22 +592,46 @@ export default function Projects() {
                   role="option"
                   aria-selected={isActive}
                   aria-current={isActive ? 'true' : undefined}
-                  ref={(el) => {
-                    if (el) cardRefs.current[project.id] = el
-                  }}
                   className={`${styles.filmCard} ${isActive ? styles.filmCardActive : styles.filmCardInactive}`}
                   onClick={() => selectProject(project.id)}
+                  style={{
+                    ...(useBelt
+                      ? {
+                          left: x,
+                          width,
+                          transform,
+                          zIndex: isActive ? 10 : 1,
+                          transition: skipMotion
+                            ? 'none'
+                            : `left ${BELT_MS}ms ${BELT_EASE}, transform ${BELT_MS}ms ${BELT_EASE}, width 500ms ${BELT_EASE}, box-shadow ${BELT_MS}ms ${BELT_EASE}, border-color ${BELT_MS}ms ${BELT_EASE}`,
+                          ...(isActive
+                            ? {
+                                borderColor: cardAccent.base,
+                                boxShadow: `0 8px 22px ${cardAccent.glow}2E`,
+                              }
+                            : {}),
+                        }
+                      : isActive
+                        ? {
+                            borderColor: cardAccent.base,
+                            boxShadow: `0 8px 22px ${cardAccent.glow}2E`,
+                          }
+                        : {}),
+                    '--card-accent': cardAccent.base,
+                  }}
                 >
                   <span
                     className={styles.accentBar}
                     style={{
-                      background: project.canvasColor,
-                      opacity: isActive ? 1 : 0.25,
+                      background: cardAccent.base,
+                      opacity: isActive ? 1 : 0,
                     }}
                     aria-hidden="true"
                   />
                   <span className={styles.filmIndex}>
-                    {String(i + 1).padStart(2, '0')}
+                    {String(
+                      projects.findIndex((p) => p.id === project.id) + 1
+                    ).padStart(2, '0')}
                   </span>
                   <span className={styles.filmName}>{project.title}</span>
                   {project.tags[0] && (
@@ -552,6 +641,7 @@ export default function Projects() {
                     <span
                       key={cycleKey}
                       className={styles.progressSliver}
+                      style={{ background: cardAccent.base }}
                       aria-hidden="true"
                     />
                   )}
