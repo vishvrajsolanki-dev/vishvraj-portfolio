@@ -303,6 +303,7 @@ export default function Achievements() {
           </aside>
 
           <div className={styles.showcase} aria-live="polite">
+            <p className={styles.caseKicker}>On display</p>
             <div className={styles.case}>
               <div className={styles.caseRail} aria-hidden="true" />
               <div
