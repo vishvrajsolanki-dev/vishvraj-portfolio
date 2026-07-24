@@ -293,41 +293,69 @@ function IssuerGridLogo({ item }) {
       />
     )
   }
+  if (String(item.id).startsWith('slot-')) {
+    return (
+      <svg className={styles.issuerTileLogo} viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="24" r="14" fill="none" stroke="currentColor" strokeWidth="1.8" opacity="0.35" />
+        <path d="M24 16v16M16 24h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" opacity="0.45" />
+      </svg>
+    )
+  }
   return <span className={styles.issuerTileMark}>{item.mark || item.shortName}</span>
 }
 
-/** 2-column issuer tile grid — sized for up to 10 cards. */
+/** 3×3 issuer tile grid + full-width View All bar underneath. */
 function IssuerGrid({ items, activeId, onSelect }) {
-  const dense = items.length > 6
+  const tiles = items.filter((item) => item.id !== 'all').slice(0, 9)
+  const viewAll = items.find((item) => item.id === 'all')
+
   return (
-    <ul className={`${styles.issuerGrid} ${dense ? styles.issuerGridDense : ''}`}>
-      {items.map((item) => {
-        const isActive = activeId === item.id
-        const isPlaceholder = String(item.id).startsWith('slot-')
-        return (
-          <li key={item.id}>
-            <button
-              type="button"
-              className={`${styles.issuerTile} ${isActive ? styles.issuerTileActive : ''} ${
-                isPlaceholder ? styles.issuerTilePlaceholder : ''
-              }`}
-              aria-pressed={isActive}
-              aria-label={`${item.name}${item.meta ? `, ${item.meta}` : ''}`}
-              title={item.name}
-              disabled={isPlaceholder}
-              onClick={() => {
-                if (!isPlaceholder) onSelect(item.id)
-              }}
-            >
-              <span className={styles.issuerTileLogoWrap} aria-hidden="true">
-                <IssuerGridLogo item={item} />
-              </span>
-              <span className={styles.issuerTileName}>{item.shortName || item.name}</span>
-            </button>
-          </li>
-        )
-      })}
-    </ul>
+    <div className={styles.issuerPanel}>
+      <ul className={styles.issuerGrid}>
+        {tiles.map((item) => {
+          const isActive = activeId === item.id
+          const isPlaceholder = String(item.id).startsWith('slot-')
+          return (
+            <li key={item.id}>
+              <button
+                type="button"
+                className={`${styles.issuerTile} ${isActive ? styles.issuerTileActive : ''} ${
+                  isPlaceholder ? styles.issuerTilePlaceholder : ''
+                }`}
+                aria-pressed={isActive}
+                aria-label={`${item.name}${item.meta ? `, ${item.meta}` : ''}`}
+                title={item.name}
+                disabled={isPlaceholder}
+                onClick={() => {
+                  if (!isPlaceholder) onSelect(item.id)
+                }}
+              >
+                <span className={styles.issuerTileLogoWrap} aria-hidden="true">
+                  <IssuerGridLogo item={item} />
+                </span>
+                <span className={styles.issuerTileName}>{item.shortName || item.name}</span>
+              </button>
+            </li>
+          )
+        })}
+      </ul>
+
+      {viewAll && (
+        <button
+          type="button"
+          className={`${styles.issuerViewAll} ${activeId === 'all' ? styles.issuerViewAllActive : ''}`}
+          aria-pressed={activeId === 'all'}
+          aria-label={`${viewAll.name}, ${viewAll.meta}`}
+          onClick={() => onSelect('all')}
+        >
+          <ViewAllMark className={styles.issuerViewAllIcon} />
+          <span className={styles.issuerViewAllText}>
+            <span className={styles.issuerViewAllName}>View All</span>
+            <span className={styles.issuerViewAllMeta}>{viewAll.meta}</span>
+          </span>
+        </button>
+      )}
+    </div>
   )
 }
 
@@ -343,46 +371,47 @@ export default function Certifications() {
   )
 
   const navItems = useMemo(() => {
-    const base = [
-      ...issuers.map((issuer) => ({
-        id: issuer.id,
-        name: issuer.name,
-        shortName: issuer.shortName || issuer.name,
-        logoKind: issuer.logoKind,
-        logoUrl: issuer.logoUrl,
-        mark: issuer.mark,
-        meta: (() => {
-          const count = certifications.filter((cert) => cert.issuerId === issuer.id).length
-          return `${count} cert${count === 1 ? '' : 's'}`
-        })(),
-      })),
-      {
-        id: 'all',
-        name: 'View All',
-        shortName: 'View All',
-        logoKind: 'all',
-        meta: `${certifications.length} total`,
-      },
-    ]
+    const issuerTiles = issuers.map((issuer) => ({
+      id: issuer.id,
+      name: issuer.name,
+      shortName: issuer.shortName || issuer.name,
+      logoKind: issuer.logoKind,
+      logoUrl: issuer.logoUrl,
+      mark: issuer.mark,
+      meta: (() => {
+        const count = certifications.filter((cert) => cert.issuerId === issuer.id).length
+        return `${count} cert${count === 1 ? '' : 's'}`
+      })(),
+    }))
 
-    // Optional layout preview: /?stress=10#certifications pads empty capacity slots
+    const viewAll = {
+      id: 'all',
+      name: 'View All',
+      shortName: 'View All',
+      logoKind: 'all',
+      meta: `${certifications.length} total`,
+    }
+
+    // Optional: /?stress=9#certifications fills the 3×3 issuer grid to capacity
+    let tiles = issuerTiles
     if (typeof window !== 'undefined') {
       const stress = Number(new URLSearchParams(window.location.search).get('stress') || 0)
-      const target = Math.min(10, Math.max(0, stress))
-      if (target > base.length) {
-        return [
-          ...base,
-          ...Array.from({ length: target - base.length }, (_, i) => ({
+      const target = Math.min(9, Math.max(0, stress))
+      if (target > tiles.length) {
+        tiles = [
+          ...tiles,
+          ...Array.from({ length: target - tiles.length }, (_, i) => ({
             id: `slot-${i + 1}`,
-            name: `Issuer ${base.length + i}`,
-            shortName: `Issuer ${base.length + i}`,
-            logoKind: 'all',
+            name: `Issuer ${tiles.length + i + 1}`,
+            shortName: `Issuer ${tiles.length + i + 1}`,
+            logoKind: 'slot',
             meta: 'soon',
           })),
         ]
       }
     }
-    return base
+
+    return [...tiles, viewAll]
   }, [])
 
   const filteredCerts = useMemo(() => {
