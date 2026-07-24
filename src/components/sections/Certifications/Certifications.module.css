@@ -77,7 +77,7 @@
 /* ── Stage: issuer constellation (left) | card stack (right) ── */
 .stage {
   display: grid;
-  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+  grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
   gap: clamp(1.5rem, 5vw, 4.5rem);
   align-items: center;
   min-height: min(62vh, 560px);
@@ -356,7 +356,16 @@
 }
 
 .cardLogoWashImg {
-  display: none;
+  width: 108%;
+  height: 108%;
+  max-width: none;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  transform: scale(1.05);
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .cardLogoWashSvg {

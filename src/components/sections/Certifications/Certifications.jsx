@@ -10,9 +10,9 @@ const AUTO_MS = 5000
 
 /** Fixed constellation board — grows rings, not height, as issuers are added. */
 const CONSTELLATION = {
-  width: 248,
+  width: 268,
   height: 360,
-  cx: 40,
+  cx: 44,
   cy: 180,
   startDeg: -78,
   endDeg: 78,
@@ -34,17 +34,18 @@ const AnthropicLogo = ({ className }) => (
   <svg className={className} viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <path
       fill="currentColor"
-      d="M26.8 8.5 6.2 55.5h9.1l4.1-9.5h17.2l4.1 9.5h9.2L29.4 8.5h-2.6zm1.2 13.4 6.4 15.2H21.6l6.4-15.2zM48.2 8.5 56.8 55.5h-9.1L39.1 8.5h9.1z"
+      fillRule="evenodd"
+      d="M25.2 7.2 4.5 56.8h10.2l4.55-10.6h17.9l4.55 10.6H51.9L31.2 7.2h-6zm1.55 14.9 7.05 16.5H19.7l7.05-16.5zM46.6 7.2 55.5 56.8H45.2L36.3 7.2h10.3z"
     />
   </svg>
 )
 
 const GoogleCloudLogo = ({ className }) => (
   <svg className={className} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <path fill="#EA4335" d="M12.05 4.2c-2.55 0-4.78 1.55-5.75 3.78l2.55 1.48c.55-1.32 1.85-2.25 3.35-2.25 1.42 0 2.65.82 3.25 2.02l2.62-1.52C16.92 5.58 14.68 4.2 12.05 4.2z" />
-    <path fill="#4285F4" d="M19.55 11.35h-7.2v2.7h4.15c-.42 1.35-1.62 2.3-3.1 2.55l2.35 1.82c2.15-1.12 3.6-3.35 3.6-5.82 0-.45-.08-.88-.2-1.25z" />
-    <path fill="#34A853" d="M12.2 19.1c2.35 0 4.35-.78 5.8-2.1l-2.35-1.82c-.9.6-2.05.95-3.15.95-2.42 0-4.48-1.55-5.22-3.7L4.7 14.2c1.42 2.85 4.25 4.9 7.5 4.9z" />
-    <path fill="#FBBC05" d="M7.05 12.9c-.2-.55-.3-1.15-.3-1.75s.1-1.2.3-1.75L4.45 7.1C3.9 8.25 3.6 9.55 3.6 11.15c0 1.55.3 2.9.9 4.15l2.55-2.4z" />
+    <path fill="#4285F4" d="M12.14 2.5C8.52 2.5 5.4 4.66 4.03 7.75l2.88 1.67c.86-2.05 2.9-3.5 5.23-3.5 2.22 0 4.14 1.27 5.07 3.12l2.96-1.72C18.68 4.4 15.62 2.5 12.14 2.5z" />
+    <path fill="#34A853" d="M21.34 12.08h-9.2v3.04h5.3c-.54 1.52-2.07 2.6-3.96 2.88l2.65 2.05c2.72-1.42 4.56-4.25 4.56-7.37 0-.55-.1-1.08-.28-1.6h.93z" />
+    <path fill="#FBBC04" d="M7.35 13.22c-.22-.62-.34-1.29-.34-1.98s.12-1.36.34-1.98L4.1 7.25C3.4 8.6 3 10.15 3 11.88c0 1.68.38 3.27 1.05 4.66l3.3-3.32z" />
+    <path fill="#EA4335" d="M12.14 21.26c3.22 0 5.92-1.06 7.89-2.87l-2.65-2.05c-1.17.78-2.66 1.24-4.28 1.24-3.25 0-6.01-2.1-7.02-4.98L2.9 15.28c1.7 3.58 5.33 5.98 9.24 5.98z" />
   </svg>
 )
 
@@ -72,7 +73,10 @@ const issuers = [
     name: 'Anthropic',
     fullName: 'Anthropic Academy',
     logoKind: 'anthropic',
-    washOpacity: 0.13,
+    logoUrl: '/logos/anthropic.png',
+    washUrl: '/logos/anthropic-wash.svg',
+    invertLogo: true,
+    washOpacity: 0.12,
     logoAlt: 'Anthropic',
     mark: 'AI',
   },
@@ -81,7 +85,10 @@ const issuers = [
     name: 'Google Cloud',
     fullName: 'Google Cloud',
     logoKind: 'gcloud',
-    washOpacity: 0.14,
+    logoUrl: '/logos/gcloud.png',
+    washUrl: '/logos/gcloud-wash.svg',
+    invertLogo: false,
+    washOpacity: 0.13,
     logoAlt: 'Google Cloud',
     mark: 'GC',
   },
@@ -90,7 +97,7 @@ const issuers = [
     name: 'Microsoft',
     fullName: 'Microsoft',
     logoKind: 'microsoft',
-    washOpacity: 0.09,
+    washOpacity: 0.085,
     logoAlt: 'Microsoft',
     mark: 'MS',
   },
@@ -99,7 +106,7 @@ const issuers = [
     name: 'IIT Hyderabad',
     fullName: 'IIT Hyderabad × My Job Grow',
     logoKind: 'iith',
-    washOpacity: 0.12,
+    washOpacity: 0.11,
     logoAlt: 'IIT Hyderabad',
     mark: 'IIT',
   },
@@ -196,8 +203,7 @@ function CheckIcon() {
 }
 
 function IssuerLogo({ issuer, className, size = 22 }) {
-  if (issuer.logoKind === 'anthropic') return <AnthropicLogo className={className} />
-  if (issuer.logoKind === 'gcloud') return <GoogleCloudLogo className={className} />
+  // Prefer crisp source assets for badge marks
   if (issuer.logoKind === 'microsoft') {
     return (
       <span className={className}>
@@ -206,10 +212,47 @@ function IssuerLogo({ issuer, className, size = 22 }) {
     )
   }
   if (issuer.logoKind === 'iith') return <IithLogo className={className} />
+  if (issuer.logoKind === 'anthropic') return <AnthropicLogo className={className} />
+  if (issuer.logoKind === 'gcloud') return <GoogleCloudLogo className={className} />
+  if (issuer.logoUrl) {
+    return (
+      <img
+        src={issuer.logoUrl}
+        alt={issuer.logoAlt}
+        className={className}
+        style={issuer.invertLogo ? { filter: 'invert(1)' } : undefined}
+      />
+    )
+  }
   return <span className={className}>{issuer.mark}</span>
 }
 
 function CardLogoWash({ issuer }) {
+  // Vector washes only — never upscale tiny PNGs
+  if (issuer.washUrl) {
+    return (
+      <img
+        src={issuer.washUrl}
+        alt=""
+        className={styles.cardLogoWashImg}
+        decoding="async"
+      />
+    )
+  }
+  if (issuer.logoKind === 'microsoft') {
+    return (
+      <span className={styles.cardLogoWashSvg}>
+        <MicrosoftLogo size={320} />
+      </span>
+    )
+  }
+  if (issuer.logoKind === 'iith') {
+    return (
+      <span className={`${styles.cardLogoWashSvg} ${styles.cardLogoWashMono}`}>
+        <IithLogo />
+      </span>
+    )
+  }
   if (issuer.logoKind === 'anthropic') {
     return (
       <span className={`${styles.cardLogoWashSvg} ${styles.cardLogoWashMono}`}>
@@ -221,20 +264,6 @@ function CardLogoWash({ issuer }) {
     return (
       <span className={styles.cardLogoWashSvg}>
         <GoogleCloudLogo />
-      </span>
-    )
-  }
-  if (issuer.logoKind === 'microsoft') {
-    return (
-      <span className={styles.cardLogoWashSvg}>
-        <MicrosoftLogo size={280} />
-      </span>
-    )
-  }
-  if (issuer.logoKind === 'iith') {
-    return (
-      <span className={`${styles.cardLogoWashSvg} ${styles.cardLogoWashMono}`}>
-        <IithLogo />
       </span>
     )
   }
@@ -388,8 +417,8 @@ export default function Certifications() {
     []
   )
 
-  const navItems = useMemo(
-    () => [
+  const navItems = useMemo(() => {
+    const base = [
       ...issuers.map((issuer) => ({
         id: issuer.id,
         name: issuer.name,
@@ -403,9 +432,24 @@ export default function Certifications() {
         name: 'View All',
         meta: `${certifications.length} total`,
       },
-    ],
-    []
-  )
+    ]
+
+    // Optional stress preview: /#certifications?stress=12 pads fake issuers
+    // to prove the fixed constellation board does not grow congested.
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const stress = Number(params.get('stress') || 0)
+      if (stress > base.length) {
+        const extras = Array.from({ length: stress - base.length }, (_, i) => ({
+          id: `future-${i + 1}`,
+          name: `Issuer ${base.length + i}`,
+          meta: '1 cert',
+        }))
+        return [...base, ...extras]
+      }
+    }
+    return base
+  }, [])
 
   const filteredCerts = useMemo(() => {
     if (activeIssuerId === 'all') {
