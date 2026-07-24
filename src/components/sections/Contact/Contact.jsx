@@ -20,6 +20,10 @@ const SOCIALS = [
   { id: 'leetcode', label: 'LeetCode', href: null },
 ]
 
+/** Alternating tilts for the vertical spine (mockup B) */
+const CHIP_TILTS = [-6.5, 5.2, -4.8, 7.1, -5.6, 4.4, -6.0]
+const CHIP_SHIFTS = [0, 18, 4, 22, 8, 16, 2]
+
 function MailIcon() {
   return (
     <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
@@ -89,27 +93,23 @@ function DeskArt() {
   return (
     <svg className={styles.deskArt} viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <g fill="none" stroke="currentColor" strokeWidth="1">
-        <circle cx="160" cy="140" r="48" />
-        <circle cx="160" cy="140" r="24" strokeDasharray="3 4" />
-        <path d="M160 78v18M160 184v18M98 140h18M204 140h18" />
-        <text x="118" y="222" className={styles.artLabel}>DETAIL A</text>
+        <circle cx="140" cy="160" r="42" />
+        <circle cx="140" cy="160" r="20" strokeDasharray="3 4" />
+        <path d="M140 104v16M140 200v16M88 160h16M176 160h16" />
+        <text x="100" y="238" className={styles.artLabel}>DETAIL A</text>
 
-        <rect x="880" y="80" width="200" height="120" />
-        <path d="M900 110h160M900 140h120M900 170h140" />
-        <text x="900" y="228" className={styles.artLabel}>ISO · 2.50</text>
+        <rect x="520" y="90" width="160" height="90" />
+        <path d="M540 115h120M540 140h90M540 165h105" />
+        <text x="520" y="208" className={styles.artLabel}>ISO · 2.50</text>
 
-        <path d="M720 520l140-32 48 100-140 32z" />
-        <circle cx="810" cy="560" r="14" />
-        <text x="720" y="640" className={styles.artLabel}>REF 01</text>
-
-        <path d="M80 520h200v120H80z" strokeDasharray="4 4" />
-        <text x="80" y="670" className={styles.artLabel}>24.00</text>
+        <path d="M80 560h160v100H80z" strokeDasharray="4 4" />
+        <text x="80" y="690" className={styles.artLabel}>24.00</text>
       </g>
     </svg>
   )
 }
 
-function SocialChip({ item, tilt }) {
+function SocialChip({ item, tilt, shift }) {
   const className = [
     styles.chip,
     item.accent === 'amber' ? styles.chipAmber : '',
@@ -117,6 +117,11 @@ function SocialChip({ item, tilt }) {
   ]
     .filter(Boolean)
     .join(' ')
+
+  const style = {
+    '--tilt': `${tilt}deg`,
+    '--shift': `${shift}px`,
+  }
 
   const inner = (
     <>
@@ -132,7 +137,7 @@ function SocialChip({ item, tilt }) {
     return (
       <span
         className={className}
-        style={{ '--tilt': `${tilt}deg` }}
+        style={style}
         aria-label={`${item.label} — link coming soon`}
         title="Link coming soon"
       >
@@ -144,7 +149,7 @@ function SocialChip({ item, tilt }) {
   return (
     <a
       className={className}
-      style={{ '--tilt': `${tilt}deg` }}
+      style={style}
       href={item.href}
       target="_blank"
       rel="noopener noreferrer"
@@ -155,8 +160,6 @@ function SocialChip({ item, tilt }) {
   )
 }
 
-const CHIP_TILTS = [-3.5, 2.2, -1.8, 3.1, -2.6, 1.4, -3.0]
-
 export default function Contact() {
   const sectionRef = useRef(null)
 
@@ -165,7 +168,8 @@ export default function Contact() {
     if (!section) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    const cluster = section.querySelector(`.${styles.cluster}`)
+    const primary = section.querySelector(`.${styles.primary}`)
+    const spine = section.querySelector(`.${styles.spine}`)
     const chips = gsap.utils.toArray(section.querySelectorAll(`.${styles.chip}`))
     const props = gsap.utils.toArray(section.querySelectorAll(`.${styles.prop}`))
 
@@ -184,19 +188,25 @@ export default function Contact() {
         duration: 0.4,
         ease: 'power2.out',
       })
-      .from(cluster, {
+      .from(primary, {
         y: 28,
         opacity: 0.4,
         duration: 0.85,
         ease: 'power3.out',
       }, '-=0.15')
+      .from(spine, {
+        x: 24,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power2.out',
+      }, '-=0.55')
       .from(chips, {
         opacity: 0,
-        y: 16,
-        stagger: 0.05,
-        duration: 0.45,
+        x: 18,
+        stagger: 0.06,
+        duration: 0.4,
         ease: 'power2.out',
-      }, '-=0.4')
+      }, '-=0.45')
       .from(props, {
         opacity: 0,
         duration: 0.5,
@@ -204,10 +214,9 @@ export default function Contact() {
         ease: 'power1.out',
       }, '-=0.35')
 
-    // Subtle 10s drift on cluster + chips
-    gsap.to(cluster, {
-      y: '+=8',
-      x: '+=6',
+    gsap.to(primary, {
+      y: '+=7',
+      x: '+=4',
       duration: 10,
       ease: 'sine.inOut',
       yoyo: true,
@@ -218,13 +227,13 @@ export default function Contact() {
     chips.forEach((el, i) => {
       const dir = i % 2 === 0 ? 1 : -1
       gsap.to(el, {
-        y: `+=${dir * (4 + (i % 3))}`,
-        x: `+=${-dir * (3 + (i % 2))}`,
+        y: `+=${dir * (5 + (i % 3))}`,
+        x: `+=${-dir * (4 + (i % 2) * 2)}`,
         duration: 10,
         ease: 'sine.inOut',
         yoyo: true,
         repeat: -1,
-        delay: 1.2 + i * 0.2,
+        delay: 1.2 + i * 0.18,
       })
     })
   }, { scope: sectionRef })
@@ -262,78 +271,83 @@ export default function Contact() {
             <em>INOX</em>
           </div>
         </div>
-        <div className={`${styles.prop} ${styles.propJig}`} aria-hidden="true">
-          <div className={styles.jig} />
-        </div>
 
-        <div className={styles.stage}>
-          <div className={styles.cluster}>
-            <article className={styles.plate} aria-label="Contact card">
-              <span className={`${styles.screw} ${styles.screwTL}`} aria-hidden="true" />
-              <span className={`${styles.screw} ${styles.screwTR}`} aria-hidden="true" />
-              <span className={`${styles.screw} ${styles.screwBL}`} aria-hidden="true" />
-              <span className={`${styles.screw} ${styles.screwBR}`} aria-hidden="true" />
+        <div className={styles.layout}>
+          <div className={styles.primary}>
+            <div className={styles.cluster}>
+              <article className={styles.plate} aria-label="Contact card">
+                <span className={`${styles.screw} ${styles.screwTL}`} aria-hidden="true" />
+                <span className={`${styles.screw} ${styles.screwTR}`} aria-hidden="true" />
+                <span className={`${styles.screw} ${styles.screwBL}`} aria-hidden="true" />
+                <span className={`${styles.screw} ${styles.screwBR}`} aria-hidden="true" />
 
-              <div className={styles.plateBody}>
-                <div className={styles.plateTop}>
-                  <div>
-                    <h2 className={styles.plateName}>Vishvrajsinh Solanki</h2>
-                    <p className={styles.plateRole}>ML &amp; Robotics Engineer</p>
+                <div className={styles.plateBody}>
+                  <div className={styles.plateTop}>
+                    <div>
+                      <h2 className={styles.plateName}>Vishvrajsinh Solanki</h2>
+                      <p className={styles.plateRole}>ML &amp; Robotics Engineer</p>
+                    </div>
+                    <div className={styles.monoBadge} aria-hidden="true">VS</div>
                   </div>
-                  <div className={styles.monoBadge} aria-hidden="true">VS</div>
+
+                  <div className={styles.plateDivider} aria-hidden="true" />
+
+                  <div className={styles.plateMeta}>
+                    <a className={styles.metaLink} href={`mailto:${EMAIL}`}>
+                      <MailIcon />
+                      <span>{EMAIL}</span>
+                    </a>
+                    <p className={styles.metaItem}>
+                      <PinIcon />
+                      <span>Gujarat, India · Available globally</span>
+                    </p>
+                  </div>
                 </div>
 
-                <div className={styles.plateDivider} aria-hidden="true" />
-
-                <div className={styles.plateMeta}>
-                  <a className={styles.metaLink} href={`mailto:${EMAIL}`}>
-                    <MailIcon />
-                    <span>{EMAIL}</span>
-                  </a>
-                  <p className={styles.metaItem}>
-                    <PinIcon />
-                    <span>Gujarat, India · Available globally</span>
-                  </p>
+                <div className={styles.fins} aria-hidden="true">
+                  <span />
+                  <span />
+                  <span />
                 </div>
-              </div>
+              </article>
 
-              <div className={styles.fins} aria-hidden="true">
-                <span />
-                <span />
-                <span />
-              </div>
-            </article>
+              <a
+                className={styles.sdCard}
+                href={RESUME_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open resume PDF"
+              >
+                <span className={styles.sdAntenna} aria-hidden="true" />
+                <div className={styles.sdBody}>
+                  <div className={styles.sdHeader}>RESUME</div>
+                  <div className={styles.sdFace}>
+                    <RobotArmIcon />
+                  </div>
+                  <div className={styles.sdFooter}>
+                    <span>PDF</span>
+                    <span>128MB</span>
+                  </div>
+                </div>
+              </a>
+            </div>
 
-            <a
-              className={styles.sdCard}
-              href={RESUME_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Open resume PDF"
-            >
-              <span className={styles.sdAntenna} aria-hidden="true" />
-              <div className={styles.sdBody}>
-                <div className={styles.sdHeader}>RESUME</div>
-                <div className={styles.sdFace}>
-                  <RobotArmIcon />
-                </div>
-                <div className={styles.sdFooter}>
-                  <span>PDF</span>
-                  <span>128MB</span>
-                </div>
-              </div>
-            </a>
+            <p className={styles.hint}>
+              Open to internships, research collaborations, and hard problems.
+            </p>
           </div>
 
-          <nav className={styles.socialRail} aria-label="Social profiles">
+          <nav className={styles.spine} aria-label="Social profiles">
+            <p className={styles.spineLabel}>Profiles</p>
             {SOCIALS.map((item, i) => (
-              <SocialChip key={item.id} item={item} tilt={CHIP_TILTS[i] ?? 0} />
+              <SocialChip
+                key={item.id}
+                item={item}
+                tilt={CHIP_TILTS[i] ?? 0}
+                shift={CHIP_SHIFTS[i] ?? 0}
+              />
             ))}
           </nav>
-
-          <p className={styles.hint}>
-            Open to internships, research collaborations, and hard problems.
-          </p>
         </div>
       </div>
     </section>
