@@ -24,6 +24,20 @@
   letter-spacing: -0.02em;
 }
 
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.28);
+}
+
 .nav {
   display: flex;
   align-items: center;
