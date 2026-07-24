@@ -1,212 +1,190 @@
-/* Full-viewport engineering desk — no nested card shell */
+/* Full-viewport dark engineering desk — object language from reference, site palette */
 
 .section {
+  --desk-metal: #c8ced6;
+  --desk-metal-deep: #9aa3ae;
+  --desk-ink: #111820;
+  --desk-muted: #3a4555;
+  --desk-line: rgba(255, 255, 255, 0.06);
+  --desk-amber: #ebb01b;
+
   position: relative;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   background:
-    radial-gradient(ellipse 70% 50% at 50% 40%, rgba(120, 170, 210, 0.14), transparent 58%),
-    linear-gradient(180deg, #dce6ee 0%, #c8d6e4 48%, #b8c9da 100%);
-  color: #1a2430;
+    radial-gradient(ellipse 70% 55% at 38% 48%, rgba(40, 48, 72, 0.35), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 78% 28%, rgba(30, 36, 55, 0.25), transparent 55%),
+    linear-gradient(180deg, #0e0c16 0%, var(--color-bg, #0a0810) 45%, #06050c 100%);
+  color: rgba(235, 238, 245, 0.88);
 }
 
-.blueprint {
+.atmosphere {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-}
-
-.blueprintSvg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.55;
 }
 
 .grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(55, 95, 140, 0.11) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(55, 95, 140, 0.11) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 20%, transparent 85%);
+    linear-gradient(var(--desk-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--desk-line) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse 80% 70% at 42% 50%, #000 15%, transparent 78%);
+  opacity: 0.9;
 }
 
-.eyebrow {
+.deskArt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: rgba(160, 180, 220, 0.09);
+}
+
+.artLabel {
+  fill: currentColor;
+  stroke: none;
+  font-size: 12px;
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.08em;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 75% 70% at 45% 50%, transparent 35%, rgba(6, 5, 12, 0.55) 100%);
+}
+
+/* ——— Top bar ——— */
+
+.topBar {
   position: relative;
   z-index: 2;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding:
+    calc(4.75rem + env(safe-area-inset-top, 0px))
+    var(--section-x, clamp(1.25rem, 5vw, 4rem))
+    0;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
   gap: 0.85rem;
-  padding: calc(4.75rem + env(safe-area-inset-top, 0px)) var(--section-x, clamp(1.25rem, 5vw, 4rem)) 0;
+  margin: 0;
   font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(35, 60, 95, 0.55);
+  color: rgba(200, 210, 230, 0.45);
 }
 
 .eyebrowLine {
-  flex: 1;
-  max-width: 5rem;
+  width: 4.5rem;
   height: 1px;
-  background: rgba(35, 60, 95, 0.28);
+  background: rgba(200, 210, 230, 0.22);
 }
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: rgba(200, 210, 230, 0.5);
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #5dce8a;
+  box-shadow: 0 0 0 3px rgba(93, 206, 138, 0.18);
+}
+
+/* ——— Desk stage ——— */
 
 .desk {
   position: relative;
   z-index: 1;
   flex: 1;
+  display: flex;
+  align-items: center;
   min-height: 0;
-  width: 100%;
+  padding:
+    1.5rem
+    var(--section-x, clamp(1.25rem, 5vw, 4rem))
+    2.5rem;
 }
 
-.float {
-  position: absolute;
+.stage {
+  position: relative;
+  width: min(920px, 100%);
+  margin-left: clamp(0rem, 4vw, 3.5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.35rem;
+}
+
+/* ——— Plate + SD cluster ——— */
+
+.cluster {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 640px;
   will-change: transform;
 }
 
-.floatPlate {
-  left: 50%;
-  top: 48%;
-  z-index: 5;
-}
-
-.floatSd {
-  right: max(6%, calc(50% - 360px));
-  top: 22%;
-  z-index: 6;
-}
-
-.floatTape {
-  left: 50%;
-  bottom: 11%;
-  z-index: 6;
-}
-
-.floatGh {
-  left: max(5%, calc(50% - 420px));
-  bottom: 18%;
-  z-index: 6;
-}
-
-.floatIg {
-  right: max(8%, calc(50% - 280px));
-  bottom: 22%;
-  z-index: 5;
-}
-
-.floatRuler {
-  top: 14%;
-  left: 4%;
-  z-index: 3;
-}
-
-.floatJig {
-  top: 12%;
-  right: 5%;
-  z-index: 3;
-}
-
-.floatPen {
-  bottom: 8%;
-  left: 6%;
-  z-index: 3;
-}
-
-/* ——— Metal ID plate ——— */
-
 .plate {
   position: relative;
-  transform: rotate(-1.2deg);
-  width: min(560px, 78vw);
+  z-index: 2;
+  flex: 1 1 auto;
+  width: min(520px, 100%);
   aspect-ratio: 1.72 / 1;
-  padding: clamp(1.35rem, 2.8vw, 2rem) clamp(1.5rem, 3vw, 2.15rem);
+  padding: clamp(1.25rem, 2.5vw, 1.85rem) clamp(1.35rem, 2.8vw, 2rem);
   border-radius: 10px;
+  transform: rotate(-1.1deg);
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.55) 0%, transparent 28%),
     linear-gradient(225deg, rgba(0, 0, 0, 0.08) 0%, transparent 35%),
     repeating-linear-gradient(
       118deg,
       transparent 0 2px,
-      rgba(255, 255, 255, 0.04) 2px 3px
+      rgba(255, 255, 255, 0.035) 2px 3px
     ),
     linear-gradient(160deg, #f0f2f5 0%, #c8ced6 38%, #aeb6c0 62%, #d5dae2 100%);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.75) inset,
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
     0 -1px 0 rgba(0, 0, 0, 0.12) inset,
-    0 2px 3px rgba(255, 255, 255, 0.35) inset,
-    0 28px 50px rgba(25, 40, 60, 0.28),
-    0 10px 18px rgba(25, 40, 60, 0.16),
-    0 2px 4px rgba(0, 0, 0, 0.12);
-}
-
-/* Machined corner notches (reference plate) */
-.plate::before,
-.plate::after {
-  content: '';
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  background: #c5ced8;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
-  z-index: 0;
-}
-
-.plate::before {
-  top: -1px;
-  left: -1px;
-  clip-path: polygon(0 0, 100% 0, 0 100%);
-  background: linear-gradient(135deg, #d8dde4, #b0b8c4);
-}
-
-.plate::after {
-  top: -1px;
-  right: -1px;
-  clip-path: polygon(0 0, 100% 0, 100% 100%);
-  background: linear-gradient(225deg, #d8dde4, #b0b8c4);
-}
-
-.plateNotchBL,
-.plateNotchBR {
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.plateNotchBL {
-  bottom: -1px;
-  left: -1px;
-  background: linear-gradient(45deg, #d8dde4, #b0b8c4);
-  clip-path: polygon(0 0, 0 100%, 100% 100%);
-}
-
-.plateNotchBR {
-  bottom: -1px;
-  right: -1px;
-  background: linear-gradient(315deg, #d8dde4, #b0b8c4);
-  clip-path: polygon(100% 0, 0 100%, 100% 100%);
+    0 28px 50px rgba(0, 0, 0, 0.45),
+    0 10px 18px rgba(0, 0, 0, 0.3);
+  color: var(--desk-ink);
 }
 
 .screw {
   position: absolute;
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 32% 28%, #f5f6f8 0%, #b8bcc4 45%, #7a808a 100%);
+  background: radial-gradient(circle at 32% 28%, #f5f6f8 0%, #b8bcc4 45%, #7a808a 100%);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.35),
-    inset 0 1px 1px rgba(255, 255, 255, 0.7),
-    inset 0 -1px 1px rgba(0, 0, 0, 0.25);
-  z-index: 6;
+    inset 0 1px 1px rgba(255, 255, 255, 0.7);
+  z-index: 3;
 }
 
 .screw::after {
@@ -232,7 +210,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 0.35rem 0.15rem 0.2rem;
+  padding: 0.25rem 0.1rem;
 }
 
 .plateTop {
@@ -245,46 +223,44 @@
 .plateName {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.15rem, 2.4vw, 1.65rem);
+  font-size: clamp(1.1rem, 2.2vw, 1.55rem);
   font-weight: 700;
   letter-spacing: 0.04em;
   line-height: 1.15;
-  color: #111820;
   text-transform: uppercase;
+  color: var(--desk-ink);
 }
 
 .plateRole {
   margin: 0.4rem 0 0;
   font-family: var(--font-mono);
-  font-size: clamp(0.62rem, 1.1vw, 0.74rem);
+  font-size: clamp(0.6rem, 1vw, 0.72rem);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #3a4555;
+  color: var(--desk-muted);
 }
 
 .monoBadge {
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   display: grid;
   place-items: center;
   border-radius: 7px;
-  background:
-    linear-gradient(160deg, #3a5478 0%, #243552 100%);
+  background: linear-gradient(160deg, #3a5478 0%, #243552 100%);
   color: #eef3f8;
   font-family: var(--font-display);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
     0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .plateDivider {
   height: 1px;
-  margin: 0.85rem 0 0.75rem;
+  margin: 0.75rem 0;
   background: linear-gradient(
     90deg,
     transparent,
@@ -297,19 +273,19 @@
 .plateMeta {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 0.5rem;
 }
 
 .metaLink,
 .metaItem {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.5rem;
+  margin: 0;
   font-family: var(--font-mono);
-  font-size: clamp(0.68rem, 1.15vw, 0.78rem);
+  font-size: clamp(0.65rem, 1.05vw, 0.76rem);
   color: #2a3545;
   text-decoration: none;
-  letter-spacing: 0.01em;
 }
 
 .metaLink:hover {
@@ -324,8 +300,8 @@
 
 .fins {
   position: absolute;
-  right: 1.5rem;
-  bottom: 1.15rem;
+  right: 1.35rem;
+  bottom: 1.05rem;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -334,28 +310,31 @@
 
 .fins span {
   display: block;
-  width: 36px;
+  width: 34px;
   height: 2px;
   border-radius: 1px;
   background: linear-gradient(90deg, rgba(40, 50, 65, 0.18), rgba(40, 50, 65, 0.08));
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
-/* ——— SD resume card ——— */
+/* ——— SD resume (overlaps plate) ——— */
 
 .sdCard {
-  display: block;
+  position: absolute;
+  top: -8%;
+  right: -4%;
+  z-index: 4;
   width: 108px;
   text-decoration: none;
   color: inherit;
-  transform: rotate(7deg);
-  filter: drop-shadow(0 16px 28px rgba(20, 35, 55, 0.32));
+  transform: rotate(8deg);
+  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.45));
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
 }
 
 .sdCard:hover {
   transform: rotate(5deg) translateY(-6px) scale(1.03);
-  filter: drop-shadow(0 22px 36px rgba(20, 35, 55, 0.4));
+  filter: drop-shadow(0 22px 36px rgba(0, 0, 0, 0.55));
 }
 
 .sdBody {
@@ -363,13 +342,9 @@
   border-radius: 5px 5px 8px 8px;
   overflow: hidden;
   background: linear-gradient(180deg, #1a1f28 0%, #0e1116 100%);
-  border: 1px solid rgba(0, 0, 0, 0.45);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 1px 0 rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
-/* SD card top contacts notch */
 .sdBody::before {
   content: '';
   position: absolute;
@@ -379,7 +354,6 @@
   height: 10px;
   background: #2a3140;
   border-radius: 0 0 3px 3px;
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
 
 .sdHeader {
@@ -396,15 +370,14 @@
 .sdFace {
   display: grid;
   place-items: center;
-  height: 78px;
-  background:
-    linear-gradient(180deg, #3a424e 0%, #2a313c 100%);
+  height: 76px;
+  background: linear-gradient(180deg, #3a424e 0%, #2a313c 100%);
   color: rgba(220, 230, 240, 0.55);
 }
 
 .sdFace svg {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
 }
 
 .sdFooter {
@@ -426,7 +399,6 @@
   height: 18px;
   border-radius: 2px;
   background: linear-gradient(180deg, #c5ccd6, #8a929e);
-  box-shadow: 1px 0 0 rgba(0, 0, 0, 0.2);
 }
 
 .sdAntenna::after {
@@ -440,133 +412,158 @@
   background: linear-gradient(180deg, #b0b8c2, #7a828c);
 }
 
-/* ——— Kapton LinkedIn tape ——— */
+/* ——— Social rail ——— */
 
-.tape {
+.socialRail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 0.75rem;
+  width: 100%;
+  max-width: 720px;
+  padding-left: 0.25rem;
+}
+
+.chip {
+  --tilt: 0deg;
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.55rem 1rem;
+  gap: 0.45rem;
+  padding: 0.48rem 0.78rem 0.48rem 0.55rem;
+  border-radius: 6px;
   text-decoration: none;
-  color: #1a1408;
+  color: rgba(230, 235, 245, 0.88);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.02em;
-  transform: rotate(-5deg);
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 220, 100, 0.55) 0%,
-      rgba(235, 176, 27, 0.92) 18%,
-      rgba(210, 150, 20, 0.88) 82%,
-      rgba(180, 120, 15, 0.75) 100%
-    );
-  border: none;
-  /* serrated tape edges */
-  clip-path: polygon(
-    0% 8%, 2% 0%, 4% 8%, 6% 0%, 8% 8%, 10% 0%, 12% 8%, 14% 0%, 16% 8%, 18% 0%,
-    20% 8%, 22% 0%, 24% 8%, 26% 0%, 28% 8%, 30% 0%, 32% 8%, 34% 0%, 36% 8%, 38% 0%,
-    40% 8%, 42% 0%, 44% 8%, 46% 0%, 48% 8%, 50% 0%, 52% 8%, 54% 0%, 56% 8%, 58% 0%,
-    60% 8%, 62% 0%, 64% 8%, 66% 0%, 68% 8%, 70% 0%, 72% 8%, 74% 0%, 76% 8%, 78% 0%,
-    80% 8%, 82% 0%, 84% 8%, 86% 0%, 88% 8%, 90% 0%, 92% 8%, 94% 0%, 96% 8%, 98% 0%,
-    100% 8%, 100% 92%, 98% 100%, 96% 92%, 94% 100%, 92% 92%, 90% 100%, 88% 92%,
-    86% 100%, 84% 92%, 82% 100%, 80% 92%, 78% 100%, 76% 92%, 74% 100%, 72% 92%,
-    70% 100%, 68% 92%, 66% 100%, 64% 92%, 62% 100%, 60% 92%, 58% 100%, 56% 92%,
-    54% 100%, 52% 92%, 50% 100%, 48% 92%, 46% 100%, 44% 92%, 42% 100%, 40% 92%,
-    38% 100%, 36% 92%, 34% 100%, 32% 92%, 30% 100%, 28% 92%, 26% 100%, 24% 92%,
-    22% 100%, 20% 92%, 18% 100%, 16% 92%, 14% 100%, 12% 92%, 10% 100%, 8% 92%,
-    6% 100%, 4% 92%, 2% 100%, 0% 92%
-  );
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  background: rgba(22, 24, 34, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow:
-    0 8px 20px rgba(40, 30, 10, 0.22),
+    0 8px 18px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transform: rotate(var(--tilt));
+  transition: transform 0.25s ease, background 0.2s ease, border-color 0.2s ease;
+  will-change: transform;
+}
+
+.chip:hover {
+  background: rgba(32, 36, 50, 0.95);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: rotate(0deg) translateY(-2px);
+}
+
+.chipAmber {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 220, 100, 0.95) 0%,
+    rgba(235, 176, 27, 0.92) 45%,
+    rgba(200, 140, 18, 0.9) 100%
+  );
+  color: #1a1408;
+  border-color: rgba(120, 80, 10, 0.35);
+  box-shadow:
+    0 8px 18px rgba(40, 30, 10, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  transition: transform 0.3s ease, filter 0.3s ease;
-  filter: drop-shadow(0 4px 8px rgba(40, 30, 10, 0.15));
 }
 
-.tape:hover {
-  transform: rotate(-3deg) translateY(-3px);
+.chipAmber:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 228, 120, 1) 0%,
+    rgba(235, 176, 27, 0.98) 100%
+  );
+  border-color: rgba(120, 80, 10, 0.45);
 }
 
-.tapeIcon {
+.chipPlaceholder {
+  opacity: 0.55;
+  cursor: default;
+  border-style: dashed;
+}
+
+.chipPlaceholder:hover {
+  transform: rotate(var(--tilt));
+  background: rgba(22, 24, 34, 0.88);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.chipMark {
   display: grid;
   place-items: center;
   width: 22px;
   height: 22px;
-  border-radius: 3px;
-  background: #0a0a0a;
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: 0.65rem;
-  font-weight: 700;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
 }
 
-/* ——— GitHub + IG chips ——— */
+.chipAmber .chipMark {
+  background: #0a0a0a;
+  color: #fff;
+}
 
-.ghChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 0.95rem;
-  border-radius: 999px;
-  text-decoration: none;
-  color: rgba(255, 255, 255, 0.9);
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
+.markIn,
+.markLetter {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
   letter-spacing: 0.02em;
-  background: rgba(18, 24, 32, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 10px 24px rgba(15, 25, 40, 0.28);
-  transform: rotate(-4deg);
-  transition: transform 0.3s ease, background 0.25s ease;
+  line-height: 1;
 }
 
-.ghChip:hover {
-  background: rgba(18, 24, 32, 0.95);
-  transform: rotate(-2deg) translateY(-3px);
+.chipLabel {
+  white-space: nowrap;
 }
 
-.igTag {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.45rem 0.85rem;
-  border-radius: 999px;
-  text-decoration: none;
-  color: rgba(30, 45, 65, 0.75);
+.chipSoon {
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  padding-left: 0.15rem;
+}
+
+.hint {
+  margin: 0.15rem 0 0;
+  max-width: 36rem;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
-  background: rgba(255, 255, 255, 0.45);
-  border: 1px solid rgba(40, 60, 90, 0.18);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 8px 18px rgba(30, 45, 65, 0.12);
-  transform: rotate(3deg);
-  transition: transform 0.3s ease, background 0.25s ease;
+  font-size: 0.72rem;
+  line-height: 1.55;
+  letter-spacing: 0.02em;
+  color: rgba(190, 200, 220, 0.42);
+  padding-left: 0.25rem;
 }
 
-.igTag:hover {
-  background: rgba(255, 255, 255, 0.7);
-  transform: rotate(1deg) translateY(-2px);
+/* ——— Quiet props ——— */
+
+.prop {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.55;
+  z-index: 0;
 }
 
-/* ——— Desk props ——— */
+.propRuler {
+  top: 8%;
+  left: 3%;
+}
+
+.propJig {
+  top: 12%;
+  right: 6%;
+}
 
 .ruler {
   position: relative;
-  width: min(220px, 28vw);
-  height: 28px;
+  width: min(200px, 22vw);
+  height: 26px;
   display: flex;
   align-items: flex-end;
-  gap: 0;
-  padding: 0 0.4rem 0.2rem;
+  padding: 0 0.35rem 0.15rem;
   border-radius: 3px;
-  background:
-    linear-gradient(180deg, #e8ecf0 0%, #b8c0c8 45%, #9aa4b0 100%);
-  box-shadow:
-    0 6px 16px rgba(30, 45, 65, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  transform: rotate(-12deg);
+  background: linear-gradient(180deg, #d8dde4 0%, #9aa4b0 100%);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+  transform: rotate(-11deg);
   overflow: hidden;
 }
 
@@ -578,34 +575,29 @@
 
 .ruler span:nth-child(5n) {
   height: 70%;
-  border-left-width: 1.5px;
 }
 
-.rulerLabel {
-  position: absolute !important;
+.ruler em {
+  position: absolute;
   top: 2px;
   right: 6px;
-  border: none !important;
-  height: auto !important;
-  flex: none !important;
+  font-style: normal;
   font-family: var(--font-mono);
-  font-size: 0.5rem;
+  font-size: 0.48rem;
   letter-spacing: 0.12em;
   color: rgba(40, 55, 75, 0.55);
 }
 
 .jig {
   position: relative;
-  width: min(150px, 18vw);
-  height: min(100px, 12vw);
+  width: min(120px, 14vw);
+  height: min(80px, 10vw);
   border-radius: 6px;
-  background:
-    linear-gradient(145deg, #8a949e 0%, #5a646e 40%, #3a4450 70%, #6a7480 100%);
+  background: linear-gradient(145deg, #6a7480 0%, #3a4450 55%, #5a646e 100%);
   box-shadow:
-    0 14px 28px rgba(20, 30, 45, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
-  transform: rotate(8deg);
+    0 12px 24px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: rotate(9deg);
 }
 
 .jig::before {
@@ -617,179 +609,65 @@
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.jig::after {
-  content: '';
-  position: absolute;
-  top: 12%;
-  right: 12%;
-  width: 22%;
-  height: 28%;
-  border-radius: 3px;
-  background: linear-gradient(160deg, #9aa4ae, #5a646e);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.pen {
-  position: relative;
-  width: 8px;
-  height: min(140px, 18vw);
-  border-radius: 4px;
-  background:
-    linear-gradient(90deg, #1a3a5c 0%, #2a5a8a 40%, #1a3a5c 60%, #0a2038 100%);
-  box-shadow:
-    0 8px 20px rgba(20, 35, 55, 0.25),
-    inset 1px 0 0 rgba(255, 255, 255, 0.15);
-  transform: rotate(28deg);
-}
-
-.pen::before {
-  content: '';
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 10px;
-  height: 14px;
-  border-radius: 2px 2px 1px 1px;
-  background: linear-gradient(180deg, #c0c8d0, #8a929a);
-}
-
-.pen::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 12px solid #c8a060;
-}
-
 /* ——— Responsive ——— */
 
 @media (max-width: 900px) {
-  .section {
-    min-height: 100svh;
-    overflow: hidden;
-  }
-
   .desk {
-    min-height: calc(100svh - 5rem);
+    align-items: flex-start;
+    padding-top: 2rem;
   }
 
-  .floatPlate {
-    left: 50%;
-    top: 46%;
+  .stage {
+    margin-left: 0;
+    width: 100%;
   }
 
-  .plate {
-    width: min(480px, 88vw);
-    transform: rotate(-0.8deg);
-  }
-
-  .floatSd {
-    right: 6%;
-    top: 16%;
+  .cluster {
+    max-width: 100%;
   }
 
   .sdCard {
     width: 92px;
+    right: -2%;
+    top: -6%;
   }
 
-  .floatTape {
-    left: 50%;
-    bottom: 10%;
-  }
-
-  .tape {
-    font-size: 0.65rem;
-    max-width: 92vw;
-  }
-
-  .floatGh {
-    left: 5%;
-    bottom: 22%;
-  }
-
-  .ghChip {
-    font-size: 0.6rem;
-    max-width: 46vw;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .floatIg {
-    right: 5%;
-    bottom: 24%;
-  }
-
-  .floatRuler {
-    top: 10%;
-    left: 2%;
-  }
-
-  .ruler {
-    width: 140px;
-    height: 22px;
-  }
-
-  .floatJig {
-    top: 10%;
-  }
-
-  .jig {
-    width: 90px;
-    height: 60px;
-  }
-
-  .pen {
-    height: 90px;
-  }
-
-  .floatPen {
-    bottom: 6%;
+  .propRuler,
+  .propJig {
+    opacity: 0.35;
   }
 }
 
 @media (max-width: 600px) {
-  .eyebrow {
+  .topBar {
     padding-top: calc(4.25rem + env(safe-area-inset-top, 0px));
-  }
-
-  .floatPlate {
-    top: 44%;
+    flex-wrap: wrap;
   }
 
   .plate {
-    width: min(400px, 92vw);
-    aspect-ratio: 1.55 / 1;
-    padding: 1.15rem 1.2rem;
+    width: 100%;
+    aspect-ratio: 1.5 / 1;
+    padding: 1.1rem 1.15rem;
   }
 
   .plateName {
-    font-size: 1.05rem;
+    font-size: 1.02rem;
   }
 
   .monoBadge {
-    width: 38px;
-    height: 38px;
-    font-size: 0.7rem;
-  }
-
-  .floatSd {
-    top: 14%;
-    right: 4%;
+    width: 36px;
+    height: 36px;
+    font-size: 0.68rem;
   }
 
   .sdCard {
     width: 78px;
+    right: 0;
+    top: -10%;
   }
 
   .sdFace {
-    height: 58px;
+    height: 56px;
   }
 
   .sdFace svg {
@@ -797,57 +675,33 @@
     height: 28px;
   }
 
-  .floatTape {
-    bottom: 8%;
+  .socialRail {
+    gap: 0.5rem;
   }
 
-  .tape {
-    padding: 0.45rem 0.75rem;
+  .chip {
+    padding: 0.4rem 0.65rem 0.4rem 0.45rem;
+    font-size: 0.62rem;
   }
 
-  .tape span:last-child {
-    max-width: 58vw;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .floatGh {
-    bottom: 20%;
-  }
-
-  .ghChip {
-    padding: 0.45rem 0.7rem;
-  }
-
-  .ghChip span {
+  .chipSoon {
     display: none;
   }
 
-  .floatIg {
-    bottom: 20%;
+  .propRuler {
+    display: none;
   }
 
-  .igTag {
-    font-size: 0.6rem;
-  }
-
-  .floatRuler,
-  .floatJig {
-    opacity: 0.7;
-  }
-
-  .floatPen {
-    left: 3%;
-    opacity: 0.65;
+  .propJig {
+    opacity: 0.25;
+    right: 4%;
+    top: 6%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sdCard,
-  .tape,
-  .ghChip,
-  .igTag {
+  .chip,
+  .sdCard {
     transition: none;
   }
 }

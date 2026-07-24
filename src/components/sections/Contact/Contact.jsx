@@ -7,10 +7,18 @@ import styles from './Contact.module.css'
 gsap.registerPlugin(ScrollTrigger)
 
 const EMAIL = 'vishvrajsolanki0207@gmail.com'
-const LINKEDIN_URL = 'https://www.linkedin.com/in/vishvrajsinh-solanki-1396ab37a/'
-const GITHUB_URL = 'https://github.com/vishvrajsolanki-dev'
-const INSTAGRAM_URL = 'https://instagram.com/vishvrajsinh_solanki'
 const RESUME_URL = 'https://drive.google.com/file/d/1vH0gETTidsGGQk5npUYWETKgLSawnOBz/view?usp=sharing'
+
+/** Swap `href: null` → real URL when ready */
+const SOCIALS = [
+  { id: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/vishvrajsinh-solanki-1396ab37a/', accent: 'amber' },
+  { id: 'github', label: 'GitHub', href: 'https://github.com/vishvrajsolanki-dev' },
+  { id: 'x', label: 'X', href: null },
+  { id: 'instagram', label: 'Instagram', href: 'https://instagram.com/vishvrajsinh_solanki' },
+  { id: 'indeed', label: 'Indeed', href: null },
+  { id: 'kaggle', label: 'Kaggle', href: null },
+  { id: 'leetcode', label: 'LeetCode', href: null },
+]
 
 function MailIcon() {
   return (
@@ -42,44 +50,112 @@ function RobotArmIcon() {
   )
 }
 
-function GitHubMark() {
-  return (
-    <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
-      <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
-    </svg>
-  )
+function SocialMark({ id }) {
+  switch (id) {
+    case 'linkedin':
+      return <span className={styles.markIn}>in</span>
+    case 'github':
+      return (
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+        </svg>
+      )
+    case 'x':
+      return (
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
+        </svg>
+      )
+    case 'instagram':
+      return (
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5" />
+          <circle cx="12" cy="12" r="4" />
+          <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none" />
+        </svg>
+      )
+    case 'indeed':
+      return <span className={styles.markLetter}>Id</span>
+    case 'kaggle':
+      return <span className={styles.markLetter}>Kg</span>
+    case 'leetcode':
+      return <span className={styles.markLetter}>LC</span>
+    default:
+      return null
+  }
 }
 
-function BlueprintArt() {
+function DeskArt() {
   return (
-    <svg className={styles.blueprintSvg} viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <g fill="none" stroke="#3a6a9a" strokeOpacity="0.45" strokeWidth="1.1">
-        <circle cx="180" cy="150" r="58" />
-        <circle cx="180" cy="150" r="30" strokeDasharray="4 5" />
-        <path d="M180 78v22M180 200v22M108 150h22M230 150h22" />
-        <line x1="120" y1="230" x2="240" y2="230" />
-        <text x="132" y="252" fill="#3a6a9a" fillOpacity="0.5" stroke="none" fontSize="13" fontFamily="monospace">DETAIL A · Ø54</text>
+    <svg className={styles.deskArt} viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <g fill="none" stroke="currentColor" strokeWidth="1">
+        <circle cx="160" cy="140" r="48" />
+        <circle cx="160" cy="140" r="24" strokeDasharray="3 4" />
+        <path d="M160 78v18M160 184v18M98 140h18M204 140h18" />
+        <text x="118" y="222" className={styles.artLabel}>DETAIL A</text>
 
-        <rect x="820" y="70" width="260" height="150" />
-        <path d="M845 105h210M845 140h160M845 175h190" />
-        <circle cx="980" cy="145" r="22" />
-        <text x="845" y="248" fill="#3a6a9a" fillOpacity="0.5" stroke="none" fontSize="13" fontFamily="monospace">ISO VIEW · 2.50</text>
+        <rect x="880" y="80" width="200" height="120" />
+        <path d="M900 110h160M900 140h120M900 170h140" />
+        <text x="900" y="228" className={styles.artLabel}>ISO · 2.50</text>
 
-        <path d="M90 480h280v170H90z" />
-        <path d="M125 520h210M125 565h170M125 610h195" strokeDasharray="3 4" />
-        <text x="90" y="680" fill="#3a6a9a" fillOpacity="0.5" stroke="none" fontSize="13" fontFamily="monospace">24.00</text>
+        <path d="M720 520l140-32 48 100-140 32z" />
+        <circle cx="810" cy="560" r="14" />
+        <text x="720" y="640" className={styles.artLabel}>REF 01</text>
 
-        <path d="M640 460l200-48 68 135-200 48z" />
-        <circle cx="780" cy="520" r="20" />
-        <path d="M760 520h40M780 500v40" />
-        <text x="640" y="620" fill="#3a6a9a" fillOpacity="0.5" stroke="none" fontSize="13" fontFamily="monospace">FRONT · 650</text>
-
-        <path d="M480 100v80M460 140h40" strokeDasharray="2 3" />
-        <text x="500" y="120" fill="#3a6a9a" fillOpacity="0.4" stroke="none" fontSize="12" fontFamily="monospace">REF 01</text>
+        <path d="M80 520h200v120H80z" strokeDasharray="4 4" />
+        <text x="80" y="670" className={styles.artLabel}>24.00</text>
       </g>
     </svg>
   )
 }
+
+function SocialChip({ item, tilt }) {
+  const className = [
+    styles.chip,
+    item.accent === 'amber' ? styles.chipAmber : '',
+    !item.href ? styles.chipPlaceholder : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  const inner = (
+    <>
+      <span className={styles.chipMark}>
+        <SocialMark id={item.id} />
+      </span>
+      <span className={styles.chipLabel}>{item.label}</span>
+      {!item.href && <span className={styles.chipSoon}>soon</span>}
+    </>
+  )
+
+  if (!item.href) {
+    return (
+      <span
+        className={className}
+        style={{ '--tilt': `${tilt}deg` }}
+        aria-label={`${item.label} — link coming soon`}
+        title="Link coming soon"
+      >
+        {inner}
+      </span>
+    )
+  }
+
+  return (
+    <a
+      className={className}
+      style={{ '--tilt': `${tilt}deg` }}
+      href={item.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={item.label}
+    >
+      {inner}
+    </a>
+  )
+}
+
+const CHIP_TILTS = [-3.5, 2.2, -1.8, 3.1, -2.6, 1.4, -3.0]
 
 export default function Contact() {
   const sectionRef = useRef(null)
@@ -87,84 +163,68 @@ export default function Contact() {
   useGSAP(() => {
     const section = sectionRef.current
     if (!section) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const cluster = section.querySelector(`.${styles.cluster}`)
+    const chips = gsap.utils.toArray(section.querySelectorAll(`.${styles.chip}`))
+    const props = gsap.utils.toArray(section.querySelectorAll(`.${styles.prop}`))
 
-    const floats = gsap.utils.toArray(section.querySelectorAll(`.${styles.float}`))
-    const plateFloat = section.querySelector(`.${styles.floatPlate}`)
-    const tapeFloat = section.querySelector(`.${styles.floatTape}`)
+    const enter = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 72%',
+        once: true,
+      },
+    })
 
-    // GSAP owns wrapper transforms so drift doesn't fight CSS translate
-    gsap.set(plateFloat, { xPercent: -52, yPercent: -52 })
-    gsap.set(tapeFloat, { xPercent: -18 })
-
-    if (!reduced) {
-      const enter = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 72%',
-          once: true,
-        },
+    enter
+      .from(section.querySelector(`.${styles.topBar}`), {
+        opacity: 0,
+        y: 10,
+        duration: 0.4,
+        ease: 'power2.out',
       })
+      .from(cluster, {
+        y: 28,
+        opacity: 0.4,
+        duration: 0.85,
+        ease: 'power3.out',
+      }, '-=0.15')
+      .from(chips, {
+        opacity: 0,
+        y: 16,
+        stagger: 0.05,
+        duration: 0.45,
+        ease: 'power2.out',
+      }, '-=0.4')
+      .from(props, {
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.06,
+        ease: 'power1.out',
+      }, '-=0.35')
 
-      enter
-        .from(section.querySelector(`.${styles.eyebrow}`), {
-          opacity: 0,
-          y: 8,
-          duration: 0.35,
-          ease: 'power2.out',
-        })
-        .from(section.querySelector(`.${styles.floatPlate}`), {
-          y: 36,
-          opacity: 0.35,
-          duration: 0.9,
-          ease: 'power3.out',
-        }, '-=0.1')
-        .from(
-          [
-            section.querySelector(`.${styles.floatSd}`),
-            section.querySelector(`.${styles.floatTape}`),
-            section.querySelector(`.${styles.floatGh}`),
-            section.querySelector(`.${styles.floatIg}`),
-          ],
-          {
-            opacity: 0,
-            y: 22,
-            stagger: 0.09,
-            duration: 0.55,
-            ease: 'power2.out',
-          },
-          '-=0.45',
-        )
-        .from(
-          [
-            section.querySelector(`.${styles.floatRuler}`),
-            section.querySelector(`.${styles.floatJig}`),
-            section.querySelector(`.${styles.floatPen}`),
-          ],
-          {
-            opacity: 0,
-            duration: 0.6,
-            stagger: 0.08,
-            ease: 'power1.out',
-          },
-          '-=0.5',
-        )
-    }
+    // Subtle 10s drift on cluster + chips
+    gsap.to(cluster, {
+      y: '+=8',
+      x: '+=6',
+      duration: 10,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1,
+      delay: 1.1,
+    })
 
-    if (reduced) return
-
-    // Continuous 10s desk drift (delayed so enter animation can settle)
-    floats.forEach((el, i) => {
+    chips.forEach((el, i) => {
       const dir = i % 2 === 0 ? 1 : -1
       gsap.to(el, {
-        x: `+=${dir * (8 + (i % 4) * 3)}`,
-        y: `+=${-dir * (6 + (i % 3) * 2)}`,
+        y: `+=${dir * (4 + (i % 3))}`,
+        x: `+=${-dir * (3 + (i % 2))}`,
         duration: 10,
         ease: 'sine.inOut',
         yoyo: true,
         repeat: -1,
-        delay: 1.2 + i * 0.35,
+        delay: 1.2 + i * 0.2,
       })
     })
   }, { scope: sectionRef })
@@ -176,130 +236,104 @@ export default function Contact() {
       ref={sectionRef}
       aria-labelledby="contact-heading"
     >
-      <div className={styles.blueprint} aria-hidden="true">
+      <div className={styles.atmosphere} aria-hidden="true">
         <div className={styles.grid} />
-        <BlueprintArt />
+        <DeskArt />
+        <div className={styles.vignette} />
       </div>
 
-      <p className={styles.eyebrow} id="contact-heading">
-        <span>11 — Contact</span>
-        <span className={styles.eyebrowLine} aria-hidden="true" />
-      </p>
+      <div className={styles.topBar}>
+        <p className={styles.eyebrow} id="contact-heading">
+          <span>11 — Contact</span>
+          <span className={styles.eyebrowLine} />
+        </p>
+        <p className={styles.status}>
+          <span className={styles.statusDot} aria-hidden="true" />
+          Available globally
+        </p>
+      </div>
 
       <div className={styles.desk}>
-        <div className={`${styles.float} ${styles.floatRuler}`} aria-hidden="true">
+        <div className={`${styles.prop} ${styles.propRuler}`} aria-hidden="true">
           <div className={styles.ruler}>
-            {Array.from({ length: 18 }, (_, i) => (
+            {Array.from({ length: 16 }, (_, i) => (
               <span key={i} />
             ))}
-            <span className={styles.rulerLabel}>INOX</span>
+            <em>INOX</em>
           </div>
         </div>
-        <div className={`${styles.float} ${styles.floatJig}`} aria-hidden="true">
+        <div className={`${styles.prop} ${styles.propJig}`} aria-hidden="true">
           <div className={styles.jig} />
         </div>
-        <div className={`${styles.float} ${styles.floatPen}`} aria-hidden="true">
-          <div className={styles.pen} />
-        </div>
 
-        <div className={`${styles.float} ${styles.floatPlate}`}>
-          <article className={styles.plate} aria-label="Contact card">
-            <span className={styles.plateNotchBL} aria-hidden="true" />
-            <span className={styles.plateNotchBR} aria-hidden="true" />
-            <span className={`${styles.screw} ${styles.screwTL}`} aria-hidden="true" />
-            <span className={`${styles.screw} ${styles.screwTR}`} aria-hidden="true" />
-            <span className={`${styles.screw} ${styles.screwBL}`} aria-hidden="true" />
-            <span className={`${styles.screw} ${styles.screwBR}`} aria-hidden="true" />
+        <div className={styles.stage}>
+          <div className={styles.cluster}>
+            <article className={styles.plate} aria-label="Contact card">
+              <span className={`${styles.screw} ${styles.screwTL}`} aria-hidden="true" />
+              <span className={`${styles.screw} ${styles.screwTR}`} aria-hidden="true" />
+              <span className={`${styles.screw} ${styles.screwBL}`} aria-hidden="true" />
+              <span className={`${styles.screw} ${styles.screwBR}`} aria-hidden="true" />
 
-            <div className={styles.plateBody}>
-              <div className={styles.plateTop}>
-                <div>
-                  <h2 className={styles.plateName}>Vishvrajsinh Solanki</h2>
-                  <p className={styles.plateRole}>ML &amp; Robotics Engineer</p>
+              <div className={styles.plateBody}>
+                <div className={styles.plateTop}>
+                  <div>
+                    <h2 className={styles.plateName}>Vishvrajsinh Solanki</h2>
+                    <p className={styles.plateRole}>ML &amp; Robotics Engineer</p>
+                  </div>
+                  <div className={styles.monoBadge} aria-hidden="true">VS</div>
                 </div>
-                <div className={styles.monoBadge} aria-hidden="true">VS</div>
+
+                <div className={styles.plateDivider} aria-hidden="true" />
+
+                <div className={styles.plateMeta}>
+                  <a className={styles.metaLink} href={`mailto:${EMAIL}`}>
+                    <MailIcon />
+                    <span>{EMAIL}</span>
+                  </a>
+                  <p className={styles.metaItem}>
+                    <PinIcon />
+                    <span>Gujarat, India · Available globally</span>
+                  </p>
+                </div>
               </div>
 
-              <div className={styles.plateDivider} aria-hidden="true" />
-
-              <div className={styles.plateMeta}>
-                <a className={styles.metaLink} href={`mailto:${EMAIL}`}>
-                  <MailIcon />
-                  <span>{EMAIL}</span>
-                </a>
-                <p className={styles.metaItem}>
-                  <PinIcon />
-                  <span>Gujarat, India · Available globally</span>
-                </p>
+              <div className={styles.fins} aria-hidden="true">
+                <span />
+                <span />
+                <span />
               </div>
-            </div>
+            </article>
 
-            <div className={styles.fins} aria-hidden="true">
-              <span />
-              <span />
-              <span />
-            </div>
-          </article>
-        </div>
-
-        <div className={`${styles.float} ${styles.floatSd}`}>
-          <a
-            className={styles.sdCard}
-            href={RESUME_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Open resume PDF"
-          >
-            <span className={styles.sdAntenna} aria-hidden="true" />
-            <div className={styles.sdBody}>
-              <div className={styles.sdHeader}>RESUME</div>
-              <div className={styles.sdFace}>
-                <RobotArmIcon />
+            <a
+              className={styles.sdCard}
+              href={RESUME_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open resume PDF"
+            >
+              <span className={styles.sdAntenna} aria-hidden="true" />
+              <div className={styles.sdBody}>
+                <div className={styles.sdHeader}>RESUME</div>
+                <div className={styles.sdFace}>
+                  <RobotArmIcon />
+                </div>
+                <div className={styles.sdFooter}>
+                  <span>PDF</span>
+                  <span>128MB</span>
+                </div>
               </div>
-              <div className={styles.sdFooter}>
-                <span>PDF</span>
-                <span>128MB</span>
-              </div>
-            </div>
-          </a>
-        </div>
+            </a>
+          </div>
 
-        <div className={`${styles.float} ${styles.floatTape}`}>
-          <a
-            className={styles.tape}
-            href={LINKEDIN_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn profile"
-          >
-            <span className={styles.tapeIcon}>in</span>
-            <span>linkedin.com/in/vishvrajsinh-solanki</span>
-          </a>
-        </div>
+          <nav className={styles.socialRail} aria-label="Social profiles">
+            {SOCIALS.map((item, i) => (
+              <SocialChip key={item.id} item={item} tilt={CHIP_TILTS[i] ?? 0} />
+            ))}
+          </nav>
 
-        <div className={`${styles.float} ${styles.floatGh}`}>
-          <a
-            className={styles.ghChip}
-            href={GITHUB_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub profile"
-          >
-            <GitHubMark />
-            <span>github.com/vishvrajsolanki-dev</span>
-          </a>
-        </div>
-
-        <div className={`${styles.float} ${styles.floatIg}`}>
-          <a
-            className={styles.igTag}
-            href={INSTAGRAM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Instagram profile"
-          >
-            @vishvrajsinh_solanki
-          </a>
+          <p className={styles.hint}>
+            Open to internships, research collaborations, and hard problems.
+          </p>
         </div>
       </div>
     </section>
