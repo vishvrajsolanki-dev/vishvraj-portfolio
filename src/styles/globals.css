@@ -23,6 +23,8 @@
     --color-accent: #FFFFFF;
     --color-accent-dim: rgba(255, 255, 255, 0.6);
     --color-accent-muted: rgba(255, 255, 255, 0.2);
+    /* TrackBot mascot systems-online glow (teal, violet-black safe) */
+    --mascot-glow: #6EE7E0;
     --color-text-primary: #FFFFFF;
     --color-text-secondary: rgba(255, 255, 255, 0.6);
     --color-text-muted: rgba(255, 255, 255, 0.35);
