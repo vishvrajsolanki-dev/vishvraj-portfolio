@@ -20,9 +20,7 @@ const SOCIALS = [
   { id: 'leetcode', label: 'LeetCode', href: null },
 ]
 
-/** Alternating tilts; negative shift pulls chips left into the mid gap */
-const CHIP_TILTS = [-6.5, 5.2, -4.8, 7.1, -5.6, 4.4, -6.0]
-const CHIP_SHIFTS = [-8, -28, -12, -36, -16, -30, -10]
+const CHIP_TILTS = [-5.5, 4.2, -3.8, 5.5, -4.6, 3.4, -5.0]
 
 function MailIcon() {
   return (
@@ -93,23 +91,22 @@ function DeskArt() {
   return (
     <svg className={styles.deskArt} viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <g fill="none" stroke="currentColor" strokeWidth="1">
-        <circle cx="140" cy="160" r="42" />
-        <circle cx="140" cy="160" r="20" strokeDasharray="3 4" />
-        <path d="M140 104v16M140 200v16M88 160h16M176 160h16" />
-        <text x="100" y="238" className={styles.artLabel}>DETAIL A</text>
+        <circle cx="90" cy="200" r="36" />
+        <circle cx="90" cy="200" r="16" strokeDasharray="3 4" />
+        <text x="55" y="268" className={styles.artLabel}>DETAIL A</text>
 
-        <rect x="520" y="90" width="160" height="90" />
-        <path d="M540 115h120M540 140h90M540 165h105" />
-        <text x="520" y="208" className={styles.artLabel}>ISO · 2.50</text>
+        <rect x="980" y="140" width="140" height="80" />
+        <path d="M995 165h110M995 185h80M995 205h95" />
+        <text x="980" y="248" className={styles.artLabel}>ISO · 2.50</text>
 
-        <path d="M80 560h160v100H80z" strokeDasharray="4 4" />
-        <text x="80" y="690" className={styles.artLabel}>24.00</text>
+        <path d="M1050 560h90v70h-90z" strokeDasharray="4 4" />
+        <text x="1050" y="660" className={styles.artLabel}>REF 01</text>
       </g>
     </svg>
   )
 }
 
-function SocialChip({ item, tilt, shift }) {
+function SocialChip({ item, tilt }) {
   const className = [
     styles.chip,
     item.accent === 'amber' ? styles.chipAmber : '',
@@ -118,10 +115,7 @@ function SocialChip({ item, tilt, shift }) {
     .filter(Boolean)
     .join(' ')
 
-  const style = {
-    '--tilt': `${tilt}deg`,
-    '--shift': `${shift}px`,
-  }
+  const style = { '--tilt': `${tilt}deg` }
 
   const inner = (
     <>
@@ -168,8 +162,7 @@ export default function Contact() {
     if (!section) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    const primary = section.querySelector(`.${styles.primary}`)
-    const spine = section.querySelector(`.${styles.spine}`)
+    const board = section.querySelector(`.${styles.board}`)
     const chips = gsap.utils.toArray(section.querySelectorAll(`.${styles.chip}`))
     const props = gsap.utils.toArray(section.querySelectorAll(`.${styles.prop}`))
 
@@ -185,38 +178,31 @@ export default function Contact() {
       .from(section.querySelector(`.${styles.topBar}`), {
         opacity: 0,
         y: 10,
-        duration: 0.4,
+        duration: 0.35,
         ease: 'power2.out',
       })
-      .from(primary, {
-        y: 28,
-        opacity: 0.4,
+      .from(board, {
+        y: 26,
+        opacity: 0.35,
         duration: 0.85,
         ease: 'power3.out',
-      }, '-=0.15')
-      .from(spine, {
-        x: 24,
-        opacity: 0,
-        duration: 0.7,
-        ease: 'power2.out',
-      }, '-=0.55')
+      }, '-=0.1')
       .from(chips, {
         opacity: 0,
-        x: 18,
-        stagger: 0.06,
+        x: 14,
+        stagger: 0.05,
         duration: 0.4,
         ease: 'power2.out',
       }, '-=0.45')
       .from(props, {
         opacity: 0,
-        duration: 0.5,
-        stagger: 0.06,
+        duration: 0.45,
+        stagger: 0.05,
         ease: 'power1.out',
-      }, '-=0.35')
+      }, '-=0.3')
 
-    gsap.to(primary, {
-      y: '+=7',
-      x: '+=4',
+    gsap.to(board, {
+      y: '+=6',
       duration: 10,
       ease: 'sine.inOut',
       yoyo: true,
@@ -227,13 +213,12 @@ export default function Contact() {
     chips.forEach((el, i) => {
       const dir = i % 2 === 0 ? 1 : -1
       gsap.to(el, {
-        y: `+=${dir * (5 + (i % 3))}`,
-        x: `+=${-dir * (4 + (i % 2) * 2)}`,
+        y: `+=${dir * (4 + (i % 3))}`,
         duration: 10,
         ease: 'sine.inOut',
         yoyo: true,
         repeat: -1,
-        delay: 1.2 + i * 0.18,
+        delay: 1.15 + i * 0.15,
       })
     })
   }, { scope: sectionRef })
@@ -248,6 +233,7 @@ export default function Contact() {
       <div className={styles.atmosphere} aria-hidden="true">
         <div className={styles.grid} />
         <DeskArt />
+        <div className={styles.glow} />
         <div className={styles.vignette} />
       </div>
 
@@ -265,15 +251,19 @@ export default function Contact() {
       <div className={styles.desk}>
         <div className={`${styles.prop} ${styles.propRuler}`} aria-hidden="true">
           <div className={styles.ruler}>
-            {Array.from({ length: 16 }, (_, i) => (
+            {Array.from({ length: 14 }, (_, i) => (
               <span key={i} />
             ))}
             <em>INOX</em>
           </div>
         </div>
+        <div className={`${styles.prop} ${styles.propJig}`} aria-hidden="true">
+          <div className={styles.jig} />
+        </div>
 
-        <div className={styles.layout}>
-          <div className={styles.primary}>
+        {/* One centered composition — plate + spine locked together */}
+        <div className={styles.board}>
+          <div className={styles.boardCore}>
             <div className={styles.cluster}>
               <article className={styles.plate} aria-label="Contact card">
                 <span className={`${styles.screw} ${styles.screwTL}`} aria-hidden="true" />
@@ -332,22 +322,25 @@ export default function Contact() {
               </a>
             </div>
 
-            <p className={styles.hint}>
-              Open to internships, research collaborations, and hard problems.
-            </p>
+            <div className={styles.bridge} aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
+
+            <nav className={styles.spine} aria-label="Social profiles">
+              <p className={styles.spineLabel}>Profiles</p>
+              <div className={styles.spineGrid}>
+                {SOCIALS.map((item, i) => (
+                  <SocialChip key={item.id} item={item} tilt={CHIP_TILTS[i] ?? 0} />
+                ))}
+              </div>
+            </nav>
           </div>
 
-          <nav className={styles.spine} aria-label="Social profiles">
-            <p className={styles.spineLabel}>Profiles</p>
-            {SOCIALS.map((item, i) => (
-              <SocialChip
-                key={item.id}
-                item={item}
-                tilt={CHIP_TILTS[i] ?? 0}
-                shift={CHIP_SHIFTS[i] ?? 0}
-              />
-            ))}
-          </nav>
+          <p className={styles.hint}>
+            Open to internships, research collaborations, and hard problems.
+          </p>
         </div>
       </div>
     </section>
