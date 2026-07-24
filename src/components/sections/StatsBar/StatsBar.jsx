@@ -14,15 +14,16 @@ const stats = [
   { countTo: 1, suffix: '', label: 'Recognised by\nSSIP', focus: false },
 ]
 
-/** Degrees from upright (0) toward pulled-down */
 const MAX_PULL = 95
 const PULL_THRESHOLD = 32
+const armVars = { transformOrigin: '50% 100%' }
 
 export default function StatsBar() {
   const sectionRef = useRef(null)
   const rackRef = useRef(null)
   const shaftRef = useRef(null)
-  const tweenRefs = useRef([])
+  const countTweens = useRef([])
+  const leverTweens = useRef([])
   const hasAutoPlayed = useRef(false)
   const spinningRef = useRef(false)
   const dragRef = useRef({
@@ -39,12 +40,10 @@ export default function StatsBar() {
     setSpinning(busy)
   }
 
-  const killTweens = () => {
-    tweenRefs.current.forEach((t) => t?.kill?.())
-    tweenRefs.current = []
+  const killCountTweens = () => {
+    countTweens.current.forEach((t) => t?.kill?.())
+    countTweens.current = []
   }
-
-  const armVars = { transformOrigin: '50% 100%' }
 
   const setArmAngle = (deg) => {
     const shaft = shaftRef.current
@@ -52,27 +51,23 @@ export default function StatsBar() {
     gsap.set(shaft, { rotate: deg, ...armVars })
   }
 
-  const springHome = (onDone) => {
+  const springHome = () => {
     const shaft = shaftRef.current
-    if (!shaft) {
-      onDone?.()
-      return
-    }
+    if (!shaft) return
     const tween = gsap.to(shaft, {
       rotate: 0,
-      duration: 0.7,
+      duration: 0.65,
       ease: 'elastic.out(1, 0.5)',
       ...armVars,
-      onComplete: () => onDone?.(),
     })
-    tweenRefs.current.push(tween)
+    leverTweens.current.push(tween)
   }
 
   const runCountUp = useCallback(() => {
     const section = sectionRef.current
     if (!section) return
 
-    killTweens()
+    killCountTweens()
     setBusy(true)
 
     const valueEls = section.querySelectorAll(`.${styles.value}`)
@@ -80,16 +75,19 @@ export default function StatsBar() {
 
     valueEls.forEach((el, i) => {
       const stat = stats[i]
-      el.textContent = `0${stat.suffix}`
       const obj = { val: 0 }
+      // Snap first paint off zero so small ints (1, 2) don't idle on 0
+      el.textContent = `0${stat.suffix}`
 
       const tween = gsap.to(obj, {
         val: stat.countTo,
-        duration: 1.7,
-        ease: 'power2.out',
-        delay: i * 0.1,
+        duration: 1.1,
+        ease: 'power3.out',
+        delay: i * 0.04,
         onUpdate() {
-          el.textContent = `${Math.round(obj.val)}${stat.suffix}`
+          // ceil once moving so 0→1 / 0→2 leave zero on the first tick
+          const n = obj.val === 0 ? 0 : Math.min(stat.countTo, Math.ceil(obj.val))
+          el.textContent = `${n}${stat.suffix}`
         },
         onComplete() {
           el.textContent = `${stat.countTo}${stat.suffix}`
@@ -97,40 +95,37 @@ export default function StatsBar() {
           if (remaining <= 0) setBusy(false)
         },
       })
-      tweenRefs.current.push(tween)
+      countTweens.current.push(tween)
     })
   }, [])
 
   const triggerPull = useCallback((fromAngle = 0) => {
     if (spinningRef.current) return
-    setBusy(true)
-
-    const section = sectionRef.current
-    section?.querySelectorAll(`.${styles.value}`).forEach((el, i) => {
-      el.textContent = `0${stats[i].suffix}`
-    })
 
     const shaft = shaftRef.current
-    const tl = gsap.timeline({
-      onComplete: () => runCountUp(),
-    })
 
+    // Count-up starts immediately — lever motion runs in parallel
+    runCountUp()
+
+    leverTweens.current.forEach((t) => t?.kill?.())
+    leverTweens.current = []
+
+    const tl = gsap.timeline()
     if (fromAngle < MAX_PULL - 6) {
       tl.to(shaft, {
         rotate: MAX_PULL,
-        duration: 0.24,
+        duration: 0.18,
         ease: 'power3.in',
         ...armVars,
       })
     }
     tl.to(shaft, {
       rotate: 0,
-      duration: 0.75,
+      duration: 0.65,
       ease: 'elastic.out(1, 0.5)',
       ...armVars,
     })
-
-    tweenRefs.current.push(tl)
+    leverTweens.current.push(tl)
   }, [runCountUp])
 
   const onPointerDown = (e) => {
@@ -151,7 +146,6 @@ export default function StatsBar() {
     if (!d.active || spinningRef.current) return
     const dy = e.clientY - d.startY
     if (Math.abs(dy) > 3) d.moved = true
-    // Drag down → positive angle (handle tips forward/down)
     const angle = Math.max(0, Math.min(MAX_PULL, dy * 0.65))
     d.angle = angle
     setArmAngle(angle)
@@ -212,15 +206,15 @@ export default function StatsBar() {
 
     gsap.fromTo(
       rack,
-      { opacity: 0, y: 28 },
+      { opacity: 0, y: 20 },
       {
         opacity: 1,
         y: 0,
-        duration: 0.7,
+        duration: 0.55,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: section,
-          start: 'top 88%',
+          start: 'top 90%',
           once: true,
           onEnter: () => {
             if (hasAutoPlayed.current) return
@@ -231,23 +225,19 @@ export default function StatsBar() {
       },
     )
 
-    return () => killTweens()
+    return () => {
+      killCountTweens()
+      leverTweens.current.forEach((t) => t?.kill?.())
+      leverTweens.current = []
+    }
   }, { scope: sectionRef, dependencies: [runCountUp] })
 
   return (
     <section
       className={styles.section}
       ref={sectionRef}
-      id="impact"
       aria-label="Impact metrics"
     >
-      <div className={styles.header}>
-        <p className={styles.eyebrow}>
-          <span>01 — Impact</span>
-          <span className={styles.eyebrowLine} aria-hidden="true" />
-        </p>
-      </div>
-
       <div className={styles.rack} ref={rackRef}>
         <div className={styles.strip}>
           {stats.map((s) => (
