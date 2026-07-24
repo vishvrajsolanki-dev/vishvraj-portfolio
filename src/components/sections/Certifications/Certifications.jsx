@@ -8,8 +8,8 @@ gsap.registerPlugin(ScrollTrigger)
 
 const AUTO_MS = 5000
 
-const MicrosoftLogo = () => (
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22" aria-hidden="true">
+const MicrosoftLogo = ({ size = 22 }) => (
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width={size} height={size} aria-hidden="true">
     <path d="M11.4 11.4H0V0h11.4v11.4z" fill="#F25022" />
     <path d="M24 11.4H12.6V0H24v11.4z" fill="#7FBA00" />
     <path d="M11.4 24H0V12.6h11.4V24z" fill="#00A4EF" />
@@ -23,6 +23,7 @@ const issuers = [
     name: 'Anthropic',
     fullName: 'Anthropic Academy',
     logoUrl: '/logos/anthropic.png',
+    washUrl: '/logos/anthropic-mark.png',
     logoAlt: 'Anthropic',
     invertLogo: true,
     mark: 'AI',
@@ -41,7 +42,7 @@ const issuers = [
     name: 'Microsoft',
     fullName: 'Microsoft',
     logoUrl: null,
-    logoSvg: <MicrosoftLogo />,
+    logoSvg: true,
     logoAlt: 'Microsoft',
     invertLogo: false,
     mark: 'MS',
@@ -147,8 +148,14 @@ function CheckIcon() {
   )
 }
 
-function IssuerLogo({ issuer, className }) {
-  if (issuer.logoSvg) return <span className={className}>{issuer.logoSvg}</span>
+function IssuerLogo({ issuer, className, size = 22 }) {
+  if (issuer.logoSvg) {
+    return (
+      <span className={className}>
+        <MicrosoftLogo size={size} />
+      </span>
+    )
+  }
   if (issuer.logoUrl) {
     return (
       <img
@@ -162,6 +169,59 @@ function IssuerLogo({ issuer, className }) {
   return <span className={className}>{issuer.mark}</span>
 }
 
+function CardLogoWash({ issuer }) {
+  if (issuer.logoSvg) {
+    return (
+      <span className={styles.cardLogoWashSvg}>
+        <MicrosoftLogo size={280} />
+      </span>
+    )
+  }
+  const src = issuer.washUrl || issuer.logoUrl
+  if (src) {
+    const needsInvert = Boolean(issuer.invertLogo && !issuer.washUrl)
+    return (
+      <img
+        src={src}
+        alt=""
+        className={styles.cardLogoWashImg}
+        style={needsInvert ? { filter: 'invert(1) brightness(1.15)' } : undefined}
+      />
+    )
+  }
+  return <span className={styles.cardLogoWashMark}>{issuer.mark}</span>
+}
+
+/** Serpentine spine connecting issuer nodes — scales with item count. */
+function IssuerSpine({ count }) {
+  const h = Math.max(count, 2) * 72
+  const mid = 18
+  // Alternating left/right control points for a soft curly ribbon
+  let d = `M ${mid} 12`
+  for (let i = 0; i < count - 1; i += 1) {
+    const y0 = 12 + i * 72
+    const y1 = 12 + (i + 1) * 72
+    const bulge = i % 2 === 0 ? mid + 16 : mid - 14
+    const c1y = y0 + 28
+    const c2y = y1 - 28
+    d += ` C ${bulge} ${c1y}, ${bulge} ${c2y}, ${mid} ${y1}`
+  }
+
+  return (
+    <svg
+      className={styles.issuerSpine}
+      viewBox={`0 0 36 ${h}`}
+      width="36"
+      height={h}
+      aria-hidden="true"
+      preserveAspectRatio="none"
+    >
+      <path className={styles.issuerSpineGlow} d={d} fill="none" />
+      <path className={styles.issuerSpineStroke} d={d} fill="none" />
+    </svg>
+  )
+}
+
 export default function Certifications() {
   const sectionRef = useRef(null)
   const reducedMotion = useRef(false)
@@ -170,6 +230,25 @@ export default function Certifications() {
 
   const issuerIndex = useMemo(
     () => Object.fromEntries(issuers.map((issuer) => [issuer.id, issuer])),
+    []
+  )
+
+  const navItems = useMemo(
+    () => [
+      ...issuers.map((issuer) => ({
+        id: issuer.id,
+        name: issuer.name,
+        meta: (() => {
+          const count = certifications.filter((cert) => cert.issuerId === issuer.id).length
+          return `${count} cert${count === 1 ? '' : 's'}`
+        })(),
+      })),
+      {
+        id: 'all',
+        name: 'View All',
+        meta: `${certifications.length} total`,
+      },
+    ],
     []
   )
 
@@ -211,26 +290,27 @@ export default function Certifications() {
   const selectCert = useCallback((certId) => {
     setActiveCertId(certId)
     const cert = certifications.find((item) => item.id === certId)
-    if (cert && activeIssuerId !== 'all' && activeIssuerId !== cert.issuerId) {
-      setActiveIssuerId(cert.issuerId)
-    }
-  }, [activeIssuerId])
+    if (cert) setActiveIssuerId(cert.issuerId)
+  }, [])
 
+  // Walk every credential across every issuer, then wrap.
   const advanceCert = useCallback(() => {
-    if (filteredCerts.length <= 1) return
-    const next = filteredCerts[(activeIndex + 1) % filteredCerts.length]
-    if (next) setActiveCertId(next.id)
-  }, [filteredCerts, activeIndex])
+    const idx = certifications.findIndex((cert) => cert.id === activeCertId)
+    const next = certifications[(idx + 1) % certifications.length]
+    if (!next) return
+    setActiveCertId(next.id)
+    setActiveIssuerId(next.issuerId)
+  }, [activeCertId])
 
   useEffect(() => {
     reducedMotion.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   }, [])
 
   useEffect(() => {
-    if (reducedMotion.current || filteredCerts.length <= 1) return undefined
+    if (reducedMotion.current || certifications.length <= 1) return undefined
     const id = setInterval(advanceCert, AUTO_MS)
     return () => clearInterval(id)
-  }, [advanceCert, filteredCerts.length])
+  }, [advanceCert])
 
   useGSAP(() => {
     const section = sectionRef.current
@@ -286,42 +366,31 @@ export default function Certifications() {
         <div className={styles.stage}>
           <nav className={styles.issuerNav} aria-label="Issuers">
             <p className={styles.issuerKicker}>Issuer</p>
-            <ul className={styles.issuerList}>
-              {issuers.map((issuer) => {
-                const isActive = activeIssuerId === issuer.id
-                const count = certifications.filter((cert) => cert.issuerId === issuer.id).length
-                return (
-                  <li key={issuer.id}>
-                    <button
-                      type="button"
-                      className={`${styles.issuerBtn} ${isActive ? styles.issuerBtnActive : ''}`}
-                      aria-pressed={isActive}
-                      onClick={() => selectIssuer(issuer.id)}
-                    >
-                      <span className={styles.issuerDot} aria-hidden="true" />
-                      <span className={styles.issuerText}>
-                        <span className={styles.issuerName}>{issuer.name}</span>
-                        <span className={styles.issuerMeta}>{count} cert{count === 1 ? '' : 's'}</span>
-                      </span>
-                    </button>
-                  </li>
-                )
-              })}
-              <li>
-                <button
-                  type="button"
-                  className={`${styles.issuerBtn} ${activeIssuerId === 'all' ? styles.issuerBtnActive : ''}`}
-                  aria-pressed={activeIssuerId === 'all'}
-                  onClick={() => selectIssuer('all')}
-                >
-                  <span className={styles.issuerDot} aria-hidden="true" />
-                  <span className={styles.issuerText}>
-                    <span className={styles.issuerName}>View All</span>
-                    <span className={styles.issuerMeta}>{certifications.length} total</span>
-                  </span>
-                </button>
-              </li>
-            </ul>
+            <div className={styles.issuerTrack}>
+              <IssuerSpine count={navItems.length} />
+              <ul className={styles.issuerList}>
+                {navItems.map((item, index) => {
+                  const isActive = activeIssuerId === item.id
+                  const stagger = index % 2 === 0 ? 'even' : 'odd'
+                  return (
+                    <li key={item.id} className={styles[`issuerItem${stagger === 'even' ? 'Even' : 'Odd'}`]}>
+                      <button
+                        type="button"
+                        className={`${styles.issuerBtn} ${isActive ? styles.issuerBtnActive : ''}`}
+                        aria-pressed={isActive}
+                        onClick={() => selectIssuer(item.id)}
+                      >
+                        <span className={styles.issuerDot} aria-hidden="true" />
+                        <span className={styles.issuerText}>
+                          <span className={styles.issuerName}>{item.name}</span>
+                          <span className={styles.issuerMeta}>{item.meta}</span>
+                        </span>
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
           </nav>
 
           <div className={styles.stackScene} aria-live="polite">
@@ -342,7 +411,7 @@ export default function Certifications() {
                       <button
                         type="button"
                         className={styles.cardHit}
-                        aria-label={`Show next credential`}
+                        aria-label="Show next credential"
                         onClick={advanceCert}
                       />
                     ) : (
@@ -355,29 +424,12 @@ export default function Certifications() {
                     )}
 
                     <div className={styles.cardLogoWash} aria-hidden="true">
-                      {issuer.id === 'anthropic' ? (
-                        <span className={styles.cardLogoWashMark}>{issuer.mark}</span>
-                      ) : issuer.logoSvg ? (
-                        <span className={styles.cardLogoWashSvg}>{issuer.logoSvg}</span>
-                      ) : issuer.logoUrl ? (
-                        <img
-                          src={issuer.logoUrl}
-                          alt=""
-                          className={styles.cardLogoWashImg}
-                          style={issuer.invertLogo ? { filter: 'invert(1)' } : undefined}
-                        />
-                      ) : (
-                        <span className={styles.cardLogoWashMark}>{issuer.mark}</span>
-                      )}
+                      <CardLogoWash issuer={issuer} />
                     </div>
 
                     <div className={styles.cardTop}>
                       <div className={styles.cardMark} aria-hidden="true">
-                        {issuer.id === 'anthropic' ? (
-                          <span className={styles.cardMarkText}>{issuer.mark}</span>
-                        ) : (
-                          <IssuerLogo issuer={issuer} className={styles.cardLogo} />
-                        )}
+                        <IssuerLogo issuer={issuer} className={styles.cardLogo} />
                       </div>
                       <span className={styles.cardIssuer}>{issuer.name}</span>
                     </div>
