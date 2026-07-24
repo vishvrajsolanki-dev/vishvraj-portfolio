@@ -1,6 +1,7 @@
 .section {
-  padding: 6rem 6vw;
+  padding: var(--section-pad-y) 6vw var(--section-pad-bottom);
   overflow: visible;
+  background: transparent;
 }
 
 /* ── Header: icon + EDUCATION + rule + end dot ── */
@@ -8,7 +9,7 @@
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.15rem;
 }
 
 .headerIcon {
@@ -51,18 +52,18 @@
   flex-direction: column;
   border-radius: 18px;
   overflow: hidden;
-  background: #0e0b14;
+  background: rgba(14, 11, 20, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
     0 24px 60px rgba(0, 0, 0, 0.35),
     0 1px 0 rgba(255, 255, 255, 0.04) inset;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2.25rem;
 }
 
 .visualPlane {
   position: relative;
   height: clamp(240px, 32vw, 360px);
-  background: #110e1a;
+  background: rgba(17, 14, 26, 0.9);
   overflow: hidden;
 }
 
@@ -143,7 +144,7 @@
   gap: 0;
   align-items: center;
   padding: 1.35rem 1.5rem 1.45rem;
-  background: #0c0a12;
+  background: rgba(12, 10, 18, 0.85);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -240,7 +241,7 @@
 
 @media (max-width: 767px) {
   .section {
-    padding: 4.5rem 5vw;
+    padding: var(--section-pad-y) 5vw;
   }
 
   .visualPlane {

@@ -10,9 +10,10 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* Soft top wash into the shared page background — avoids a hard band */
   background:
-    radial-gradient(ellipse 55% 50% at 50% 48%, rgba(45, 52, 78, 0.38), transparent 62%),
-    linear-gradient(180deg, #0e0c16 0%, var(--color-bg, #0a0810) 50%, #06050c 100%);
+    radial-gradient(ellipse 55% 50% at 50% 48%, rgba(45, 52, 78, 0.28), transparent 62%),
+    linear-gradient(180deg, transparent 0%, rgba(10, 8, 16, 0.35) 18%, #0a0810 52%, #08070e 100%);
   color: rgba(235, 238, 245, 0.88);
 }
 

@@ -1,6 +1,6 @@
 .section {
   position: relative;
-  padding: clamp(4rem, 8vw, 6.5rem) 0;
+  padding: var(--section-pad-y) 0 var(--section-pad-bottom);
   overflow: hidden;
   isolation: isolate;
   overflow-anchor: none;
@@ -32,7 +32,7 @@
 }
 
 .header {
-  margin-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
+  margin-bottom: clamp(1.1rem, 2.2vw, 1.65rem);
 }
 
 .sectionLabel {

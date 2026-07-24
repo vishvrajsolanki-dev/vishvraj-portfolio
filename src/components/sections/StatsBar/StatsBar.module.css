@@ -3,9 +3,11 @@
 .section {
   position: relative;
   z-index: 2;
-  margin: 0 0 4.5rem;
-  padding: 1.1rem clamp(0.75rem, 2vw, 1.25rem) 0;
-  background: var(--color-bg, #0a0810);
+  /* Keep strip close to About — previous 4.5rem margin + About's 8rem pad
+     created a large empty void (color banding showed through). */
+  margin: 0;
+  padding: 0.85rem clamp(0.75rem, 2vw, 1.25rem) 0;
+  background: transparent;
   isolation: isolate;
 }
 
@@ -15,7 +17,7 @@
   max-width: none;
   margin: 0;
   /* equal L/R inset so the strip isn’t skewed by the side handle */
-  padding: 2.5rem 2.6rem;
+  padding: 1.35rem 2.6rem 0.35rem;
 }
 
 .strip {
@@ -191,12 +193,12 @@
 
 @media (max-width: 640px) {
   .section {
-    margin-bottom: 3.5rem;
-    padding: 1rem 0.85rem 0;
+    margin-bottom: 0;
+    padding: 0.65rem 0.85rem 0;
   }
 
   .rack {
-    padding: 2.2rem 2.15rem;
+    padding: 1.15rem 2.15rem 0.25rem;
   }
 
   .strip {

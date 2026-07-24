@@ -1,6 +1,7 @@
 .about {
-    padding: var(--space-4xl) 0 var(--space-3xl);
+    padding: calc(var(--section-pad-y) * 0.45) 0 var(--section-pad-bottom);
     position: relative;
+    background: transparent;
 }
 
 .container {
@@ -26,7 +27,7 @@
     grid-template-columns: 1fr 420px;
     gap: 0;
     align-items: start;
-    min-height: 640px;
+    min-height: unset;
 }
 
 /* ── LEFT ── */
@@ -158,8 +159,23 @@
     width: 100%;
     aspect-ratio: 3 / 4;
     overflow: hidden;
-    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
+    background: transparent;
     max-width: 100%;
+}
+
+.photoWrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    /* Kill studio-backdrop halo so the plate dissolves into page wash */
+    box-shadow:
+      inset 0 0 0 1px rgba(10, 8, 16, 0.35),
+      inset 0 -90px 90px 20px rgba(10, 8, 16, 0.88),
+      inset 0 70px 70px -10px rgba(10, 8, 16, 0.72),
+      inset 70px 0 80px -20px rgba(10, 8, 16, 0.75),
+      inset -50px 0 70px -15px rgba(10, 8, 16, 0.7);
 }
 
 .photo {
@@ -167,18 +183,18 @@
     height: 100%;
     object-fit: cover;
     object-position: center top;
-    filter: grayscale(20%) contrast(1.05);
+    filter: grayscale(25%) contrast(1.08) brightness(0.78);
     display: block;
 }
 
-/* ── Edge fades — blend photo into page bg ── */
+/* ── Edge fades — soft vignette into page (rgba, not solid hex seams) ── */
 .fadeTop {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 120px;
-    background: linear-gradient(to bottom, var(--color-bg) 0%, transparent 100%);
+    height: 28%;
+    background: linear-gradient(to bottom, rgba(10, 8, 16, 0.98) 0%, rgba(10, 8, 16, 0.55) 45%, transparent 100%);
     pointer-events: none;
     z-index: 2;
 }
@@ -188,8 +204,8 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 200px;
-    background: linear-gradient(to top, #0a0810 0%, rgba(10, 8, 16, 0.7) 60%, transparent 100%);
+    height: 42%;
+    background: linear-gradient(to top, rgba(10, 8, 16, 0.98) 0%, rgba(10, 8, 16, 0.7) 40%, transparent 100%);
     pointer-events: none;
     z-index: 2;
 }
@@ -199,8 +215,8 @@
     top: 0;
     right: 0;
     bottom: 0;
-    width: 80px;
-    background: linear-gradient(to left, #06050c 0%, transparent 100%);
+    width: 28%;
+    background: linear-gradient(to left, rgba(10, 8, 16, 0.95) 0%, transparent 100%);
     pointer-events: none;
     z-index: 2;
 }
@@ -210,8 +226,8 @@
     top: 0;
     left: 0;
     bottom: 0;
-    width: 120px;
-    background: linear-gradient(to right, #0a0810 0%, transparent 100%);
+    width: 32%;
+    background: linear-gradient(to right, rgba(10, 8, 16, 0.95) 0%, transparent 100%);
     pointer-events: none;
     z-index: 2;
 }
@@ -287,8 +303,8 @@
         height: 140px;
         background: linear-gradient(
             to top,
-            #080808 0%,
-            rgba(8, 8, 8, 0.85) 50%,
+            rgba(10, 8, 16, 0.98) 0%,
+            rgba(10, 8, 16, 0.7) 50%,
             transparent 100%
         );
     }
@@ -296,8 +312,8 @@
     .fadeTop {
         background: linear-gradient(
             to bottom,
-            #080808 0%,
-            #080808 20%,
+            rgba(10, 8, 16, 0.95) 0%,
+            rgba(10, 8, 16, 0.55) 35%,
             transparent 100%
         );
         height: 100px;

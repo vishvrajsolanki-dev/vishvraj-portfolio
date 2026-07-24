@@ -1,8 +1,9 @@
 .section {
   position: relative;
-  padding: clamp(4.5rem, 8vw, 7rem) 0 5.5rem;
+  padding: var(--section-pad-y) 0 var(--section-pad-bottom);
   overflow: hidden;
   isolation: isolate;
+  background: transparent;
 }
 
 .gridBg {
@@ -31,7 +32,7 @@
   justify-content: space-between;
   gap: 1.5rem 2rem;
   flex-wrap: wrap;
-  margin-bottom: clamp(2rem, 4vw, 3rem);
+  margin-bottom: clamp(1.15rem, 2.5vw, 1.75rem);
 }
 
 .headerCopy {

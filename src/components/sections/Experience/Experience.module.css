@@ -1,7 +1,8 @@
 .experience {
-  padding: var(--space-4xl) 0 var(--space-3xl);
+  padding: var(--section-pad-y) 0 var(--section-pad-bottom);
   position: relative;
   overflow: visible;
+  background: transparent;
 }
 
 .container {
@@ -16,7 +17,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-xl);
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-lg);
   flex-wrap: wrap;
 }
 

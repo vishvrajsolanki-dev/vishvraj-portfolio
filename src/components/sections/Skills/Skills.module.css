@@ -1,5 +1,5 @@
 .section {
-  padding: clamp(3rem, 6vw, 5rem) 0;
+  padding: var(--section-pad-y) 0 var(--section-pad-bottom);
   background: transparent;
   overflow: hidden;
   position: relative;
@@ -26,7 +26,7 @@
   font-size: clamp(1.85rem, 3.4vw, 2.6rem);
   font-weight: 700;
   color: #ffffff;
-  margin: 0 0 2rem;
+  margin: 0 0 1.35rem;
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
@@ -39,7 +39,7 @@
   display: grid;
   grid-template-columns: minmax(260px, 0.95fr) minmax(0, 1.05fr);
   gap: clamp(1.75rem, 4vw, 3.5rem);
-  align-items: center;
+  align-items: start;
 }
 
 .mapPane {
@@ -111,7 +111,7 @@
   bottom: -4%;
   width: 36%;
   height: 24%;
-  background: radial-gradient(ellipse at 100% 100%, #0a0810 0%, #0a0810 58%, transparent 80%);
+  background: radial-gradient(ellipse at 100% 100%, rgba(10, 8, 16, 0.98) 0%, rgba(10, 8, 16, 0.92) 58%, transparent 80%);
   pointer-events: none;
   z-index: 31;
 }
@@ -133,7 +133,7 @@
   touch-action: none;
   z-index: 1;
   isolation: isolate;
-  background: #0a0810;
+  background: rgba(10, 8, 16, 0.92);
   /*
     Spline badge is fixed iframe chrome — overlays can't cover it.
     Smaller/higher disc clips the badge out of the visible area.
@@ -176,12 +176,12 @@
   left: auto;
   width: 38%;
   height: 24%;
-  background: #0a0810;
+  background: rgba(10, 8, 16, 0.98);
   border-radius: 100% 0 40% 0;
   pointer-events: none;
   z-index: 30;
   transform: translateZ(0);
-  box-shadow: -6px -6px 18px 10px #0a0810;
+  box-shadow: -6px -6px 18px 10px rgba(10, 8, 16, 0.95);
 }
 
 .node {

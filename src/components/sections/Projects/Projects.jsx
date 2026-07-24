@@ -304,12 +304,12 @@ export default function Projects() {
       </span>
       <div
         className={`${styles.ambientBlob} ${styles.ambientBlobTR}`}
-        style={{ background: `radial-gradient(circle, ${accent.glow}1A 0%, transparent 70%)` }}
+        style={{ background: `radial-gradient(circle, ${accent.glow}08 0%, transparent 78%)` }}
         aria-hidden="true"
       />
       <div
         className={`${styles.ambientBlob} ${styles.ambientBlobBL}`}
-        style={{ background: `radial-gradient(circle, ${accent.glow}14 0%, transparent 70%)` }}
+        style={{ background: `radial-gradient(circle, ${accent.glow}06 0%, transparent 78%)` }}
         aria-hidden="true"
       />
 
