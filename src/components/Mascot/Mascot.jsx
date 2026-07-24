@@ -13,6 +13,7 @@ import {
   isTransforming,
   DEFAULT_STATE,
 } from './mascotStateMachine'
+import { readMascotFlags, detectLowCapability } from './mascotFlags'
 import styles from './Mascot.module.css'
 
 const IDLE_SLEEP_MS = 3 * 60 * 1000
@@ -28,25 +29,6 @@ const SECTION_IDS = [
   'achievements',
   'contact',
 ]
-
-/** Feature flags from URL. ?mascot=1 required; ?mascot_transform=0 disables transform only. */
-export function readMascotFlags(search = typeof window !== 'undefined' ? window.location.search : '') {
-  const params = new URLSearchParams(search)
-  const enabled = params.get('mascot') === '1'
-  const transformParam = params.get('mascot_transform')
-  const transformEnabled = transformParam !== '0'
-  return { enabled, transformEnabled }
-}
-
-/** Low-end / reduced-motion gate — static Bot, no AGV/transform. */
-export function detectLowCapability() {
-  if (typeof window === 'undefined') return false
-  const reduced =
-    window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true
-  const cores = navigator.hardwareConcurrency
-  const lowCores = typeof cores === 'number' && cores > 0 && cores <= 2
-  return reduced || lowCores
-}
 
 function prefersReducedMotion() {
   if (typeof window === 'undefined') return false
@@ -132,22 +114,37 @@ function MascotScene({
     isTransforming(state) ||
     !keepBothRigs
 
-  // Initial opacities; TransformTimeline owns mid-transform fades
-  const agvOpacity = state === MascotState.AGV ? 1 : 0
-  const botOpacity =
-    state === MascotState.BOT || state === MascotState.SLEEP || !keepBothRigs ? 1 : 0
+  // Idle opacities only — during TRANSFORM the GSAP timeline owns material opacity.
+  // Forcing 0 here on TRANSFORM_* was blanking both rigs before the timeline started.
+  const transforming = isTransforming(state)
+  const agvOpacity = transforming ? undefined : state === MascotState.AGV ? 1 : 0
+  const botOpacity = transforming
+    ? undefined
+    : state === MascotState.BOT || state === MascotState.SLEEP || !keepBothRigs
+      ? 1
+      : 0
 
   return (
     <>
-      <ambientLight intensity={0.45} />
-      <directionalLight position={[3, 5, 4]} intensity={0.9} color="#ffffff" />
-      <pointLight position={[-2, 2, -2]} intensity={0.35} color="#6EE7E0" />
+      <ambientLight intensity={0.55} />
+      <directionalLight position={[3, 5, 4]} intensity={1.15} color="#ffffff" />
+      <directionalLight position={[-3, 2, -2]} intensity={0.35} color="#a8fff8" />
+      <pointLight position={[-2, 2.5, 2]} intensity={0.55} color="#6EE7E0" />
 
-      <group ref={shakeGroupRef} position={[0, -0.9, 0]}>
+      <group ref={shakeGroupRef} position={[0, -0.55, 0]} scale={0.72}>
         {keepBothRigs && (
-          <AgvRig ref={agvRef} visible={agvVisible} opacity={agvOpacity} />
+          <AgvRig
+            ref={agvRef}
+            visible={agvVisible || transforming}
+            opacity={agvOpacity}
+          />
         )}
-        <BotRig ref={botRef} visible={botVisible} opacity={botOpacity} pose={botPose} />
+        <BotRig
+          ref={botRef}
+          visible={botVisible || transforming}
+          opacity={botOpacity}
+          pose={botPose}
+        />
         {keepBothRigs && <VfxBurst ref={vfxRef} />}
       </group>
     </>
@@ -156,18 +153,12 @@ function MascotScene({
 
 function StatusHud({ state, transformEnabled, lowCapability }) {
   let label = 'BOT / IDLE'
-  if (lowCapability || !transformEnabled) {
-    label = state === MascotState.SLEEP ? 'BOT / SLEEP' : 'BOT / IDLE'
-  } else if (state === MascotState.AGV) {
-    label = 'AGV / MOVING'
-  } else if (state === MascotState.TRANSFORM_FWD) {
-    label = 'TRANSFORM ▶ BOT'
-  } else if (state === MascotState.TRANSFORM_REV) {
-    label = 'TRANSFORM ▶ AGV'
-  } else if (state === MascotState.SLEEP) {
+  if (state === MascotState.SLEEP) {
     label = 'BOT / SLEEP'
-  } else {
-    label = 'BOT / IDLE'
+  } else if (!lowCapability && transformEnabled) {
+    if (state === MascotState.AGV) label = 'AGV / MOVING'
+    else if (state === MascotState.TRANSFORM_FWD) label = 'TRANSFORM ▶ BOT'
+    else if (state === MascotState.TRANSFORM_REV) label = 'TRANSFORM ▶ AGV'
   }
   return (
     <div className={styles.hud} aria-hidden="true">
@@ -182,17 +173,20 @@ export default function Mascot() {
   const lowCapability = useMemo(() => detectLowCapability(), [])
   const transformEnabled = flags.transformEnabled && !lowCapability
 
-  const machineRef = useRef(null)
-  if (!machineRef.current) {
-    machineRef.current = createMascotMachine(
-      transformEnabled ? DEFAULT_STATE : MascotState.BOT,
-      { transformEnabled },
-    )
-  }
+  const machine = useMemo(
+    () =>
+      createMascotMachine(transformEnabled ? DEFAULT_STATE : MascotState.BOT, {
+        transformEnabled,
+      }),
+    // Intentionally once per mount — flags are session-stable from URL
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  )
+  const machineRef = useRef(machine)
 
-  const [state, setState] = useState(() => machineRef.current.getState())
+  const [state, setState] = useState(DEFAULT_STATE)
   const [comment, setComment] = useState(null)
-  const [mounted, setMounted] = useState(false)
+  const greetOnceRef = useRef(false)
 
   const agvRef = useRef(null)
   const botRef = useRef(null)
@@ -354,8 +348,18 @@ export default function Mascot() {
   // Mount listeners: scroll milestone, section greetings, visibility, idle
   useEffect(() => {
     if (!flags.enabled) return undefined
-    setMounted(true)
     resetIdleTimer()
+
+    // Initial greeting (once)
+    let greetTimer = null
+    if (!greetOnceRef.current) {
+      greetOnceRef.current = true
+      greetTimer = setTimeout(() => {
+        if (machineRef.current.getState() === MascotState.BOT) {
+          showComment(commentsRef.current.sectionGreeting('hero') || 'TrackBot online.')
+        }
+      }, 900)
+    }
 
     const onVisibility = () => {
       if (document.visibilityState === 'visible' && pendingScrollRef.current) {
@@ -378,11 +382,12 @@ export default function Mascot() {
     window.addEventListener('pointerdown', onPointer)
     window.addEventListener('keydown', onPointer)
 
+    const localObservers = []
+
     // Projects section → scroll-milestone auto-transform (once / session)
     const projectsEl = document.getElementById('projects')
-    let projectsObserver = null
     if (projectsEl && typeof IntersectionObserver !== 'undefined') {
-      projectsObserver = new IntersectionObserver(
+      const projectsObserver = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
             if (entry.isIntersecting && entry.intersectionRatio > 0.25) {
@@ -393,11 +398,10 @@ export default function Mascot() {
         { threshold: [0.25, 0.5] },
       )
       projectsObserver.observe(projectsEl)
-      observersRef.current.push(projectsObserver)
+      localObservers.push(projectsObserver)
     }
 
     // Section-entry greetings (Bot mode only)
-    const sectionObservers = []
     SECTION_IDS.forEach((id) => {
       const el = document.getElementById(id)
       if (!el || typeof IntersectionObserver === 'undefined') return
@@ -414,9 +418,9 @@ export default function Mascot() {
         { threshold: 0.4 },
       )
       obs.observe(el)
-      sectionObservers.push(obs)
-      observersRef.current.push(obs)
+      localObservers.push(obs)
     })
+    observersRef.current = localObservers
 
     // Occasional idle commentary in BOT
     const idleCommentInterval = setInterval(() => {
@@ -426,22 +430,27 @@ export default function Mascot() {
       if (line) showComment(line)
     }, 28000)
 
+    const agv = agvRef
+    const bot = botRef
+    const vfx = vfxRef
+
     return () => {
       document.removeEventListener('visibilitychange', onVisibility)
       window.removeEventListener('pointerdown', onPointer)
       window.removeEventListener('keydown', onPointer)
       clearInterval(idleCommentInterval)
+      if (greetTimer) clearTimeout(greetTimer)
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
       if (commentTimerRef.current) clearTimeout(commentTimerRef.current)
       if (timelineRef.current) {
         timelineRef.current.kill()
         timelineRef.current = null
       }
-      observersRef.current.forEach((o) => o.disconnect())
+      localObservers.forEach((o) => o.disconnect())
       observersRef.current = []
-      agvRef.current?.dispose?.()
-      botRef.current?.dispose?.()
-      vfxRef.current?.dispose?.()
+      agv.current?.dispose?.()
+      bot.current?.dispose?.()
+      vfx.current?.dispose?.()
     }
   }, [
     flags.enabled,
@@ -449,18 +458,7 @@ export default function Mascot() {
     tryScrollMilestone,
     dispatch,
     showComment,
-    transformEnabled,
   ])
-
-  // Initial greeting once Bot is up
-  useEffect(() => {
-    if (!mounted || !flags.enabled) return
-    if (state !== MascotState.BOT) return
-    const t = setTimeout(() => {
-      showComment(commentsRef.current.sectionGreeting('hero') || 'TrackBot online.')
-    }, 900)
-    return () => clearTimeout(t)
-  }, [mounted, flags.enabled]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!flags.enabled) return null
 
@@ -501,7 +499,7 @@ export default function Mascot() {
               alpha: true,
               powerPreference: 'high-performance',
             }}
-            camera={{ position: [2.8, 1.6, 3.6], fov: 40, near: 0.1, far: 40 }}
+            camera={{ position: [2.4, 1.35, 3.2], fov: 38, near: 0.1, far: 40 }}
             style={{ width: '100%', height: '100%', pointerEvents: 'none' }}
           >
             <Suspense fallback={null}>

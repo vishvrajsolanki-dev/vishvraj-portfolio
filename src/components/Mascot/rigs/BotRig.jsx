@@ -55,22 +55,18 @@ function useMats() {
 function Limb({ mats, upper = [0.22, 0.45, 0.22], lower = [0.18, 0.4, 0.18], hand = true }) {
   return (
     <group>
-      <mesh position={[0, -upper[1] / 2, 0]}>
+      <mesh position={[0, -upper[1] / 2, 0]} material={mats.armor}>
         <boxGeometry args={upper} />
-        <primitive object={mats.armor} attach="material" />
       </mesh>
-      <mesh position={[0, -upper[1], 0]}>
+      <mesh position={[0, -upper[1], 0]} material={mats.joint}>
         <sphereGeometry args={[0.1, 8, 8]} />
-        <primitive object={mats.joint} attach="material" />
       </mesh>
-      <mesh position={[0, -upper[1] - lower[1] / 2, 0]}>
+      <mesh position={[0, -upper[1] - lower[1] / 2, 0]} material={mats.armor}>
         <boxGeometry args={lower} />
-        <primitive object={mats.armor} attach="material" />
       </mesh>
       {hand && (
-        <mesh position={[0, -upper[1] - lower[1] - 0.08, 0]}>
+        <mesh position={[0, -upper[1] - lower[1] - 0.08, 0]} material={mats.joint}>
           <boxGeometry args={[0.16, 0.14, 0.12]} />
-          <primitive object={mats.joint} attach="material" />
         </mesh>
       )}
     </group>
@@ -114,6 +110,7 @@ const BotRig = forwardRef(function BotRig({ visible = true, opacity = 1, pose = 
   }))
 
   useEffect(() => {
+    if (opacity === undefined || opacity === null) return
     Object.values(mats).forEach((m) => {
       m.opacity = opacity
       m.transparent = opacity < 1
@@ -141,13 +138,11 @@ const BotRig = forwardRef(function BotRig({ visible = true, opacity = 1, pose = 
           hand={false}
         />
         {/* Foot with integrated wheel hint */}
-        <mesh position={[0, -1.05, 0.05]}>
+        <mesh position={[0, -1.05, 0.05]} material={mats.armor}>
           <boxGeometry args={[0.32, 0.14, 0.42]} />
-          <primitive object={mats.armor} attach="material" />
         </mesh>
-        <mesh position={[0, -1.0, -0.12]} rotation={[0, 0, Math.PI / 2]}>
+        <mesh position={[0, -1.0, -0.12]} rotation={[0, 0, Math.PI / 2]} material={mats.joint}>
           <cylinderGeometry args={[0.12, 0.12, 0.14, 10]} />
-          <primitive object={mats.joint} attach="material" />
         </mesh>
       </group>
       <group ref={legR} name="legR" position={[-0.28, 1.05, 0]}>
@@ -157,75 +152,61 @@ const BotRig = forwardRef(function BotRig({ visible = true, opacity = 1, pose = 
           lower={[0.24, 0.48, 0.28]}
           hand={false}
         />
-        <mesh position={[0, -1.05, 0.05]}>
+        <mesh position={[0, -1.05, 0.05]} material={mats.armor}>
           <boxGeometry args={[0.32, 0.14, 0.42]} />
-          <primitive object={mats.armor} attach="material" />
         </mesh>
-        <mesh position={[0, -1.0, -0.12]} rotation={[0, 0, Math.PI / 2]}>
+        <mesh position={[0, -1.0, -0.12]} rotation={[0, 0, Math.PI / 2]} material={mats.joint}>
           <cylinderGeometry args={[0.12, 0.12, 0.14, 10]} />
-          <primitive object={mats.joint} attach="material" />
         </mesh>
       </group>
 
       {/* Torso — AGV chassis correspondence */}
       <group ref={torso} name="botTorso" position={[0, 1.55, 0]}>
-        <mesh>
+        <mesh material={mats.armor}>
           <boxGeometry args={[0.85, 0.7, 0.55]} />
-          <primitive object={mats.armor} attach="material" />
         </mesh>
-        <mesh position={[0, -0.05, 0.28]}>
+        <mesh position={[0, -0.05, 0.28]} material={mats.chassis}>
           <boxGeometry args={[0.55, 0.2, 0.04]} />
-          <primitive object={mats.chassis} attach="material" />
         </mesh>
         {/* Chest glow line */}
-        <mesh position={[0, 0.15, 0.29]}>
+        <mesh position={[0, 0.15, 0.29]} material={mats.glow}>
           <boxGeometry args={[0.45, 0.04, 0.03]} />
-          <primitive object={mats.glow} attach="material" />
         </mesh>
         {/* Waist plate AGV-T1 */}
-        <mesh position={[0, -0.42, 0.05]}>
+        <mesh position={[0, -0.42, 0.05]} material={mats.chassis}>
           <boxGeometry args={[0.7, 0.18, 0.4]} />
-          <primitive object={mats.chassis} attach="material" />
         </mesh>
         {/* Shoulder pads */}
-        <mesh position={[0.5, 0.28, 0]}>
+        <mesh position={[0.5, 0.28, 0]} material={mats.armor}>
           <boxGeometry args={[0.22, 0.16, 0.35]} />
-          <primitive object={mats.armor} attach="material" />
         </mesh>
-        <mesh position={[-0.5, 0.28, 0]}>
+        <mesh position={[-0.5, 0.28, 0]} material={mats.armor}>
           <boxGeometry args={[0.22, 0.16, 0.35]} />
-          <primitive object={mats.armor} attach="material" />
         </mesh>
       </group>
 
       {/* Head */}
       <group ref={head} name="botHead" position={[0, 2.1, 0]}>
-        <mesh>
+        <mesh material={mats.armor}>
           <boxGeometry args={[0.48, 0.38, 0.4]} />
-          <primitive object={mats.armor} attach="material" />
         </mesh>
-        <mesh position={[0, 0, 0.18]}>
+        <mesh position={[0, 0, 0.18]} material={mats.chassis}>
           <boxGeometry args={[0.42, 0.28, 0.08]} />
-          <primitive object={mats.chassis} attach="material" />
         </mesh>
         {/* Eyes */}
-        <mesh position={[0.1, 0.02, 0.23]}>
+        <mesh position={[0.1, 0.02, 0.23]} rotation={[Math.PI / 2, 0, 0]} material={mats.glow}>
           <cylinderGeometry args={[0.07, 0.07, 0.04, 12]} />
-          <primitive object={mats.glow} attach="material" />
         </mesh>
-        <mesh position={[-0.1, 0.02, 0.23]}>
+        <mesh position={[-0.1, 0.02, 0.23]} rotation={[Math.PI / 2, 0, 0]} material={mats.glow}>
           <cylinderGeometry args={[0.07, 0.07, 0.04, 12]} />
-          <primitive object={mats.glow} attach="material" />
         </mesh>
         {/* Antennae */}
         <group ref={antenna} name="antenna">
-          <mesh position={[0.16, 0.28, 0]}>
+          <mesh position={[0.16, 0.28, 0]} material={mats.joint}>
             <cylinderGeometry args={[0.025, 0.025, 0.2, 6]} />
-            <primitive object={mats.joint} attach="material" />
           </mesh>
-          <mesh position={[-0.16, 0.28, 0]}>
+          <mesh position={[-0.16, 0.28, 0]} material={mats.joint}>
             <cylinderGeometry args={[0.025, 0.025, 0.2, 6]} />
-            <primitive object={mats.joint} attach="material" />
           </mesh>
         </group>
       </group>

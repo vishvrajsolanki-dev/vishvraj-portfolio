@@ -10,9 +10,9 @@ import * as THREE from 'three'
  *   body, mast, wheelFL, wheelFR, wheelRL, wheelRR
  */
 
-const BODY = '#1a1520'
-const PANEL = '#0e0b14'
-const METAL = '#2a2435'
+const BODY = '#2a2438'
+const PANEL = '#c8ccd4'
+const METAL = '#3a3348'
 const GLOW = '#6EE7E0'
 
 function useMats() {
@@ -49,9 +49,16 @@ function useMats() {
         opacity: 1,
       }),
       wheel: new THREE.MeshStandardMaterial({
-        color: '#141018',
-        roughness: 0.9,
-        metalness: 0.15,
+        color: '#1a141f',
+        roughness: 0.85,
+        metalness: 0.25,
+        transparent: true,
+        opacity: 1,
+      }),
+      hub: new THREE.MeshStandardMaterial({
+        color: '#5a4a38',
+        roughness: 0.45,
+        metalness: 0.7,
         transparent: true,
         opacity: 1,
       }),
@@ -97,6 +104,7 @@ const AgvRig = forwardRef(function AgvRig({ visible = true, opacity = 1 }, ref) 
   }))
 
   useEffect(() => {
+    if (opacity === undefined || opacity === null) return
     Object.values(mats).forEach((m) => {
       m.opacity = opacity
       m.transparent = opacity < 1
@@ -116,92 +124,82 @@ const AgvRig = forwardRef(function AgvRig({ visible = true, opacity = 1 }, ref) 
     <group ref={root} visible={visible} name="agvRig" position={[0, wheelR, 0]}>
       {/* Chassis slab */}
       <group ref={body} name="agvBody">
-        <mesh castShadow receiveShadow>
+        <mesh castShadow receiveShadow material={mats.body}>
           <boxGeometry args={[L, H * 0.55, W * 0.85]} />
-          <primitive object={mats.body} attach="material" />
         </mesh>
-        {/* Top deck */}
-        <mesh position={[0, H * 0.32, 0]}>
+        {/* Light armor top deck */}
+        <mesh position={[0, H * 0.32, 0]} material={mats.panel}>
           <boxGeometry args={[L * 0.92, H * 0.12, W * 0.72]} />
-          <primitive object={mats.panel} attach="material" />
+        </mesh>
+        {/* Side skirts */}
+        <mesh position={[0, -0.05, W * 0.4]} material={mats.panel}>
+          <boxGeometry args={[L * 0.7, H * 0.22, 0.06]} />
+        </mesh>
+        <mesh position={[0, -0.05, -W * 0.4]} material={mats.panel}>
+          <boxGeometry args={[L * 0.7, H * 0.22, 0.06]} />
         </mesh>
         {/* Front bumper / faceplate */}
-        <mesh position={[L * 0.48, 0, 0]}>
+        <mesh position={[L * 0.48, 0, 0]} material={mats.metal}>
           <boxGeometry args={[0.12, H * 0.4, W * 0.7]} />
-          <primitive object={mats.metal} attach="material" />
         </mesh>
         {/* Eye bars */}
-        <mesh position={[L * 0.545, 0.08, 0.18]}>
+        <mesh position={[L * 0.545, 0.08, 0.18]} material={mats.glow}>
           <boxGeometry args={[0.04, 0.06, 0.28]} />
-          <primitive object={mats.glow} attach="material" />
         </mesh>
-        <mesh position={[L * 0.545, 0.08, -0.18]}>
+        <mesh position={[L * 0.545, 0.08, -0.18]} material={mats.glow}>
           <boxGeometry args={[0.04, 0.06, 0.28]} />
-          <primitive object={mats.glow} attach="material" />
         </mesh>
         {/* Side brand plate */}
-        <mesh position={[0, 0.05, W * 0.38]}>
+        <mesh position={[0, 0.05, W * 0.44]} material={mats.metal}>
           <boxGeometry args={[L * 0.35, 0.1, 0.04]} />
-          <primitive object={mats.metal} attach="material" />
         </mesh>
         {/* Glow strip along top */}
-        <mesh position={[0, H * 0.38, 0]}>
-          <boxGeometry args={[L * 0.5, 0.03, 0.06]} />
-          <primitive object={mats.glow} attach="material" />
+        <mesh position={[0, H * 0.4, 0]} material={mats.glow}>
+          <boxGeometry args={[L * 0.5, 0.04, 0.08]} />
         </mesh>
       </group>
 
       {/* RFID / nav mast — folded flat on deck */}
       <group ref={mast} name="agvMast" position={[-0.15, H * 0.4, 0]} rotation={[0, 0, -Math.PI / 2]}>
-        <mesh>
+        <mesh material={mats.metal}>
           <cylinderGeometry args={[0.05, 0.05, 0.55, 8]} />
-          <primitive object={mats.metal} attach="material" />
         </mesh>
-        <mesh position={[0, 0.3, 0]}>
+        <mesh position={[0, 0.3, 0]} material={mats.glow}>
           <boxGeometry args={[0.14, 0.08, 0.14]} />
-          <primitive object={mats.glow} attach="material" />
         </mesh>
       </group>
 
       {/* Four mecanum-style wheels */}
       <group ref={wheelFL} name="wheelFL" position={[axX, 0, axZ]} rotation={[0, 0, Math.PI / 2]}>
-        <mesh>
+        <mesh material={mats.wheel}>
           <cylinderGeometry args={[wheelR, wheelR, wheelW, 16]} />
-          <primitive object={mats.wheel} attach="material" />
         </mesh>
-        <mesh>
+        <mesh material={mats.hub}>
           <cylinderGeometry args={[wheelR * 0.35, wheelR * 0.35, wheelW * 1.15, 8]} />
-          <primitive object={mats.metal} attach="material" />
         </mesh>
       </group>
       <group ref={wheelFR} name="wheelFR" position={[axX, 0, -axZ]} rotation={[0, 0, Math.PI / 2]}>
-        <mesh>
+        <mesh material={mats.wheel}>
           <cylinderGeometry args={[wheelR, wheelR, wheelW, 16]} />
-          <primitive object={mats.wheel} attach="material" />
         </mesh>
-        <mesh>
+        <mesh material={mats.hub}>
           <cylinderGeometry args={[wheelR * 0.35, wheelR * 0.35, wheelW * 1.15, 8]} />
-          <primitive object={mats.metal} attach="material" />
         </mesh>
       </group>
       <group ref={wheelRL} name="wheelRL" position={[-axX, 0, axZ]} rotation={[0, 0, Math.PI / 2]}>
-        <mesh>
+        <mesh material={mats.wheel}>
           <cylinderGeometry args={[wheelR, wheelR, wheelW, 16]} />
-          <primitive object={mats.wheel} attach="material" />
         </mesh>
-        <mesh>
+        <mesh material={mats.hub}>
           <cylinderGeometry args={[wheelR * 0.35, wheelR * 0.35, wheelW * 1.15, 8]} />
-          <primitive object={mats.metal} attach="material" />
         </mesh>
       </group>
       <group ref={wheelRR} name="wheelRR" position={[-axX, 0, -axZ]} rotation={[0, 0, Math.PI / 2]}>
-        <mesh>
+        <mesh material={mats.wheel}>
           <cylinderGeometry args={[wheelR, wheelR, wheelW, 16]} />
-          <primitive object={mats.wheel} attach="material" />
         </mesh>
-        <mesh>
+        <mesh material={mats.hub}>
           <cylinderGeometry args={[wheelR * 0.35, wheelR * 0.35, wheelW * 1.15, 8]} />
-          <primitive object={mats.metal} attach="material" />
         </mesh>
       </group>
     </group>
