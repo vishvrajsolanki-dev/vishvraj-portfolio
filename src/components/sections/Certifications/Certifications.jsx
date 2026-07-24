@@ -8,22 +8,6 @@ gsap.registerPlugin(ScrollTrigger)
 
 const AUTO_MS = 5000
 
-/** Fixed constellation board — concentric arcs stay stretched; never overlap. */
-const CONSTELLATION = {
-  width: 360,
-  height: 480,
-  cx: 52,
-  cy: 240,
-  startDeg: -84,
-  endDeg: 84,
-  // Fully stretched parallels — ~110px clear channel between rings (ref design)
-  outerR: 180,
-  innerR: 70,
-  dualAt: 7,
-  labelPadOuter: 20,
-  labelPadInner: 18,
-}
-
 const MicrosoftLogo = ({ size = 22 }) => (
   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width={size} height={size} aria-hidden="true">
     <path d="M11.4 11.4H0V0h11.4v11.4z" fill="#F25022" />
@@ -53,27 +37,19 @@ const GoogleCloudLogo = ({ className }) => (
 )
 
 const IithLogo = ({ className }) => (
-  <svg className={className} viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" strokeWidth="2.2" opacity="0.55" />
-    <text
-      x="32"
-      y="37"
-      textAnchor="middle"
-      fill="currentColor"
-      fontFamily="var(--font-display), system-ui, sans-serif"
-      fontSize="16"
-      fontWeight="700"
-      letterSpacing="0.06em"
-    >
-      IIT
-    </text>
-  </svg>
+  <img
+    src="/logos/iith-icon.png"
+    alt=""
+    className={className}
+    decoding="async"
+  />
 )
 
 const issuers = [
   {
     id: 'anthropic',
     name: 'Anthropic',
+    shortName: 'Anthropic',
     fullName: 'Anthropic Academy',
     logoKind: 'anthropic',
     logoUrl: '/logos/anthropic.png',
@@ -86,6 +62,7 @@ const issuers = [
   {
     id: 'gcloud',
     name: 'Google Cloud',
+    shortName: 'Google Cloud',
     fullName: 'Google Cloud',
     logoKind: 'gcloud',
     logoUrl: '/logos/gcloud.png',
@@ -98,6 +75,7 @@ const issuers = [
   {
     id: 'microsoft',
     name: 'Microsoft',
+    shortName: 'Microsoft',
     fullName: 'Microsoft',
     logoKind: 'microsoft',
     washOpacity: 0.085,
@@ -107,9 +85,12 @@ const issuers = [
   {
     id: 'iith',
     name: 'IIT Hyderabad',
+    shortName: 'IIT',
     fullName: 'IIT Hyderabad × My Job Grow',
     logoKind: 'iith',
-    washOpacity: 0.11,
+    logoUrl: '/logos/iith-icon.png',
+    washUrl: '/logos/iith-icon-white.png',
+    washOpacity: 0.1,
     logoAlt: 'IIT Hyderabad',
     mark: 'IIT',
   },
@@ -251,9 +232,12 @@ function CardLogoWash({ issuer }) {
   }
   if (issuer.logoKind === 'iith') {
     return (
-      <span className={`${styles.cardLogoWashSvg} ${styles.cardLogoWashMono}`}>
-        <IithLogo />
-      </span>
+      <img
+        src={issuer.washUrl || '/logos/iith-icon-white.png'}
+        alt=""
+        className={styles.cardLogoWashImg}
+        decoding="async"
+      />
     )
   }
   if (issuer.logoKind === 'anthropic') {
@@ -273,230 +257,77 @@ function CardLogoWash({ issuer }) {
   return <span className={styles.cardLogoWashMark}>{issuer.mark}</span>
 }
 
-/** Evenly place `count` points along a right-opening arc. */
-function placeOnArc(count, radius, { cx, cy, startDeg, endDeg }, angleOffsetDeg = 0) {
-  if (count <= 0) return []
-  const span = endDeg - startDeg
-  return Array.from({ length: count }, (_, i) => {
-    const t = count === 1 ? 0.5 : i / (count - 1)
-    const deg = startDeg + span * t + angleOffsetDeg
-    const rad = (deg * Math.PI) / 180
-    return {
-      x: cx + Math.cos(rad) * radius,
-      y: cy + Math.sin(rad) * radius,
-      deg,
-      rad,
-    }
-  })
-}
-
-/**
- * Fixed-board constellation layout.
- * ≤6 issuers → single outer arc
- * 7+ issuers → outer + inner rings with a large radial gap + angular stagger
- * so nodes/labels never sit on top of each other.
- */
-export function layoutConstellation(count, board = CONSTELLATION) {
-  const {
-    width,
-    height,
-    cx,
-    cy,
-    startDeg,
-    endDeg,
-    outerR,
-    innerR,
-    dualAt,
-    labelPadOuter,
-    labelPadInner,
-  } = board
-  const dual = count >= dualAt
-  const outerCount = dual ? Math.ceil(count * 0.55) : count
-  const innerCount = dual ? count - outerCount : 0
-
-  // Half-step offset so inner nodes nest between outer nodes (not on the same ray)
-  const outerStep = outerCount > 1 ? (endDeg - startDeg) / (outerCount - 1) : 0
-  const innerOffset = dual && innerCount > 0 ? outerStep * 0.45 : 0
-
-  const outer = placeOnArc(outerCount, outerR, { cx, cy, startDeg, endDeg }).map((p) => ({
-    ...p,
-    ring: 'outer',
-    // Labels sit outside the arc (further from hub) — never into the gap
-    labelX: p.x + Math.cos(p.rad) * labelPadOuter + 12,
-    labelY: p.y + Math.sin(p.rad) * (Math.abs(p.deg) > 55 ? 4 : 0),
-    labelSide: 'out',
-  }))
-
-  const inner = placeOnArc(
-    innerCount,
-    innerR,
-    { cx, cy, startDeg: startDeg + 8, endDeg: endDeg - 8 },
-    innerOffset
-  ).map((p) => ({
-    ...p,
-    ring: 'inner',
-    // Labels sit inward toward the hub — clears the outer ring entirely
-    labelX: p.x - Math.cos(p.rad) * labelPadInner - 10,
-    labelY: p.y,
-    labelSide: 'in',
-  }))
-
-  const slots = resolveLabelCollisions([...outer, ...inner], dual, height)
-  const nodeR = dual ? 6 : 7.5
-  const ringGap = outerR - innerR
-
-  return {
-    width,
-    height,
-    cx,
-    cy,
-    outerR,
-    innerR,
-    ringGap,
-    dual,
-    nodeR,
-    compact: dual,
-    slots,
-    arcPath: describeArc(cx, cy, outerR, startDeg, endDeg),
-    innerArcPath: dual ? describeArc(cx, cy, innerR, startDeg + 6, endDeg - 6) : null,
-  }
-}
-
-/** Nudge label Y positions so text boxes never overlap. */
-function resolveLabelCollisions(slots, dual, boardHeight = CONSTELLATION.height) {
-  const approxH = dual ? 18 : 30
-  const minGap = approxH + 10
-
-  const boxes = slots.map((s) => ({ ...s }))
-
-  // Same-side labels along an arc almost always share vertical space —
-  // always enforce a minimum Y gap between consecutive items.
-  for (const side of ['out', 'in']) {
-    const group = boxes.filter((b) => b.labelSide === side).sort((a, b) => a.labelY - b.labelY)
-    for (let i = 1; i < group.length; i += 1) {
-      const prev = group[i - 1]
-      const cur = group[i]
-      const needed = prev.labelY + minGap
-      if (cur.labelY < needed) cur.labelY = needed
-    }
-    // If the stack ran past the board, shift the whole group up
-    if (group.length) {
-      const overflow = group[group.length - 1].labelY + approxH / 2 - (boardHeight - 8)
-      if (overflow > 0) {
-        for (const g of group) g.labelY -= overflow
-      }
-      // And re-pack from top if top went negative
-      const under = 8 + approxH / 2 - group[0].labelY
-      if (under > 0) {
-        for (const g of group) g.labelY += under
-      }
-      // Final pass: keep gaps after clamping
-      for (let i = 1; i < group.length; i += 1) {
-        const needed = group[i - 1].labelY + minGap
-        if (group[i].labelY < needed) group[i].labelY = needed
-      }
-    }
-  }
-
-  return boxes
-}
-
-function describeArc(cx, cy, r, startDeg, endDeg) {
-  const toXY = (deg) => {
-    const rad = (deg * Math.PI) / 180
-    return [cx + Math.cos(rad) * r, cy + Math.sin(rad) * r]
-  }
-  const [x1, y1] = toXY(startDeg)
-  const [x2, y2] = toXY(endDeg)
-  const large = Math.abs(endDeg - startDeg) > 180 ? 1 : 0
-  return `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}`
-}
-
-
-function displayIssuerName(name, dual) {
-  if (!dual) return name
-  // Keep distinct short names; only trim very long multi-word brands
-  if (name.length <= 14) return name
-  const parts = name.split(' ')
-  return parts[0]
-}
-
-function IssuerConstellation({ items, activeId, onSelect }) {
-  const layout = useMemo(() => layoutConstellation(items.length), [items.length])
-
+function ViewAllMark({ className }) {
   return (
-    <div
-      className={`${styles.constellation} ${layout.dual ? styles.constellationDual : ''}`}
-      style={{ width: layout.width, height: layout.height }}
-      data-ring-gap={layout.ringGap}
-    >
-      <svg
-        className={styles.constellationSvg}
-        viewBox={`0 0 ${layout.width} ${layout.height}`}
-        width={layout.width}
-        height={layout.height}
-        aria-hidden="true"
-      >
-        <path className={styles.constellationGlow} d={layout.arcPath} fill="none" />
-        <path className={styles.constellationStroke} d={layout.arcPath} fill="none" />
-        {layout.innerArcPath && (
-          <>
-            <path className={styles.constellationGlowInner} d={layout.innerArcPath} fill="none" />
-            <path className={styles.constellationStrokeInner} d={layout.innerArcPath} fill="none" />
-          </>
-        )}
-        <circle className={styles.constellationHub} cx={layout.cx} cy={layout.cy} r="2.5" />
-      </svg>
+    <svg className={className} viewBox="0 0 48 48" aria-hidden="true">
+      <rect x="6" y="8" width="16" height="14" rx="3" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.85" />
+      <rect x="26" y="8" width="16" height="14" rx="3" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.55" />
+      <rect x="6" y="26" width="16" height="14" rx="3" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.55" />
+      <rect x="26" y="26" width="16" height="14" rx="3" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.35" />
+    </svg>
+  )
+}
 
-      <ul className={styles.constellationList}>
-        {items.map((item, index) => {
-          const slot = layout.slots[index]
-          if (!slot) return null
-          const isActive = activeId === item.id
-          const shortName = displayIssuerName(item.name, layout.dual)
+function IssuerGridLogo({ item }) {
+  if (item.id === 'all') return <ViewAllMark className={styles.issuerTileLogo} />
+  if (item.logoKind === 'microsoft') {
+    return (
+      <span className={styles.issuerTileLogo}>
+        <MicrosoftLogo size={36} />
+      </span>
+    )
+  }
+  if (item.logoKind === 'anthropic') {
+    return <AnthropicLogo className={`${styles.issuerTileLogo} ${styles.issuerTileLogoMono}`} />
+  }
+  if (item.logoKind === 'gcloud') {
+    return <GoogleCloudLogo className={styles.issuerTileLogo} />
+  }
+  if (item.logoKind === 'iith' || item.logoUrl) {
+    return (
+      <img
+        src={item.logoUrl || '/logos/iith-icon.png'}
+        alt=""
+        className={styles.issuerTileLogo}
+        decoding="async"
+      />
+    )
+  }
+  return <span className={styles.issuerTileMark}>{item.mark || item.shortName}</span>
+}
 
-          return (
-            <li
-              key={item.id}
-              className={`${styles.constellationItem} ${
-                slot.ring === 'inner' ? styles.constellationItemInner : styles.constellationItemOuter
+/** 2-column issuer tile grid — sized for up to 10 cards. */
+function IssuerGrid({ items, activeId, onSelect }) {
+  const dense = items.length > 6
+  return (
+    <ul className={`${styles.issuerGrid} ${dense ? styles.issuerGridDense : ''}`}>
+      {items.map((item) => {
+        const isActive = activeId === item.id
+        const isPlaceholder = String(item.id).startsWith('slot-')
+        return (
+          <li key={item.id}>
+            <button
+              type="button"
+              className={`${styles.issuerTile} ${isActive ? styles.issuerTileActive : ''} ${
+                isPlaceholder ? styles.issuerTilePlaceholder : ''
               }`}
+              aria-pressed={isActive}
+              aria-label={`${item.name}${item.meta ? `, ${item.meta}` : ''}`}
+              title={item.name}
+              disabled={isPlaceholder}
+              onClick={() => {
+                if (!isPlaceholder) onSelect(item.id)
+              }}
             >
-              <button
-                type="button"
-                className={`${styles.constellationNode} ${isActive ? styles.constellationNodeActive : ''}`}
-                style={{
-                  left: slot.x,
-                  top: slot.y,
-                  width: layout.nodeR * 2,
-                  height: layout.nodeR * 2,
-                }}
-                aria-pressed={isActive}
-                aria-label={`${item.name}, ${item.meta}`}
-                title={`${item.name} · ${item.meta}`}
-                onClick={() => onSelect(item.id)}
-              />
-
-              <button
-                type="button"
-                className={`${styles.constellationLabel} ${
-                  slot.labelSide === 'in' ? styles.constellationLabelIn : styles.constellationLabelOut
-                } ${isActive ? styles.constellationLabelActive : ''}`}
-                style={{ left: slot.labelX, top: slot.labelY }}
-                tabIndex={-1}
-                aria-hidden="true"
-                onClick={() => onSelect(item.id)}
-              >
-                <span className={styles.constellationName}>{shortName}</span>
-                {!layout.dual && (
-                  <span className={styles.constellationMeta}>{item.meta}</span>
-                )}
-              </button>
-            </li>
-          )
-        })}
-      </ul>
-    </div>
+              <span className={styles.issuerTileLogoWrap} aria-hidden="true">
+                <IssuerGridLogo item={item} />
+              </span>
+              <span className={styles.issuerTileName}>{item.shortName || item.name}</span>
+            </button>
+          </li>
+        )
+      })}
+    </ul>
   )
 }
 
@@ -516,6 +347,10 @@ export default function Certifications() {
       ...issuers.map((issuer) => ({
         id: issuer.id,
         name: issuer.name,
+        shortName: issuer.shortName || issuer.name,
+        logoKind: issuer.logoKind,
+        logoUrl: issuer.logoUrl,
+        mark: issuer.mark,
         meta: (() => {
           const count = certifications.filter((cert) => cert.issuerId === issuer.id).length
           return `${count} cert${count === 1 ? '' : 's'}`
@@ -524,22 +359,27 @@ export default function Certifications() {
       {
         id: 'all',
         name: 'View All',
+        shortName: 'View All',
+        logoKind: 'all',
         meta: `${certifications.length} total`,
       },
     ]
 
-    // Optional stress preview: /#certifications?stress=12 pads fake issuers
-    // to prove the fixed constellation board does not grow congested.
+    // Optional layout preview: /?stress=10#certifications pads empty capacity slots
     if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search)
-      const stress = Number(params.get('stress') || 0)
-      if (stress > base.length) {
-        const extras = Array.from({ length: stress - base.length }, (_, i) => ({
-          id: `future-${i + 1}`,
-          name: `Issuer ${base.length + i}`,
-          meta: '1 cert',
-        }))
-        return [...base, ...extras]
+      const stress = Number(new URLSearchParams(window.location.search).get('stress') || 0)
+      const target = Math.min(10, Math.max(0, stress))
+      if (target > base.length) {
+        return [
+          ...base,
+          ...Array.from({ length: target - base.length }, (_, i) => ({
+            id: `slot-${i + 1}`,
+            name: `Issuer ${base.length + i}`,
+            shortName: `Issuer ${base.length + i}`,
+            logoKind: 'all',
+            meta: 'soon',
+          })),
+        ]
       }
     }
     return base
@@ -657,7 +497,7 @@ export default function Certifications() {
         <div className={styles.stage}>
           <nav className={styles.issuerNav} aria-label="Issuers">
             <p className={styles.issuerKicker}>Issuer</p>
-            <IssuerConstellation
+            <IssuerGrid
               items={navItems}
               activeId={activeIssuerId}
               onSelect={selectIssuer}
