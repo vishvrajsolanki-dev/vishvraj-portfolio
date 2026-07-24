@@ -455,12 +455,16 @@ export default function Certifications() {
   }, [])
 
   const advanceCert = useCallback(() => {
-    const idx = certifications.findIndex((cert) => cert.id === activeCertId)
-    const next = certifications[(idx + 1) % certifications.length]
+    const pool =
+      activeIssuerId === 'all'
+        ? certifications
+        : certifications.filter((cert) => cert.issuerId === activeIssuerId)
+    if (pool.length <= 1) return
+    const idx = pool.findIndex((cert) => cert.id === activeCertId)
+    const next = pool[(Math.max(0, idx) + 1) % pool.length]
     if (!next) return
     setActiveCertId(next.id)
-    setActiveIssuerId(next.issuerId)
-  }, [activeCertId])
+  }, [activeCertId, activeIssuerId])
 
   useEffect(() => {
     reducedMotion.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches

@@ -238,10 +238,10 @@ export default function Contact() {
       </div>
 
       <div className={styles.topBar}>
-        <p className={styles.eyebrow} id="contact-heading">
+        <h2 className={styles.eyebrow} id="contact-heading">
           <span>11 — Contact</span>
-          <span className={styles.eyebrowLine} />
-        </p>
+          <span className={styles.eyebrowLine} aria-hidden="true" />
+        </h2>
         <p className={styles.status}>
           <span className={styles.statusDot} aria-hidden="true" />
           Available globally
@@ -316,7 +316,6 @@ export default function Contact() {
                   </div>
                   <div className={styles.sdFooter}>
                     <span>PDF</span>
-                    <span>128MB</span>
                   </div>
                 </div>
               </a>

@@ -347,11 +347,11 @@
 }
 
 .dragHint {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  margin: 1.25rem 0 0;
+  margin: 0;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: 0.68rem;
   letter-spacing: 0.1em;
@@ -363,11 +363,41 @@
   opacity: 0.7;
 }
 
-/* Lightbox */
+.railActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.docOpenBtn {
+  min-height: 44px;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.docOpenBtn:hover,
+.docOpenBtn:focus-visible {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  outline: none;
+}
+
+/* Lightbox — above grain (z:50) and navbar (z:200) */
 .lightbox {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 1000;
   background: rgba(10, 8, 16, 0.88);
   display: flex;
   align-items: center;
@@ -380,8 +410,10 @@
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.06);
@@ -415,6 +447,10 @@
   }
 
   .dragHint {
+    margin-top: 0;
+  }
+
+  .railActions {
     margin-top: 1rem;
   }
 }

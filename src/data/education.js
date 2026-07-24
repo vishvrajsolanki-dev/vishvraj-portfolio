@@ -66,7 +66,7 @@ export const duringCollege = [
   {
     id: 'cvm-hackathon',
     mediaType: 'photo',
-    photoSrc: null,
+    photoSrc: '/photos/cvm-hackathon.svg',
     date: '2026',
     year: '2026',
     title: 'CVM Hackathon',

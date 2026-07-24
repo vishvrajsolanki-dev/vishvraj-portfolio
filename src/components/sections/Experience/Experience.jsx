@@ -68,7 +68,6 @@ const experiences = [
     ],
     tags: ['Python', 'XGBoost', 'GradientBoosting', 'TF-IDF', 'SMOTE', 'NLTK', 'scikit-learn', 'Streamlit'],
     links: [
-      { label: 'PlotSense Live', url: 'https://codsoft-hgjtjwr3a4okoiqyowd8ut.streamlit.app/' },
       { label: 'GitHub Repo', url: 'https://github.com/vishvrajsolanki-dev/CODSOFT' },
     ],
   },
@@ -92,9 +91,9 @@ const experiences = [
     ],
     tags: ['Python', 'Streamlit', 'scikit-learn', 'XGBoost', 'SHAP', 'Random Forest', 'pandas', 'joblib'],
     links: [
-      { label: 'LetterLens App', url: '[LETTERLENS_URL_PLACEHOLDER]' },
-      { label: 'Heart Disease App', url: 'https://codealphaheartdiseaseprediction-ypddp926uffnkst6sagsnr.streamlit.app/' },
-      { label: 'Credit Scoring App', url: 'https://codealphacreditscoringmodel-vbbirvx3mupqfimvpsnk4x.streamlit.app/' },
+      { label: 'LetterLens Repo', url: 'https://github.com/vishvrajsolanki-dev/CodeAlpha_HandwrittenCharacterRecognition' },
+      { label: 'Heart Disease Repo', url: 'https://github.com/vishvrajsolanki-dev/CodeAlpha_HeartDiseasePrediction' },
+      { label: 'Credit Scoring Repo', url: 'https://github.com/vishvrajsolanki-dev/CodeAlpha_CreditScoringModel' },
     ],
   },
 ]
@@ -347,6 +346,7 @@ export default function Experience() {
   useGSAP(() => {
     const section = sectionRef.current
     if (!section) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     gsap.fromTo(
       section.querySelector(`.${styles.header}`),

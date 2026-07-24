@@ -366,7 +366,13 @@ export default function Achievements() {
           <aside className={styles.indexPane} aria-label="Collection index">
             <p className={styles.indexKicker}>Collection Index</p>
             <div className={styles.indexShell}>
-              <ul className={styles.indexList} ref={indexListRef} role="listbox" aria-label="Achievements">
+              <ul
+                className={styles.indexList}
+                ref={indexListRef}
+                role="listbox"
+                tabIndex={0}
+                aria-label="Achievements"
+              >
                 {catalog.map((item, index) => {
                   const selected = item.id === activeId
                   return (

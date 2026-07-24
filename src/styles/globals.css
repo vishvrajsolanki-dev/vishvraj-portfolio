@@ -177,6 +177,20 @@ html {
     text-size-adjust: 100%;
 }
 
+/* Fixed navbar clearance for in-page anchors / scrollIntoView */
+#hero,
+#about,
+#experience,
+#projects,
+#skills,
+#education,
+#certifications,
+#achievements,
+#currently-building,
+#contact {
+    scroll-margin-top: var(--nav-height);
+}
+
 html,
 body {
     overflow-x: hidden;
@@ -250,6 +264,9 @@ video {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
 
     *,
     *::before,
@@ -265,7 +282,7 @@ body::after {
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 9999;
+    z-index: 50;
     opacity: 0.035;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     background-size: 128px 128px;
@@ -273,10 +290,9 @@ body::after {
 
 /* ── Kill Spline watermark ── */
 /* Must live here — Spline injects <a> into <body> outside React tree.
-   CSS Modules :global() in Skills.module.css cannot reach it reliably. */
+   Scoped to known Spline hosts (not every href containing "spline"). */
 a[href*="spline.design"],
-a[href*="app.spline.design"],
-a[href*="spline"] {
+a[href*="app.spline.design"] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;

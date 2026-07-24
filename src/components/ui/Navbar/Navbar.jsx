@@ -91,14 +91,19 @@ export default function Navbar() {
       <button
         className={styles.hamburger}
         onClick={() => setMenuOpen(!menuOpen)}
-        aria-label="Toggle menu"
+        aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={menuOpen}
+        aria-controls="mobile-nav"
       >
         <span className={`${styles.bar} ${menuOpen ? styles.barOpen1 : ''}`} />
         <span className={`${styles.bar} ${menuOpen ? styles.barOpen2 : ''}`} />
         <span className={`${styles.bar} ${menuOpen ? styles.barOpen3 : ''}`} />
       </button>
 
-      <div className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ''}`}>
+      <div
+        id="mobile-nav"
+        className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ''}`}
+      >
         {links.map((l) => (
           <button
             key={l.href}

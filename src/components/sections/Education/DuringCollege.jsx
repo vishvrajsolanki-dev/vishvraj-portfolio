@@ -122,7 +122,7 @@ function PhotoCard({ item, isActive, showProgress, cycleKey }) {
   )
 }
 
-function DocumentCard({ item, isActive, onOpenDocument, showProgress, cycleKey }) {
+function DocumentCard({ item, isActive, showProgress, cycleKey }) {
   const hasDoc = Boolean(item.documentSrc)
 
   return (
@@ -142,26 +142,10 @@ function DocumentCard({ item, isActive, onOpenDocument, showProgress, cycleKey }
           className={styles.logoBadge}
         />
         {hasDoc && (
-          <span
-            className={styles.docThumb}
-            role="button"
-            tabIndex={0}
-            aria-label={`${item.title} certificate`}
-            onClick={(e) => {
-              e.stopPropagation()
-              onOpenDocument(item)
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                e.stopPropagation()
-                onOpenDocument(item)
-              }
-            }}
-          >
+          <span className={styles.docThumb} aria-hidden="true">
             <img
               src={item.documentSrc}
-              alt={`${item.title} certificate`}
+              alt=""
               className={styles.docThumbImg}
             />
           </span>
@@ -184,9 +168,23 @@ function DocumentCard({ item, isActive, onOpenDocument, showProgress, cycleKey }
 export default function DuringCollege() {
   const [lightbox, setLightbox] = useState(null)
   const [activeId, setActiveId] = useState(duringCollege[0]?.id)
+  const [isCoarsePointer, setIsCoarsePointer] = useState(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(hover: none), (pointer: coarse), (max-width: 768px)')
+    const apply = () => setIsCoarsePointer(mq.matches)
+    apply()
+    mq.addEventListener('change', apply)
+    return () => mq.removeEventListener('change', apply)
+  }, [])
+
+  const activeItem = useMemo(
+    () => duringCollege.find((item) => item.id === activeId) || duringCollege[0],
+    [activeId]
+  )
 
   const openDocument = useCallback((item) => {
-    if (!item.documentSrc) return
+    if (!item?.documentSrc) return
     setLightbox({
       src: item.documentSrc,
       alt: `${item.title} certificate`,
@@ -262,7 +260,6 @@ export default function DuringCollege() {
             <DocumentCard
               item={item}
               isActive={isActive}
-              onOpenDocument={openDocument}
               showProgress={showProgress}
               cycleKey={cycleKey}
             />
@@ -298,12 +295,23 @@ export default function DuringCollege() {
         />
       </div>
 
-      <p className={styles.dragHint}>
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-          <path d="M8 12h8M7 9l-3 3 3 3M17 9l3 3-3 3" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        Drag to explore
-      </p>
+      <div className={styles.railActions}>
+        <p className={styles.dragHint}>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <path d="M8 12h8M7 9l-3 3 3 3M17 9l3 3-3 3" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {isCoarsePointer ? 'Swipe to explore' : 'Click a card to explore'}
+        </p>
+        {activeItem?.documentSrc && (
+          <button
+            type="button"
+            className={styles.docOpenBtn}
+            onClick={() => openDocument(activeItem)}
+          >
+            View certificate
+          </button>
+        )}
+      </div>
 
       {lightbox && (
         <DocumentLightbox

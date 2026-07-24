@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { projects } from '../data/projects'
 import styles from './ProjectPage.module.css'
@@ -139,6 +140,17 @@ export default function ProjectPage() {
   const navigate = useNavigate()
   const project = projects.find((p) => p.id === id)
 
+  useEffect(() => {
+    if (!project) {
+      document.title = 'Project not found · VS.dev'
+      return undefined
+    }
+    document.title = `${project.title} · Vishvrajsinh Solanki`
+    return () => {
+      document.title = 'Vishvrajsinh Solanki · ML & Robotics'
+    }
+  }, [project])
+
   if (!project) {
     return (
       <div className={styles.notFound}>
@@ -202,7 +214,7 @@ export default function ProjectPage() {
           <div className={styles.transformGrid}>
             <article className={styles.panel}>
               <div className={styles.panelVisual}>
-                <img src={tx.before.visual} alt="" loading="eager" />
+                <img src={tx.before.visual} alt={tx.before.title} loading="eager" />
                 <span className={styles.panelBadge}>{tx.before.label}</span>
               </div>
               <div className={styles.panelCopy}>
@@ -219,7 +231,7 @@ export default function ProjectPage() {
 
             <article className={styles.panel}>
               <div className={styles.panelVisual}>
-                <img src={tx.after.visual} alt="" loading="eager" />
+                <img src={tx.after.visual} alt={tx.after.title} loading="eager" />
                 <span className={`${styles.panelBadge} ${styles.panelBadgeAfter}`}>{tx.after.label}</span>
               </div>
               <div className={styles.panelCopy}>

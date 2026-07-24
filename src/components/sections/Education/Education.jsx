@@ -45,6 +45,7 @@ export default function Education() {
   useGSAP(() => {
     const section = sectionRef.current
     if (!section) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const tl = gsap.timeline({
       scrollTrigger: {

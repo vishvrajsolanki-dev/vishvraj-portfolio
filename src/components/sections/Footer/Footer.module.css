@@ -41,7 +41,10 @@
 .nav {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem 1.25rem;
+  max-width: 42rem;
 }
 
 .navLink {
