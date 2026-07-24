@@ -26,6 +26,26 @@ export const projects = [
                 { value: '2.1s', label: 'App startup time' },
                 { value: '7.8/10', label: 'Professional UI score' },
             ],
+            transformation: {
+                before: {
+                    label: 'Before',
+                    title: 'Notes & PDFs chaos',
+                    subtitle: 'Scattered. Unorganized. Hard to revise.',
+                    visual: '/case-studies/lexis-before.png',
+                },
+                after: {
+                    label: 'After',
+                    title: 'Structured flashcards & MCQs',
+                    subtitle: 'Organized. Focused. Easy to revise.',
+                    visual: '/case-studies/lexis-after.png',
+                },
+                overview: 'We transformed a chaotic study process into a structured, outcome-driven revision system grounded in the student\'s own material.',
+                outcomes: [
+                    { label: 'Faster revision', detail: 'Well-structured flashcards cut prep time and replace manual card-making.' },
+                    { label: 'Better retention', detail: 'Active recall through flashcards and MCQs strengthens long-term memory.' },
+                    { label: 'Higher accuracy', detail: 'Topic-wise MCQs build clarity and exam confidence from real notes.' },
+                ],
+            },
             highlights: [
                 'RAG pipeline grounds every flashcard and MCQ in the actual uploaded document — not generic AI responses.',
                 'spaCy sentence-boundary chunking preserves semantic coherence across chunks vs naive character splitting.',
@@ -76,6 +96,26 @@ export const projects = [
                 { value: 'ML', label: 'Crisis prediction engine' },
                 { value: 'Indian', label: 'Student-first context' },
             ],
+            transformation: {
+                before: {
+                    label: 'Before',
+                    title: 'Blind spending trail',
+                    subtitle: 'Receipts. Guesswork. Month-end surprises.',
+                    visual: '/case-studies/rupeeiq-before.png',
+                },
+                after: {
+                    label: 'After',
+                    title: 'Terminal-grade clarity',
+                    subtitle: 'Personality. Risk signals. Actionable charts.',
+                    visual: '/case-studies/rupeeiq-after.png',
+                },
+                overview: 'We turned scattered student expenses into a readable finance signal — personality, categories, and crisis risk in one terminal.',
+                outcomes: [
+                    { label: 'Personality map', detail: 'Five spending archetypes from real transaction patterns.' },
+                    { label: 'Early warning', detail: 'Linear regression flags cash-flow risk before it hits.' },
+                    { label: 'Zero tagging', detail: 'spaCy NLP categorizes raw expense text automatically.' },
+                ],
+            },
             highlights: [
                 'Finance personality profiler classifies users across 5 spending archetypes from transaction patterns.',
                 'Crisis predictor flags upcoming cash-flow risk from historical income/expense data using Linear Regression.',
@@ -120,6 +160,26 @@ export const projects = [
                 { value: '~1mm', label: 'Encoder resolution' },
                 { value: '3-layer', label: 'System architecture' },
             ],
+            transformation: {
+                before: {
+                    label: 'Before',
+                    title: 'Parts & paper maps',
+                    subtitle: 'Wires. Guessed routes. Manual warehouse motion.',
+                    visual: '/case-studies/trackbot-before.png',
+                },
+                after: {
+                    label: 'After',
+                    title: 'Autonomous grid AGV',
+                    subtitle: 'A* paths. Sensor fusion. Live telemetry.',
+                    visual: '/case-studies/trackbot-after.png',
+                },
+                overview: 'We moved from scattered hardware experiments to a funded AGV stack — dual-core control, landmark-corrected navigation, and a live ops dashboard.',
+                outcomes: [
+                    { label: 'SSIP funded', detail: '₹30,000 grant validates the industrial AGV direction.' },
+                    { label: 'True navigation', detail: 'A* + RFID landmarks — not fixed line-following.' },
+                    { label: 'Live ops', detail: 'WebSocket dashboard under 50ms for mission control.' },
+                ],
+            },
             highlights: [
                 'Dual-core ESP32-S3 with hard separation: Core 0 handles encoder interrupts + motor PWM + FSM; Core 1 handles WiFi + WebSocket + RFID.',
                 'A* pathfinding on a 5×4 coordinate grid with dynamic obstacle replanning — not a fixed line-following script.',
@@ -170,6 +230,26 @@ export const projects = [
                 { value: '50k', label: 'TF-IDF features' },
                 { value: '+1.87%', label: 'Accuracy gain over baseline notebook' },
             ],
+            transformation: {
+                before: {
+                    label: 'Before',
+                    title: 'Guessing genres by hand',
+                    subtitle: 'Scripts. Labels. Inconsistent intuition.',
+                    visual: '/case-studies/plotsense-before.png',
+                },
+                after: {
+                    label: 'After',
+                    title: '27-class plot classifier',
+                    subtitle: 'TF-IDF bigrams. Live cinema UI.',
+                    visual: '/case-studies/plotsense-after.png',
+                },
+                overview: 'We rebuilt a raw notebook into a deployed NLP product — 54k IMDB plots, bigram features, and a cinema-themed inference app.',
+                outcomes: [
+                    { label: '60.25% accuracy', detail: 'Competitive multi-class score across 27 genres.' },
+                    { label: 'Bigram signal', detail: 'Phrases like “serial killer” beat unigram baselines.' },
+                    { label: 'Shipped live', detail: 'Streamlit Cloud app with cached zero-lag inference.' },
+                ],
+            },
             highlights: [
                 'Bigrams were a deliberate architectural choice — they capture "serial killer", "love story", "space station" that unigrams miss entirely.',
                 'lbfgs solver chosen over saga — saga too slow to converge on CPU with 50k features and 54k samples.',
@@ -216,6 +296,26 @@ export const projects = [
                 { value: '112K', label: 'Training samples' },
                 { value: 'CNN', label: 'BatchNorm + Dropout architecture' },
             ],
+            transformation: {
+                before: {
+                    label: 'Before',
+                    title: 'Illegible scribbles',
+                    subtitle: 'Paper. Guesswork. No instant feedback.',
+                    visual: '/case-studies/letterlens-before.png',
+                },
+                after: {
+                    label: 'After',
+                    title: 'Live CNN recognition',
+                    subtitle: 'Draw. Infer. 47-class confidence.',
+                    visual: '/case-studies/letterlens-after.png',
+                },
+                overview: 'We turned messy handwriting into a real-time recognition loop — EMNIST-trained CNN with a browser drawing canvas.',
+                outcomes: [
+                    { label: '99% MNIST', detail: 'Strong digit baseline before EMNIST expansion.' },
+                    { label: '47 classes', detail: 'Uppercase, lowercase, and digits in one model.' },
+                    { label: 'Instant draw', detail: 'Streamlit canvas for live character inference.' },
+                ],
+            },
             highlights: [
                 'Trained on EMNIST Balanced — 47 character classes including uppercase, lowercase, and digits.',
                 'BatchNorm after each conv layer stabilises training and enables higher learning rates.',
