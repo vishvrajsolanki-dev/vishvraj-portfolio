@@ -8,6 +8,19 @@ gsap.registerPlugin(ScrollTrigger)
 
 const AUTO_MS = 5000
 
+/** Fixed constellation board — grows rings, not height, as issuers are added. */
+const CONSTELLATION = {
+  width: 248,
+  height: 360,
+  cx: 40,
+  cy: 180,
+  startDeg: -78,
+  endDeg: 78,
+  outerR: 124,
+  innerR: 78,
+  dualAt: 7,
+}
+
 const MicrosoftLogo = ({ size = 22 }) => (
   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width={size} height={size} aria-hidden="true">
     <path d="M11.4 11.4H0V0h11.4v11.4z" fill="#F25022" />
@@ -17,50 +30,77 @@ const MicrosoftLogo = ({ size = 22 }) => (
   </svg>
 )
 
+const AnthropicLogo = ({ className }) => (
+  <svg className={className} viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path
+      fill="currentColor"
+      d="M26.8 8.5 6.2 55.5h9.1l4.1-9.5h17.2l4.1 9.5h9.2L29.4 8.5h-2.6zm1.2 13.4 6.4 15.2H21.6l6.4-15.2zM48.2 8.5 56.8 55.5h-9.1L39.1 8.5h9.1z"
+    />
+  </svg>
+)
+
+const GoogleCloudLogo = ({ className }) => (
+  <svg className={className} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path fill="#EA4335" d="M12.05 4.2c-2.55 0-4.78 1.55-5.75 3.78l2.55 1.48c.55-1.32 1.85-2.25 3.35-2.25 1.42 0 2.65.82 3.25 2.02l2.62-1.52C16.92 5.58 14.68 4.2 12.05 4.2z" />
+    <path fill="#4285F4" d="M19.55 11.35h-7.2v2.7h4.15c-.42 1.35-1.62 2.3-3.1 2.55l2.35 1.82c2.15-1.12 3.6-3.35 3.6-5.82 0-.45-.08-.88-.2-1.25z" />
+    <path fill="#34A853" d="M12.2 19.1c2.35 0 4.35-.78 5.8-2.1l-2.35-1.82c-.9.6-2.05.95-3.15.95-2.42 0-4.48-1.55-5.22-3.7L4.7 14.2c1.42 2.85 4.25 4.9 7.5 4.9z" />
+    <path fill="#FBBC05" d="M7.05 12.9c-.2-.55-.3-1.15-.3-1.75s.1-1.2.3-1.75L4.45 7.1C3.9 8.25 3.6 9.55 3.6 11.15c0 1.55.3 2.9.9 4.15l2.55-2.4z" />
+  </svg>
+)
+
+const IithLogo = ({ className }) => (
+  <svg className={className} viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" strokeWidth="2.2" opacity="0.55" />
+    <text
+      x="32"
+      y="37"
+      textAnchor="middle"
+      fill="currentColor"
+      fontFamily="var(--font-display), system-ui, sans-serif"
+      fontSize="16"
+      fontWeight="700"
+      letterSpacing="0.06em"
+    >
+      IIT
+    </text>
+  </svg>
+)
+
 const issuers = [
   {
     id: 'anthropic',
     name: 'Anthropic',
     fullName: 'Anthropic Academy',
-    logoUrl: '/logos/anthropic.png',
-    washUrl: '/logos/anthropic-mark.png',
-    washOpacity: 0.15,
+    logoKind: 'anthropic',
+    washOpacity: 0.13,
     logoAlt: 'Anthropic',
-    invertLogo: true,
     mark: 'AI',
   },
   {
     id: 'gcloud',
     name: 'Google Cloud',
     fullName: 'Google Cloud',
-    logoUrl: '/logos/gcloud.png',
-    washUrl: '/logos/gcloud-mark.png',
-    washOpacity: 0.16,
+    logoKind: 'gcloud',
+    washOpacity: 0.14,
     logoAlt: 'Google Cloud',
-    invertLogo: false,
     mark: 'GC',
   },
   {
     id: 'microsoft',
     name: 'Microsoft',
     fullName: 'Microsoft',
-    logoUrl: null,
-    logoSvg: true,
-    washSvg: 'microsoft',
+    logoKind: 'microsoft',
     washOpacity: 0.09,
     logoAlt: 'Microsoft',
-    invertLogo: false,
     mark: 'MS',
   },
   {
     id: 'iith',
     name: 'IIT Hyderabad',
     fullName: 'IIT Hyderabad × My Job Grow',
-    logoUrl: '/logos/iith.png',
-    washUrl: '/logos/iith-mark.png',
-    washOpacity: 0.14,
+    logoKind: 'iith',
+    washOpacity: 0.12,
     logoAlt: 'IIT Hyderabad',
-    invertLogo: false,
     mark: 'IIT',
   },
 ]
@@ -156,77 +196,184 @@ function CheckIcon() {
 }
 
 function IssuerLogo({ issuer, className, size = 22 }) {
-  if (issuer.logoSvg) {
+  if (issuer.logoKind === 'anthropic') return <AnthropicLogo className={className} />
+  if (issuer.logoKind === 'gcloud') return <GoogleCloudLogo className={className} />
+  if (issuer.logoKind === 'microsoft') {
     return (
       <span className={className}>
         <MicrosoftLogo size={size} />
       </span>
     )
   }
-  if (issuer.logoUrl) {
-    return (
-      <img
-        src={issuer.logoUrl}
-        alt={issuer.logoAlt}
-        className={className}
-        style={issuer.invertLogo ? { filter: 'invert(1)' } : undefined}
-      />
-    )
-  }
+  if (issuer.logoKind === 'iith') return <IithLogo className={className} />
   return <span className={className}>{issuer.mark}</span>
 }
 
 function CardLogoWash({ issuer }) {
-  if (issuer.washSvg === 'microsoft' || issuer.logoSvg) {
+  if (issuer.logoKind === 'anthropic') {
+    return (
+      <span className={`${styles.cardLogoWashSvg} ${styles.cardLogoWashMono}`}>
+        <AnthropicLogo />
+      </span>
+    )
+  }
+  if (issuer.logoKind === 'gcloud') {
+    return (
+      <span className={styles.cardLogoWashSvg}>
+        <GoogleCloudLogo />
+      </span>
+    )
+  }
+  if (issuer.logoKind === 'microsoft') {
     return (
       <span className={styles.cardLogoWashSvg}>
         <MicrosoftLogo size={280} />
       </span>
     )
   }
-  const src = issuer.washUrl || issuer.logoUrl
-  if (src) {
-    const needsInvert = Boolean(issuer.invertLogo && !issuer.washUrl)
+  if (issuer.logoKind === 'iith') {
     return (
-      <img
-        src={src}
-        alt=""
-        className={styles.cardLogoWashImg}
-        style={needsInvert ? { filter: 'invert(1) brightness(1.15)' } : undefined}
-      />
+      <span className={`${styles.cardLogoWashSvg} ${styles.cardLogoWashMono}`}>
+        <IithLogo />
+      </span>
     )
   }
   return <span className={styles.cardLogoWashMark}>{issuer.mark}</span>
 }
 
-/** Serpentine spine connecting issuer nodes — scales with item count. */
-function IssuerSpine({ count }) {
-  const step = 76
-  const h = Math.max(count, 2) * step
-  const mid = 22
-  // Pronounced left/right curls so the rail never reads as a straight timeline
-  let d = `M ${mid} 14`
-  for (let i = 0; i < count - 1; i += 1) {
-    const y0 = 14 + i * step
-    const y1 = 14 + (i + 1) * step
-    const bulge = i % 2 === 0 ? mid + 28 : mid - 24
-    const c1y = y0 + 30
-    const c2y = y1 - 30
-    d += ` C ${bulge} ${c1y}, ${bulge} ${c2y}, ${mid} ${y1}`
+/** Evenly place `count` points along a right-opening arc. */
+function placeOnArc(count, radius, { cx, cy, startDeg, endDeg }) {
+  if (count <= 0) return []
+  return Array.from({ length: count }, (_, i) => {
+    const t = count === 1 ? 0.5 : i / (count - 1)
+    const deg = startDeg + (endDeg - startDeg) * t
+    const rad = (deg * Math.PI) / 180
+    return {
+      x: cx + Math.cos(rad) * radius,
+      y: cy + Math.sin(rad) * radius,
+      deg,
+    }
+  })
+}
+
+/**
+ * Fixed-board constellation layout.
+ * ≤6 issuers → single outer arc
+ * 7+ issuers → outer + inner rings (board size stays constant — no vertical congestion)
+ */
+export function layoutConstellation(count, board = CONSTELLATION) {
+  const { width, height, cx, cy, startDeg, endDeg, outerR, innerR, dualAt } = board
+  const dual = count >= dualAt
+  const outerCount = dual ? Math.ceil(count * 0.58) : count
+  const innerCount = dual ? count - outerCount : 0
+
+  const outer = placeOnArc(outerCount, outerR, { cx, cy, startDeg, endDeg }).map((p) => ({
+    ...p,
+    ring: 'outer',
+  }))
+  const inner = placeOnArc(innerCount, innerR, { cx, cy, startDeg, endDeg }).map((p) => ({
+    ...p,
+    ring: 'inner',
+  }))
+
+  // Interleave visually: outer first (top→bottom), then inner — assign in order of items
+  const slots = [...outer, ...inner]
+  const nodeR = Math.max(5.5, 8.5 - Math.max(0, count - 5) * 0.35)
+
+  return {
+    width,
+    height,
+    cx,
+    cy,
+    outerR,
+    innerR,
+    dual,
+    nodeR,
+    compact: count >= dualAt,
+    slots,
+    arcPath: describeArc(cx, cy, outerR, startDeg, endDeg),
+    innerArcPath: dual ? describeArc(cx, cy, innerR, startDeg, endDeg) : null,
   }
+}
+
+function describeArc(cx, cy, r, startDeg, endDeg) {
+  const toXY = (deg) => {
+    const rad = (deg * Math.PI) / 180
+    return [cx + Math.cos(rad) * r, cy + Math.sin(rad) * r]
+  }
+  const [x1, y1] = toXY(startDeg)
+  const [x2, y2] = toXY(endDeg)
+  const large = Math.abs(endDeg - startDeg) > 180 ? 1 : 0
+  return `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}`
+}
+
+function IssuerConstellation({ items, activeId, onSelect }) {
+  const layout = useMemo(() => layoutConstellation(items.length), [items.length])
 
   return (
-    <svg
-      className={styles.issuerSpine}
-      viewBox={`0 0 48 ${h}`}
-      width="48"
-      height={h}
-      aria-hidden="true"
-      preserveAspectRatio="none"
+    <div
+      className={`${styles.constellation} ${layout.compact ? styles.constellationCompact : ''}`}
+      style={{ width: layout.width, height: layout.height }}
     >
-      <path className={styles.issuerSpineGlow} d={d} fill="none" />
-      <path className={styles.issuerSpineStroke} d={d} fill="none" />
-    </svg>
+      <svg
+        className={styles.constellationSvg}
+        viewBox={`0 0 ${layout.width} ${layout.height}`}
+        width={layout.width}
+        height={layout.height}
+        aria-hidden="true"
+      >
+        <path className={styles.constellationGlow} d={layout.arcPath} fill="none" />
+        <path className={styles.constellationStroke} d={layout.arcPath} fill="none" />
+        {layout.innerArcPath && (
+          <>
+            <path className={styles.constellationGlowInner} d={layout.innerArcPath} fill="none" />
+            <path className={styles.constellationStrokeInner} d={layout.innerArcPath} fill="none" />
+          </>
+        )}
+        {/* soft hub */}
+        <circle className={styles.constellationHub} cx={layout.cx} cy={layout.cy} r="3.5" />
+      </svg>
+
+      <ul className={styles.constellationList}>
+        {items.map((item, index) => {
+          const slot = layout.slots[index]
+          if (!slot) return null
+          const isActive = activeId === item.id
+          const shortName = layout.compact && item.name.includes(' ')
+            ? item.name.split(' ')[0]
+            : item.name
+
+          return (
+            <li
+              key={item.id}
+              className={styles.constellationItem}
+              style={{
+                left: slot.x,
+                top: slot.y,
+                '--node-r': `${layout.nodeR}px`,
+              }}
+            >
+              <button
+                type="button"
+                className={`${styles.constellationBtn} ${isActive ? styles.constellationBtnActive : ''}`}
+                aria-pressed={isActive}
+                aria-label={`${item.name}, ${item.meta}`}
+                title={`${item.name} · ${item.meta}`}
+                onClick={() => onSelect(item.id)}
+              >
+                <span className={styles.constellationDot} aria-hidden="true" />
+                <span className={styles.constellationText}>
+                  <span className={styles.constellationName}>{shortName}</span>
+                  {!layout.compact && (
+                    <span className={styles.constellationMeta}>{item.meta}</span>
+                  )}
+                </span>
+              </button>
+            </li>
+          )
+        })}
+      </ul>
+    </div>
   )
 }
 
@@ -262,7 +409,6 @@ export default function Certifications() {
 
   const filteredCerts = useMemo(() => {
     if (activeIssuerId === 'all') {
-      // One representative cert per issuer for the View All stack
       return issuers
         .map((issuer) => certifications.find((cert) => cert.issuerId === issuer.id))
         .filter(Boolean)
@@ -301,7 +447,6 @@ export default function Certifications() {
     if (cert) setActiveIssuerId(cert.issuerId)
   }, [])
 
-  // Walk every credential across every issuer, then wrap.
   const advanceCert = useCallback(() => {
     const idx = certifications.findIndex((cert) => cert.id === activeCertId)
     const next = certifications[(idx + 1) % certifications.length]
@@ -374,31 +519,11 @@ export default function Certifications() {
         <div className={styles.stage}>
           <nav className={styles.issuerNav} aria-label="Issuers">
             <p className={styles.issuerKicker}>Issuer</p>
-            <div className={styles.issuerTrack}>
-              <IssuerSpine count={navItems.length} />
-              <ul className={styles.issuerList}>
-                {navItems.map((item, index) => {
-                  const isActive = activeIssuerId === item.id
-                  const stagger = index % 2 === 0 ? 'even' : 'odd'
-                  return (
-                    <li key={item.id} className={styles[`issuerItem${stagger === 'even' ? 'Even' : 'Odd'}`]}>
-                      <button
-                        type="button"
-                        className={`${styles.issuerBtn} ${isActive ? styles.issuerBtnActive : ''}`}
-                        aria-pressed={isActive}
-                        onClick={() => selectIssuer(item.id)}
-                      >
-                        <span className={styles.issuerDot} aria-hidden="true" />
-                        <span className={styles.issuerText}>
-                          <span className={styles.issuerName}>{item.name}</span>
-                          <span className={styles.issuerMeta}>{item.meta}</span>
-                        </span>
-                      </button>
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
+            <IssuerConstellation
+              items={navItems}
+              activeId={activeIssuerId}
+              onSelect={selectIssuer}
+            />
           </nav>
 
           <div className={styles.stackScene} aria-live="polite">
@@ -433,7 +558,7 @@ export default function Certifications() {
 
                     <div
                       className={styles.cardLogoWash}
-                      style={{ opacity: issuer.washOpacity ?? 0.16 }}
+                      style={{ opacity: issuer.washOpacity ?? 0.14 }}
                       aria-hidden="true"
                     >
                       <CardLogoWash issuer={issuer} />
