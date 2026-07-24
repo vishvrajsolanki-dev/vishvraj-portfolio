@@ -307,7 +307,7 @@ export default function CurrentlyBuilding() {
           <div className={styles.headerCopy}>
             <span className={styles.kicker}>Currently Building</span>
             <h2 id="whats-next-heading" className={styles.heading}>
-              What’s Next
+              What's Next
             </h2>
             <span className={styles.rule} aria-hidden="true" />
             <p className={styles.subhead}>A look ahead at in-progress builds.</p>

@@ -119,41 +119,41 @@
 .strip {
   position: relative;
   z-index: 1;
-  padding: 2.75rem 0 1.5rem;
+  padding: 1.25rem 0 1.75rem;
 }
 
 .stripBand {
   position: absolute;
   left: 0;
   right: 0;
-  top: 50%;
-  transform: translateY(-42%);
-  height: clamp(88px, 12vw, 120px);
+  top: 0.35rem;
+  height: clamp(64px, 8vw, 84px);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015) 40%, rgba(0, 0, 0, 0.25)),
     repeating-linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.035) 0 1px,
-      transparent 1px 14px
+      rgba(255, 255, 255, 0.05) 0 1px,
+      transparent 1px 12px
     ),
-    linear-gradient(180deg, rgba(22, 20, 28, 0.96), rgba(10, 8, 14, 0.98));
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    linear-gradient(180deg, rgba(28, 26, 34, 0.98), rgba(12, 10, 16, 0.98));
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 18px 40px rgba(0, 0, 0, 0.35);
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    0 16px 36px rgba(0, 0, 0, 0.35);
   pointer-events: none;
 }
 
 .rail {
   position: relative;
   display: flex;
-  gap: 1.5rem;
+  gap: 1.65rem;
   overflow-x: auto;
   overflow-y: visible;
   scroll-snap-type: x mandatory;
   scroll-padding-inline: max(6vw, calc((100vw - 1240px) / 2 + 1.25rem));
-  padding: 1.75rem max(6vw, calc((100vw - 1240px) / 2 + 1.25rem)) 1.25rem;
+  padding: 0.35rem max(6vw, calc((100vw - 1240px) / 2 + 1.25rem)) 1.35rem;
   cursor: grab;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -178,21 +178,21 @@
 /* ── Pinned card ── */
 .card {
   position: relative;
-  flex: 0 0 min(78vw, 320px);
+  flex: 0 0 min(78vw, 340px);
   scroll-snap-align: start;
-  padding-top: 0.85rem;
+  padding-top: 1.15rem;
 }
 
 .pin {
   position: absolute;
-  top: 0;
+  top: 0.15rem;
   left: 50%;
   transform: translateX(-50%);
-  width: 18px;
-  height: 28px;
-  z-index: 3;
+  width: 20px;
+  height: 30px;
+  z-index: 4;
   display: block;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.55));
 }
 
 .pinHead {
@@ -200,22 +200,23 @@
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.85), rgba(180, 180, 185, 0.9) 45%, rgba(90, 90, 96, 0.95) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.35);
+    radial-gradient(circle at 32% 28%, #fff, #c8c8ce 42%, #6e6e76 100%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 -2px 3px rgba(0, 0, 0, 0.35);
 }
 
 .pinNeedle {
   position: absolute;
-  top: 14px;
+  top: 16px;
   left: 50%;
   transform: translateX(-50%);
   width: 2px;
-  height: 14px;
-  background: linear-gradient(180deg, rgba(200, 200, 205, 0.95), rgba(120, 120, 128, 0.5));
+  height: 16px;
+  background: linear-gradient(180deg, rgba(210, 210, 216, 0.95), rgba(90, 90, 98, 0.35));
   border-radius: 1px;
 }
 
@@ -223,14 +224,14 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 430px;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  min-height: 460px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
   background:
-    linear-gradient(165deg, rgba(32, 30, 38, 0.98) 0%, rgba(14, 12, 18, 0.99) 100%);
+    linear-gradient(180deg, rgba(38, 36, 44, 0.98) 0%, rgba(16, 14, 20, 0.99) 100%);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.06) inset,
-    0 18px 40px rgba(0, 0, 0, 0.4);
+    0 1px 0 rgba(255, 255, 255, 0.07) inset,
+    0 22px 48px rgba(0, 0, 0, 0.45);
   overflow: hidden;
   transition:
     border-color 0.25s ease,
@@ -249,49 +250,50 @@
 .cardHead {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 0.75rem;
-  align-items: baseline;
-  padding: 1.15rem 1.1rem 0.85rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 0.85rem;
+  align-items: end;
+  padding: 1.25rem 1.15rem 0.95rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .cardNum {
   font-family: var(--font-display);
-  font-size: 1.85rem;
+  font-size: 2.15rem;
   font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
   color: #fff;
 }
 
 .cardTitle {
-  margin: 0;
+  margin: 0 0 0.15rem;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
-  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.25;
 }
 
 .sketchWell {
   flex: 1;
   display: grid;
   place-items: center;
-  padding: 1rem 0.85rem;
+  margin: 0.85rem 0.9rem 0;
+  padding: 0.85rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   background:
-    radial-gradient(ellipse 70% 60% at 50% 45%, rgba(255, 255, 255, 0.04), transparent 70%),
+    radial-gradient(ellipse 70% 60% at 50% 45%, rgba(255, 255, 255, 0.045), transparent 70%),
     repeating-linear-gradient(
       0deg,
       transparent,
-      transparent 11px,
-      rgba(255, 255, 255, 0.02) 11px,
-      rgba(255, 255, 255, 0.02) 12px
+      transparent 10px,
+      rgba(255, 255, 255, 0.025) 10px,
+      rgba(255, 255, 255, 0.025) 11px
     );
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.55);
-  min-height: 200px;
+  color: rgba(255, 255, 255, 0.62);
+  min-height: 210px;
 }
 
 .sketch {
@@ -312,16 +314,17 @@
 .specTable {
   display: flex;
   flex-direction: column;
+  margin-top: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .specRow {
   display: grid;
-  grid-template-columns: 64px 1fr 52px;
-  gap: 0.55rem;
-  align-items: center;
-  padding: 0.55rem 0.9rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  min-height: 42px;
+  grid-template-columns: 70px minmax(0, 1fr) 54px;
+  gap: 0;
+  align-items: stretch;
+  min-height: 44px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .specRow:last-child {
@@ -333,15 +336,23 @@
   font-size: 0.58rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.32);
+  display: flex;
+  align-items: center;
+  padding: 0.55rem 0.7rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .specValue {
   font-family: var(--font-body);
   font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.68);
   line-height: 1.35;
   min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: 0.55rem 0.7rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .specMeta {
@@ -349,11 +360,11 @@
   font-size: 0.58rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.35);
-  text-align: right;
+  color: rgba(255, 255, 255, 0.38);
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
+  padding: 0.45rem 0.35rem;
 }
 
 .crosshair {
@@ -409,20 +420,19 @@
   }
 
   .card {
-    flex-basis: min(86vw, 300px);
+    flex-basis: min(86vw, 310px);
   }
 
   .cardSheet {
-    min-height: 400px;
+    min-height: 430px;
   }
 
   .specRow {
-    grid-template-columns: 56px 1fr 44px;
-    padding: 0.5rem 0.75rem;
+    grid-template-columns: 60px minmax(0, 1fr) 46px;
   }
 
   .stripBand {
-    height: 72px;
+    height: 58px;
   }
 }
 
