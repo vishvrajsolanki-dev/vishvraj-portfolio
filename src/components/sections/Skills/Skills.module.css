@@ -26,7 +26,7 @@
   font-size: clamp(1.85rem, 3.4vw, 2.6rem);
   font-weight: 700;
   color: #ffffff;
-  margin: 0 0 1.35rem;
+  margin: 0;
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
@@ -39,7 +39,7 @@
   display: grid;
   grid-template-columns: minmax(260px, 0.95fr) minmax(0, 1.05fr);
   gap: clamp(1.75rem, 4vw, 3.5rem);
-  align-items: start;
+  align-items: center;
 }
 
 .mapPane {
@@ -48,6 +48,45 @@
   align-items: center;
   justify-content: center;
   width: 100%;
+  align-self: center;
+}
+
+/* Desktop: heading + detail on the left; dial spans both rows and
+   top-aligns so the circle sits level with the content (lifted).
+   Must come AFTER .signalLayout so display:contents wins the cascade. */
+@media (min-width: 1025px) {
+  .inner {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.95fr) minmax(0, 1.05fr);
+    column-gap: clamp(1.75rem, 4vw, 3.5rem);
+    row-gap: 1.1rem;
+    align-items: start;
+  }
+
+  .intro {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+  }
+
+  .signalLayout {
+    display: contents;
+  }
+
+  .detailPane {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+  }
+
+  .mapPane {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    /* Top-align to the label, then nudge up so the ring/nodes
+       (not the empty stage padding) sit level with the copy */
+    align-self: start;
+    margin-top: clamp(-2.75rem, -3.5vw, -1.75rem);
+  }
 }
 
 .mapStage {
@@ -353,20 +392,25 @@
 }
 
 @media (max-width: 1024px) {
+  .intro {
+    margin-bottom: 1.35rem;
+  }
+
   .signalLayout {
+    display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
   }
 
   .mapPane {
     order: -1;
-  }
-
-  .mapStage {
-    width: min(100%, 440px);
+    grid-column: auto;
+    grid-row: auto;
   }
 
   .detailPane {
+    grid-column: auto;
+    grid-row: auto;
     margin: 0 auto;
     max-width: 40rem;
     text-align: left;
@@ -374,6 +418,10 @@
 
   .detailDesc {
     max-width: none;
+  }
+
+  .mapStage {
+    width: min(100%, 440px);
   }
 
   .mobileNav {
@@ -413,8 +461,8 @@
     padding: 0 5vw;
   }
 
-  .heading {
-    margin-bottom: 1.5rem;
+  .intro {
+    margin-bottom: 1.15rem;
   }
 
   .mapStage {

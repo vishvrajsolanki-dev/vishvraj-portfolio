@@ -213,8 +213,10 @@ export default function Skills() {
   return (
     <section className={styles.section} ref={sectionRef} id="skills">
       <div className={styles.inner}>
-        <span className={styles.sectionLabel}>04 — Services & Skills</span>
-        <h2 className={styles.heading}>What I Build</h2>
+        <div className={styles.intro}>
+          <span className={styles.sectionLabel}>04 — Services & Skills</span>
+          <h2 className={styles.heading}>What I Build</h2>
+        </div>
 
         <div className={styles.signalLayout}>
           {/* Content inward-left; signal map on the right */}
