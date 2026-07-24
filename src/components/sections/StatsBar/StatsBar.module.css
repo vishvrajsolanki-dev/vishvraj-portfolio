@@ -1,16 +1,141 @@
+/* Mock A — instrument strip. Clear of hero R3F (no overlap / negative pull). */
+
 .section {
-  padding: 0 6vw;
-  margin: 0 0 6rem;
+  position: relative;
+  z-index: 2;
+  /* Sit fully below 100vh hero — no negative margin into R3F */
+  margin: 0 0 5.5rem;
+  padding:
+    clamp(2.5rem, 6vh, 4.5rem)
+    var(--section-x, clamp(1.25rem, 5vw, 4rem))
+    0;
+  background: var(--color-bg, #0a0810);
+  isolation: isolate;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 0;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.eyebrowLine {
+  width: 4rem;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ── Casino lever ── */
+.leverBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.35rem 0.55rem 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.leverBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.leverBtn:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.leverHint {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.leverBody {
+  position: relative;
+  width: 28px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.leverBase {
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 10px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #d8dde4 0%, #8a929e 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.leverArm {
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  width: 4px;
+  height: 26px;
+  margin-left: -2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #c8ced6, #6a7280);
+  transform-origin: 50% 12%;
+  will-change: transform;
+}
+
+.leverKnob {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff6b6b, #b91c1c 70%);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* ── Instrument strip ── */
 .strip {
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.02);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 42%),
+    rgba(255, 255, 255, 0.02);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 18px 40px rgba(0, 0, 0, 0.25);
 }
 
 .stat {
@@ -18,10 +143,11 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.4rem;
-  padding: 2rem 2.5rem;
-  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  gap: 0.45rem;
+  padding: 1.75rem 1.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   transition: background 0.2s ease;
+  min-width: 0;
 }
 
 .stat:last-child {
@@ -29,12 +155,27 @@
 }
 
 .stat:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.statFocus {
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.statFocus::after {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.55);
 }
 
 .value {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 2.5rem;
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: clamp(1.85rem, 3.2vw, 2.5rem);
   font-weight: 700;
   color: #ffffff;
   letter-spacing: -0.03em;
@@ -43,60 +184,78 @@
 }
 
 .label {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.4);
-  line-height: 1.5;
+  line-height: 1.45;
   white-space: pre-line;
 }
 
-/* ── Mobile: 2-column grid instead of 5-column row ── */
+@media (max-width: 900px) {
+  .stat {
+    padding: 1.35rem 1.1rem;
+  }
+
+  .statFocus::after {
+    left: 1.1rem;
+    right: 1.1rem;
+  }
+}
+
 @media (max-width: 640px) {
   .section {
-    padding: 0 4vw;
-    margin: 0 0 4rem;
+    margin-bottom: 4rem;
+    padding-top: 2rem;
+  }
+
+  .header {
+    margin-bottom: 0.85rem;
   }
 
   .strip {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    flex-direction: unset;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   .stat {
-    padding: 1.25rem 1.25rem;
-    border-right: 1px solid rgba(255, 255, 255, 0.12);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 1.2rem 1.15rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  /* Right column items — remove right border */
   .stat:nth-child(2n) {
     border-right: none;
   }
 
-  /* Only the true last item gets no bottom border */
   .stat:last-child {
     border-bottom: none;
   }
 
-  /* Orphan 5th item — spans full width, centered,
-     with explicit top border to separate from row above */
   .stat:last-child:nth-child(odd) {
     grid-column: 1 / -1;
     border-right: none;
     border-bottom: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     align-items: center;
+    text-align: center;
+  }
+
+  .statFocus::after {
+    display: none;
   }
 
   .value {
-    font-size: 1.8rem;
+    font-size: 1.75rem;
   }
 
   .label {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leverArm {
+    transition: none;
   }
 }

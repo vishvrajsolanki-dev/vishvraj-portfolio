@@ -17,7 +17,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: visible;
+    overflow: hidden; /* keep R3F inside hero — never overlap StatsBar */
 }
 
 .canvas canvas {
