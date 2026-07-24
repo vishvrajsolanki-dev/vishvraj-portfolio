@@ -14,8 +14,8 @@
   width: 100%;
   max-width: none;
   margin: 0;
-  /* room for upright handle + pull arc */
-  padding: 2.5rem 2.5rem 2.5rem 0;
+  /* equal L/R inset so the strip isn’t skewed by the side handle */
+  padding: 2.5rem 2.6rem;
 }
 
 .strip {
@@ -196,7 +196,7 @@
   }
 
   .rack {
-    padding: 2.2rem 2.1rem 2.2rem 0;
+    padding: 2.2rem 2.15rem;
   }
 
   .strip {

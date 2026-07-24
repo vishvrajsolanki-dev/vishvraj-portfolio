@@ -18,6 +18,15 @@ const MAX_PULL = 95
 const PULL_THRESHOLD = 32
 const armVars = { transformOrigin: '50% 100%' }
 
+/** Low targets linger; high targets scramble through faster. */
+const durationFor = (n) => {
+  if (n <= 1) return 1.95
+  if (n <= 2) return 1.75
+  if (n <= 5) return 1.35
+  if (n < 50) return 1.05
+  return 0.78
+}
+
 export default function StatsBar() {
   const sectionRef = useRef(null)
   const rackRef = useRef(null)
@@ -76,17 +85,19 @@ export default function StatsBar() {
     valueEls.forEach((el, i) => {
       const stat = stats[i]
       const obj = { val: 0 }
-      // Snap first paint off zero so small ints (1, 2) don't idle on 0
       el.textContent = `0${stat.suffix}`
+
+      const duration = durationFor(stat.countTo)
+      // Small ints ease through slowly; big ints race with a soft landing
+      const ease = stat.countTo <= 5 ? 'power1.inOut' : 'power2.out'
 
       const tween = gsap.to(obj, {
         val: stat.countTo,
-        duration: 1.1,
-        ease: 'power3.out',
-        delay: i * 0.04,
+        duration,
+        ease,
+        delay: i * 0.03,
         onUpdate() {
-          // ceil once moving so 0→1 / 0→2 leave zero on the first tick
-          const n = obj.val === 0 ? 0 : Math.min(stat.countTo, Math.ceil(obj.val))
+          const n = Math.min(stat.countTo, Math.round(obj.val))
           el.textContent = `${n}${stat.suffix}`
         },
         onComplete() {
