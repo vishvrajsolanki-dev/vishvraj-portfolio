@@ -7,11 +7,31 @@ function supportsWebGL() {
   if (typeof document === 'undefined') return false
   try {
     const canvas = document.createElement('canvas')
-    return Boolean(
+    const gl =
       canvas.getContext('webgl2') ||
-        canvas.getContext('webgl') ||
-        canvas.getContext('experimental-webgl')
-    )
+      canvas.getContext('webgl') ||
+      canvas.getContext('experimental-webgl')
+    if (!gl) return false
+
+    // Broken/sandboxed contexts often advertise 0xffff vendor/device and
+    // then throw inside THREE.WebGLRenderer — treat them as unsupported.
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info')
+    if (dbg) {
+      const vendor = String(gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) || '')
+      const renderer = String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '')
+      if (/0xffff/i.test(vendor) || /0xffff/i.test(renderer)) return false
+    }
+
+    const buf = gl.createBuffer()
+    if (!buf) return false
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 0]), gl.STATIC_DRAW)
+    const err = gl.getError()
+    gl.deleteBuffer(buf)
+    if (err !== gl.NO_ERROR) return false
+
+    gl.getExtension('WEBGL_lose_context')?.loseContext()
+    return true
   } catch {
     return false
   }

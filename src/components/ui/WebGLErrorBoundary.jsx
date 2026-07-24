@@ -12,6 +12,7 @@ export default class WebGLErrorBoundary extends Component {
 
   componentDidCatch(error) {
     console.warn('[WebGLErrorBoundary] Canvas crashed:', error?.message || error)
+    this.props.onError?.(error)
   }
 
   render() {

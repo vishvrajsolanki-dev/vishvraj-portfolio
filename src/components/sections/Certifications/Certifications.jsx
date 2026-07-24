@@ -558,14 +558,7 @@ export default function Certifications() {
                         aria-label="Show next credential"
                         onClick={advanceCert}
                       />
-                    ) : (
-                      <button
-                        type="button"
-                        className={styles.cardHit}
-                        aria-label={`Show ${cert.title}`}
-                        onClick={() => selectCert(cert.id)}
-                      />
-                    )}
+                    ) : null}
 
                     <div
                       className={styles.cardLogoWash}

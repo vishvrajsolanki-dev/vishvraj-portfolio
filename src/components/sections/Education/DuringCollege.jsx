@@ -171,7 +171,7 @@ export default function DuringCollege() {
   const [isCoarsePointer, setIsCoarsePointer] = useState(false)
 
   useEffect(() => {
-    const mq = window.matchMedia('(hover: none), (pointer: coarse), (max-width: 768px)')
+    const mq = window.matchMedia('(max-width: 768px)')
     const apply = () => setIsCoarsePointer(mq.matches)
     apply()
     mq.addEventListener('change', apply)

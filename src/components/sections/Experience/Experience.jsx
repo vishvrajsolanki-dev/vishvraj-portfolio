@@ -84,7 +84,7 @@ const experiences = [
     about:
       'Built and deployed ML apps with explainability — handwritten character recognition, heart disease prediction, and credit scoring — all cold-start pipelines on Streamlit Cloud.',
     bullets: [
-      'Built LetterLens — handwritten character recognition on EMNIST Balanced (47 classes); CNN with BatchNorm + Dropout achieving 99% accuracy on MNIST; live drawing canvas for real-time inference.',
+      'Built LetterLens — handwritten character recognition on EMNIST Balanced (47 classes); CNN with BatchNorm + Dropout achieving 99% accuracy on MNIST; interactive drawing-canvas prototype for real-time inference.',
       'Built Heart Disease Predictor — 4-model comparative pipeline; Random Forest hit ROC-AUC 0.9637 · Accuracy 86.9% · F1 0.8852.',
       'Built Credit Scoring Model on German Credit Dataset with SHAP explainability and human-readable feature labels; Random Forest won (AUC 0.758).',
       'Deployed all apps on Streamlit Cloud with cold-start pipelines — zero committed model binaries, self-building on fresh deploy.',
