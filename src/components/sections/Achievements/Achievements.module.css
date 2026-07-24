@@ -3,6 +3,7 @@
   padding: clamp(4rem, 8vw, 6.5rem) 0;
   overflow: hidden;
   isolation: isolate;
+  overflow-anchor: none;
 }
 
 .proof {
@@ -611,18 +612,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
-  animation: dossierIn 0.4s var(--ease-out-expo, cubic-bezier(0.19, 1, 0.22, 1));
-}
-
-@keyframes dossierIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  overflow-anchor: none;
+  min-height: 240px;
 }
 
 .dossierTop {

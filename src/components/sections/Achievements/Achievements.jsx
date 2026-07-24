@@ -258,18 +258,21 @@ export default function Achievements() {
   }, [advanceSpotlight, catalog.length, autoMs])
 
   useEffect(() => {
+    // Keep the active index row visible inside the list only —
+    // never use scrollIntoView (it scrolls the whole page back to this section).
     const list = indexListRef.current
     if (!list) return
     const row = list.querySelector(`[data-id="${activeId}"]`)
-    if (row) {
-      row.scrollIntoView({ block: 'nearest', behavior: reducedMotion.current ? 'auto' : 'smooth' })
-    }
+    if (!row) return
 
-    const shelf = shelfRef.current
-    if (!shelf) return
-    const exhibit = shelf.querySelector(`[data-id="${activeId}"]`)
-    if (exhibit) {
-      exhibit.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: reducedMotion.current ? 'auto' : 'smooth' })
+    const listRect = list.getBoundingClientRect()
+    const rowRect = row.getBoundingClientRect()
+    const pad = 8
+
+    if (rowRect.top < listRect.top + pad) {
+      list.scrollTop -= listRect.top + pad - rowRect.top
+    } else if (rowRect.bottom > listRect.bottom - pad) {
+      list.scrollTop += rowRect.bottom - (listRect.bottom - pad)
     }
   }, [activeId])
 
@@ -399,7 +402,7 @@ export default function Achievements() {
             </div>
           </aside>
 
-          <div className={styles.showcase} aria-live="polite">
+          <div className={styles.showcase}>
             <div className={styles.caseHead}>
               <p className={styles.caseKicker}>On display</p>
               <p className={styles.caseHint}>
@@ -416,6 +419,7 @@ export default function Achievements() {
                 style={{ '--shelf-cols': cols }}
                 role="list"
                 data-static-order={catalog.map((item) => item.id).join(',')}
+                aria-live="polite"
               >
                 {catalog.map((item, index) => {
                   const selected = item.id === activeId
@@ -460,7 +464,7 @@ export default function Achievements() {
             </div>
 
             {active && (
-              <article className={styles.dossier} key={active.id}>
+              <article className={styles.dossier}>
                 <div className={styles.dossierTop}>
                   <div className={styles.dossierMark}>
                     <img src={active.logo} alt="" className={styles.dossierLogo} />
