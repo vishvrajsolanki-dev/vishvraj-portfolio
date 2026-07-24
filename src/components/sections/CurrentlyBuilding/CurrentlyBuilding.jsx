@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -188,16 +188,22 @@ function ArrowRight() {
   )
 }
 
-const SEC_PER_CARD = 10
+const SPOTLIGHT_MS = 12000
+const TRAVEL_MS = 6500
 const GAP_PX = 26.4 // 1.65rem
 
-function BuildCard({ build, ghost = false, setId, onCardClick }) {
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4 * t * t * t : 1 - ((-2 * t + 2) ** 3) / 2
+}
+
+function BuildCard({ build, ghost = false, setId, active = false, onCardClick }) {
   return (
     <article
-      className={styles.card}
+      className={`${styles.card} ${active ? styles.cardActive : ''}`}
       aria-hidden={ghost || undefined}
       data-build-id={build.id}
       data-set={setId}
+      aria-current={active && !ghost ? 'true' : undefined}
       onClick={onCardClick}
     >
       <Pin />
@@ -246,11 +252,16 @@ export default function CurrentlyBuilding() {
   const trackRef = useRef(null)
   const offsetRef = useRef(0)
   const setWidthRef = useRef(0)
-  const speedRef = useRef(0)
-  const pausedRef = useRef(false)
+  const positionsRef = useRef([])
+  const indexRef = useRef(0)
+  const phaseRef = useRef('dwell') // dwell | travel
+  const phaseStartRef = useRef(0)
+  const travelFromRef = useRef(0)
+  const travelToRef = useRef(0)
   const reducedRef = useRef(false)
   const drag = useRef({ active: false, startX: 0, startOffset: 0, moved: false })
   const rafRef = useRef(0)
+  const [activeId, setActiveId] = useState(builds[0].id)
 
   const applyOffset = useCallback(() => {
     const track = trackRef.current
@@ -258,7 +269,6 @@ export default function CurrentlyBuilding() {
     const loop = setWidthRef.current
     let x = offsetRef.current
     if (loop > 0) {
-      // Keep offset in [0, loop) — content moves left; cards exit left, re-enter from right
       x = ((x % loop) + loop) % loop
       offsetRef.current = x
     }
@@ -268,43 +278,125 @@ export default function CurrentlyBuilding() {
   const measure = useCallback(() => {
     const track = trackRef.current
     if (!track) return
-    const cards = track.querySelectorAll(`.${styles.card}[data-set="a"]`)
+    const cards = [...track.querySelectorAll(`.${styles.card}[data-set="a"]`)]
     if (!cards.length) return
 
-    let width = 0
+    const positions = []
+    let cursor = 0
     cards.forEach((card, index) => {
-      width += card.getBoundingClientRect().width
-      if (index < cards.length - 1) width += GAP_PX
+      positions.push(cursor)
+      cursor += card.getBoundingClientRect().width
+      if (index < cards.length - 1) cursor += GAP_PX
     })
-    // Include trailing gap so the duplicate set butts cleanly
-    width += GAP_PX
-    setWidthRef.current = width
-    speedRef.current = width / builds.length / SEC_PER_CARD
+    cursor += GAP_PX // trailing gap before duplicate set
+    positionsRef.current = positions
+    setWidthRef.current = cursor
+
+    const i = indexRef.current % builds.length
+    offsetRef.current = positions[i] ?? 0
     applyOffset()
   }, [applyOffset])
 
-  const nudge = useCallback((dir) => {
-    const card = trackRef.current?.querySelector(`.${styles.card}`)
-    const step = card ? card.getBoundingClientRect().width + GAP_PX : 360
-    offsetRef.current += dir * step
+  const beginDwell = useCallback((now = performance.now()) => {
+    phaseRef.current = 'dwell'
+    phaseStartRef.current = now
+    const i = ((indexRef.current % builds.length) + builds.length) % builds.length
+    indexRef.current = i
+    const pos = positionsRef.current[i] ?? 0
+    offsetRef.current = pos
     applyOffset()
+    setActiveId(builds[i].id)
   }, [applyOffset])
+
+  const beginTravel = useCallback((now = performance.now()) => {
+    const n = builds.length
+    const fromIndex = ((indexRef.current % n) + n) % n
+    const nextIndex = (fromIndex + 1) % n
+    const positions = positionsRef.current
+    const loop = setWidthRef.current
+    if (!positions.length || loop <= 0) return
+
+    travelFromRef.current = offsetRef.current
+    // When wrapping, travel into the duplicate set (offset = loop == first card of set B)
+    travelToRef.current = fromIndex === n - 1 ? loop : (positions[(fromIndex + 1) % n] ?? loop)
+    phaseRef.current = 'travel'
+    phaseStartRef.current = now
+    indexRef.current = nextIndex
+    setActiveId(builds[nextIndex].id)
+  }, [])
+
+  const goToIndex = useCallback((target, { animate = false } = {}) => {
+    const n = builds.length
+    const i = ((target % n) + n) % n
+    const positions = positionsRef.current
+    if (!positions.length) return
+
+    if (animate) {
+      travelFromRef.current = offsetRef.current
+      // Choose nearest direction on the loop
+      let to = positions[i]
+      const loop = setWidthRef.current
+      const cur = offsetRef.current
+      const forward = (to - cur + loop) % loop
+      const backward = (cur - to + loop) % loop
+      if (backward < forward) {
+        to = cur - backward
+      } else {
+        to = cur + forward
+      }
+      travelToRef.current = to
+      phaseRef.current = 'travel'
+      phaseStartRef.current = performance.now()
+      indexRef.current = i
+      setActiveId(builds[i].id)
+      return
+    }
+
+    indexRef.current = i
+    beginDwell()
+  }, [beginDwell])
+
+  const nudge = useCallback((dir) => {
+    goToIndex(indexRef.current + dir, { animate: true })
+  }, [goToIndex])
 
   useEffect(() => {
     reducedRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     measure()
+    beginDwell()
 
-    const onResize = () => measure()
+    const onResize = () => {
+      measure()
+      beginDwell()
+    }
     window.addEventListener('resize', onResize)
 
-    let last = performance.now()
     const tick = (now) => {
-      const dt = Math.min(0.05, (now - last) / 1000)
-      last = now
+      if (reducedRef.current || drag.current.active) {
+        rafRef.current = requestAnimationFrame(tick)
+        return
+      }
 
-      if (!reducedRef.current && !pausedRef.current && !drag.current.active && speedRef.current > 0) {
-        offsetRef.current += speedRef.current * dt
+      if (phaseRef.current === 'dwell') {
+        if (now - phaseStartRef.current >= SPOTLIGHT_MS) {
+          beginTravel(now)
+        }
+      } else if (phaseRef.current === 'travel') {
+        const t = Math.min(1, (now - phaseStartRef.current) / TRAVEL_MS)
+        const e = easeInOutCubic(t)
+        const from = travelFromRef.current
+        const to = travelToRef.current
+        offsetRef.current = from + (to - from) * e
         applyOffset()
+
+        if (t >= 1) {
+          // Normalize onto primary set after wrap travel
+          const loop = setWidthRef.current
+          if (loop > 0) {
+            offsetRef.current = ((offsetRef.current % loop) + loop) % loop
+          }
+          beginDwell(now)
+        }
       }
 
       rafRef.current = requestAnimationFrame(tick)
@@ -315,7 +407,7 @@ export default function CurrentlyBuilding() {
       window.removeEventListener('resize', onResize)
       cancelAnimationFrame(rafRef.current)
     }
-  }, [applyOffset, measure])
+  }, [applyOffset, beginDwell, beginTravel, measure])
 
   useEffect(() => {
     const viewport = viewportRef.current
@@ -337,7 +429,6 @@ export default function CurrentlyBuilding() {
       if (!drag.current.active) return
       const dx = event.clientX - drag.current.startX
       if (Math.abs(dx) > 4) drag.current.moved = true
-      // Dragging right should reveal earlier cards (decrease offset)
       offsetRef.current = drag.current.startOffset - dx
       applyOffset()
     }
@@ -351,6 +442,23 @@ export default function CurrentlyBuilding() {
       } catch {
         /* ignore */
       }
+
+      // Snap to nearest card and restart spotlight dwell
+      const positions = positionsRef.current
+      const loop = setWidthRef.current
+      if (!positions.length || loop <= 0) return
+      let x = ((offsetRef.current % loop) + loop) % loop
+      let best = 0
+      let bestDist = Infinity
+      positions.forEach((pos, i) => {
+        const d = Math.min(Math.abs(pos - x), Math.abs(pos + loop - x), Math.abs(pos - loop - x))
+        if (d < bestDist) {
+          bestDist = d
+          best = i
+        }
+      })
+      indexRef.current = best
+      beginDwell()
     }
 
     viewport.addEventListener('pointerdown', onPointerDown)
@@ -364,7 +472,7 @@ export default function CurrentlyBuilding() {
       viewport.removeEventListener('pointerup', endDrag)
       viewport.removeEventListener('pointercancel', endDrag)
     }
-  }, [applyOffset])
+  }, [applyOffset, beginDwell])
 
   useGSAP(() => {
     const section = sectionRef.current
@@ -404,7 +512,8 @@ export default function CurrentlyBuilding() {
       id="currently-building"
       ref={sectionRef}
       aria-labelledby="whats-next-heading"
-      data-loop-sec={SEC_PER_CARD}
+      data-spotlight-ms={SPOTLIGHT_MS}
+      data-travel-ms={TRAVEL_MS}
     >
       <div className={styles.gridBg} aria-hidden="true" />
 
@@ -436,7 +545,9 @@ export default function CurrentlyBuilding() {
             >
               <ArrowRight />
             </button>
-            <span className={styles.navHint}>Continuous loop · {SEC_PER_CARD}s / card</span>
+            <span className={styles.navHint}>
+              Spotlight {SPOTLIGHT_MS / 1000}s · drift {TRAVEL_MS / 1000}s
+            </span>
           </div>
         </header>
       </div>
@@ -448,7 +559,7 @@ export default function CurrentlyBuilding() {
           ref={viewportRef}
           tabIndex={0}
           role="region"
-          aria-label="In-progress builds, continuous loop"
+          aria-label="In-progress builds, spotlight loop"
         >
           <div className={styles.track} ref={trackRef}>
             {builds.map((build) => (
@@ -456,6 +567,7 @@ export default function CurrentlyBuilding() {
                 key={`a-${build.id}`}
                 build={build}
                 setId="a"
+                active={build.id === activeId}
                 onCardClick={onCardClick}
               />
             ))}
@@ -465,6 +577,7 @@ export default function CurrentlyBuilding() {
                 build={build}
                 setId="b"
                 ghost
+                active={build.id === activeId}
                 onCardClick={onCardClick}
               />
             ))}
