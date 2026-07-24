@@ -10,8 +10,7 @@ const EMAIL = 'vishvrajsolanki0207@gmail.com'
 const LINKEDIN_URL = 'https://www.linkedin.com/in/vishvrajsinh-solanki-1396ab37a/'
 const GITHUB_URL = 'https://github.com/vishvrajsolanki-dev'
 const INSTAGRAM_URL = 'https://instagram.com/vishvrajsinh_solanki'
-/** No hosted PDF yet — request via email so the control stays a real working link. */
-const RESUME_URL = `mailto:${EMAIL}?subject=${encodeURIComponent('Resume request — Vishvrajsinh Solanki')}`
+const RESUME_URL = 'https://drive.google.com/file/d/1vH0gETTidsGGQk5npUYWETKgLSawnOBz/view?usp=sharing'
 
 function MailIcon() {
   return (
@@ -170,7 +169,9 @@ export default function Contact() {
           <a
             className={styles.sdCard}
             href={RESUME_URL}
-            aria-label="Request resume PDF by email"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Download resume PDF"
           >
             <span className={styles.sdBanner}>Resume</span>
             <span className={styles.sdIcon}>
@@ -178,7 +179,7 @@ export default function Contact() {
             </span>
             <span className={styles.sdMeta}>
               <strong>PDF</strong>
-              <em>Request</em>
+              <em>128MB</em>
             </span>
           </a>
 
