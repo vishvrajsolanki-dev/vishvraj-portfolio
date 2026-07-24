@@ -6,8 +6,16 @@ import styles from './Achievements.module.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const AUTO_MS = 5200
-const CASE_SLOTS = 4
+/** Spotlight dwell per card — middle of the 6–8s range (override with ?dwell=ms). */
+const DEFAULT_AUTO_MS = 7000
+const PREVIEW_COUNT = 9
+
+function resolveDwellMs() {
+  if (typeof window === 'undefined') return DEFAULT_AUTO_MS
+  const raw = Number(new URLSearchParams(window.location.search).get('dwell') || 0)
+  if (!Number.isFinite(raw) || raw < 500) return DEFAULT_AUTO_MS
+  return Math.min(8000, Math.max(500, raw))
+}
 
 const achievements = [
   {
@@ -69,33 +77,109 @@ const achievements = [
   },
 ]
 
-function padAchievementsForStress(base) {
+const previewExtras = [
+  {
+    id: 'preview-startup-india',
+    year: '2025',
+    dateLabel: '2025',
+    type: 'National Recognition',
+    title: 'Startup India Recognition',
+    org: 'Department for Promotion of Industry & Internal Trade',
+    issuer: 'Government of India',
+    detail: 'Preview entry — national startup recognition for early-stage hardware innovation.',
+    impact: 'Placeholder for future catalog growth beyond eight entries.',
+    tags: ['Startup', 'Policy', 'Preview'],
+    logo: '/logos/ssip.png',
+    artifact: 'plaque',
+  },
+  {
+    id: 'preview-msme',
+    year: '2025',
+    dateLabel: '2025',
+    type: 'Registration',
+    title: 'MSME Registration',
+    org: 'Ministry of Micro, Small & Medium Enterprises',
+    issuer: 'Government of India',
+    detail: 'Preview entry — enterprise registration milestone for Scale-ready projects.',
+    impact: 'Demonstrates how the static case holds nine+ recognitions.',
+    tags: ['MSME', 'Compliance', 'Preview'],
+    logo: '/logos/cvm.png',
+    artifact: 'crest',
+  },
+  {
+    id: 'preview-iso',
+    year: '2024',
+    dateLabel: '2024',
+    type: 'Quality',
+    title: 'ISO 9001:2015 Pathway',
+    org: 'Quality Systems Preview',
+    issuer: 'Standards Body · Preview',
+    detail: 'Preview entry — quality-system pathway used to stress-test the spotlight loop.',
+    impact: 'Confirms continuous cycling across a full second row of exhibits.',
+    tags: ['ISO', 'Process', 'Preview'],
+    logo: '/logos/spec.png',
+    artifact: 'medal',
+  },
+  {
+    id: 'preview-gujarat-startup',
+    year: '2026',
+    dateLabel: '2026',
+    type: 'State Recognition',
+    title: 'Gujarat Startup Recognition',
+    org: 'Startup Gujarat · Preview',
+    issuer: 'Government of Gujarat',
+    detail: 'Preview entry — state startup recognition to fill the 8+ showcase grid.',
+    impact: 'Keeps index + case + dossier in sync while cards stay locked in place.',
+    tags: ['Startup Gujarat', 'Preview', 'Policy'],
+    logo: '/logos/cems.png',
+    artifact: 'ribbon',
+  },
+  {
+    id: 'preview-open-source',
+    year: '2023',
+    dateLabel: '2023',
+    type: 'Community',
+    title: 'Open Source Contributor Mark',
+    org: 'Community Preview',
+    issuer: 'Open Source Collective · Preview',
+    detail: 'Preview entry — ninth catalog slot so the spotlight can complete a full loop.',
+    impact: 'Validates wrap-around from last card back to first without reshuffling.',
+    tags: ['OSS', 'Community', 'Preview'],
+    logo: '/logos/adit.png',
+    artifact: 'plaque',
+  },
+]
+
+function resolveCatalog(base) {
   if (typeof window === 'undefined') return base
   const params = new URLSearchParams(window.location.search)
+  const preview = params.get('preview')
   const stress = Number(params.get('stress') || 0)
-  if (!Number.isFinite(stress) || stress <= base.length) return base
 
-  const extras = []
-  for (let i = base.length; i < stress; i += 1) {
-    const seed = base[i % base.length]
-    extras.push({
-      ...seed,
-      id: `stress-${i + 1}`,
-      title: `${seed.title} · Ext ${i + 1}`,
-      dateLabel: String(2020 + (i % 7)),
-      year: String(2020 + (i % 7)),
-    })
+  if (preview === '8plus' || preview === 'achievements') {
+    return [...base, ...previewExtras].slice(0, Math.max(PREVIEW_COUNT, base.length + previewExtras.length))
   }
-  return [...base, ...extras]
+
+  if (Number.isFinite(stress) && stress > base.length) {
+    const extras = []
+    for (let i = base.length; i < stress; i += 1) {
+      const seed = previewExtras[i % previewExtras.length] ?? base[i % base.length]
+      extras.push({
+        ...seed,
+        id: `stress-${i + 1}`,
+        title: `${seed.title.replace(' · Preview', '')} · Ext ${i + 1}`,
+      })
+    }
+    return [...base, ...extras]
+  }
+
+  return base
 }
 
-/** Active exhibit leads the case; remaining slots follow chronologically. */
-function windowAround(list, activeIndex, size) {
-  if (list.length <= size) return list.map((item, i) => ({ item, absoluteIndex: i }))
-  return Array.from({ length: size }, (_, offset) => {
-    const absoluteIndex = (activeIndex + offset) % list.length
-    return { item: list[absoluteIndex], absoluteIndex }
-  })
+function shelfColumns(count) {
+  if (count <= 4) return count || 1
+  if (count <= 8) return 4
+  return Math.min(5, count)
 }
 
 function ArtifactGlyph({ kind }) {
@@ -136,34 +220,32 @@ function ArtifactGlyph({ kind }) {
 export default function Achievements() {
   const sectionRef = useRef(null)
   const indexListRef = useRef(null)
+  const shelfRef = useRef(null)
   const reducedMotion = useRef(false)
   const pauseUntil = useRef(0)
+  const activeIndexRef = useRef(0)
 
-  const catalog = useMemo(() => padAchievementsForStress(achievements), [])
+  const catalog = useMemo(() => resolveCatalog(achievements), [])
+  const autoMs = useMemo(() => resolveDwellMs(), [])
+  const isPreview = catalog.length > achievements.length
+  const cols = shelfColumns(catalog.length)
+
   const [activeId, setActiveId] = useState(catalog[0]?.id ?? '')
-
-  const activeIndex = Math.max(
-    0,
-    catalog.findIndex((item) => item.id === activeId)
-  )
+  const activeIndex = Math.max(0, catalog.findIndex((item) => item.id === activeId))
   const active = catalog[activeIndex] ?? catalog[0]
+  activeIndexRef.current = activeIndex
 
-  const displaySlots = useMemo(
-    () => windowAround(catalog, activeIndex, CASE_SLOTS),
-    [catalog, activeIndex]
-  )
-
-  const selectAchievement = useCallback((id) => {
+  const selectAchievement = useCallback((id, { pause = true } = {}) => {
     setActiveId(id)
-    pauseUntil.current = Date.now() + AUTO_MS * 1.4
-  }, [])
+    if (pause) pauseUntil.current = Date.now() + autoMs * 1.25
+  }, [autoMs])
 
-  const advance = useCallback(() => {
+  const advanceSpotlight = useCallback(() => {
     if (!catalog.length) return
     if (Date.now() < pauseUntil.current) return
-    const next = catalog[(activeIndex + 1) % catalog.length]
+    const next = catalog[(activeIndexRef.current + 1) % catalog.length]
     if (next) setActiveId(next.id)
-  }, [catalog, activeIndex])
+  }, [catalog])
 
   useEffect(() => {
     reducedMotion.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -171,16 +253,24 @@ export default function Achievements() {
 
   useEffect(() => {
     if (reducedMotion.current || catalog.length <= 1) return undefined
-    const id = setInterval(advance, AUTO_MS)
+    const id = setInterval(advanceSpotlight, autoMs)
     return () => clearInterval(id)
-  }, [advance, catalog.length])
+  }, [advanceSpotlight, catalog.length, autoMs])
 
   useEffect(() => {
     const list = indexListRef.current
     if (!list) return
     const row = list.querySelector(`[data-id="${activeId}"]`)
-    if (!row) return
-    row.scrollIntoView({ block: 'nearest', behavior: reducedMotion.current ? 'auto' : 'smooth' })
+    if (row) {
+      row.scrollIntoView({ block: 'nearest', behavior: reducedMotion.current ? 'auto' : 'smooth' })
+    }
+
+    const shelf = shelfRef.current
+    if (!shelf) return
+    const exhibit = shelf.querySelector(`[data-id="${activeId}"]`)
+    if (exhibit) {
+      exhibit.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: reducedMotion.current ? 'auto' : 'smooth' })
+    }
   }, [activeId])
 
   useEffect(() => {
@@ -239,10 +329,12 @@ export default function Achievements() {
 
   return (
     <section
-      className={styles.section}
+      className={`${styles.section} ${isPreview ? styles.sectionPreview : ''}`}
       id="achievements"
       ref={sectionRef}
       aria-labelledby="achievements-heading"
+      data-catalog-count={catalog.length}
+      data-spotlight-ms={autoMs}
     >
       <div className={styles.proof} aria-hidden="true">
         MARKS
@@ -260,6 +352,11 @@ export default function Achievements() {
           <p className={styles.subhead}>
             Each recognition. Cataloged. Preserved.
           </p>
+          {isPreview && (
+            <p className={styles.previewBanner} role="status">
+              Preview · {catalog.length} entries · static case · spotlight loop {autoMs / 1000}s
+            </p>
+          )}
         </header>
 
         <div className={styles.stage} tabIndex={0}>
@@ -303,39 +400,41 @@ export default function Achievements() {
           </aside>
 
           <div className={styles.showcase} aria-live="polite">
-            <p className={styles.caseKicker}>On display</p>
-            <div className={styles.case}>
+            <div className={styles.caseHead}>
+              <p className={styles.caseKicker}>On display</p>
+              <p className={styles.caseHint}>
+                Spotlight · {autoMs / 1000}s loop · cards stay fixed
+              </p>
+            </div>
+
+            <div className={`${styles.case} ${catalog.length > 4 ? styles.caseDense : ''}`}>
               <div className={styles.caseRail} aria-hidden="true" />
-              <div
-                className={styles.caseCeiling}
-                style={{ gridTemplateColumns: `repeat(${displaySlots.length}, 1fr)` }}
-                aria-hidden="true"
-              >
-                {displaySlots.map(({ item }) => (
-                  <span
-                    key={`spot-${item.id}`}
-                    className={`${styles.spotlight} ${item.id === activeId ? styles.spotlightActive : ''}`}
-                  />
-                ))}
-              </div>
 
               <div
                 className={styles.shelf}
-                style={{ gridTemplateColumns: `repeat(${displaySlots.length}, minmax(0, 1fr))` }}
+                ref={shelfRef}
+                style={{ '--shelf-cols': cols }}
                 role="list"
+                data-static-order={catalog.map((item) => item.id).join(',')}
               >
-                {displaySlots.map(({ item, absoluteIndex }) => {
+                {catalog.map((item, index) => {
                   const selected = item.id === activeId
                   return (
                     <button
                       key={item.id}
                       type="button"
                       role="listitem"
+                      data-id={item.id}
+                      data-order={index}
                       className={`${styles.exhibit} ${selected ? styles.exhibitActive : ''}`}
                       onClick={() => selectAchievement(item.id)}
                       aria-label={`${item.title}, ${item.dateLabel}`}
                       aria-pressed={selected}
                     >
+                      <span
+                        className={`${styles.spotlight} ${selected ? styles.spotlightActive : ''}`}
+                        aria-hidden="true"
+                      />
                       <div className={styles.artifact}>
                         <div className={styles.artifactGlow} aria-hidden="true" />
                         <img src={item.logo} alt="" className={styles.artifactLogo} />
@@ -349,7 +448,7 @@ export default function Achievements() {
                         <span className={styles.pedestalBase} />
                       </div>
                       <span className={styles.exhibitIndex}>
-                        {String(absoluteIndex + 1).padStart(2, '0')}
+                        {String(index + 1).padStart(2, '0')}
                       </span>
                     </button>
                   )

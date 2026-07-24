@@ -83,6 +83,22 @@
   color: rgba(255, 255, 255, 0.32);
 }
 
+.previewBanner {
+  margin: 0.85rem 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+}
+
 /* ── Stage: index | showcase ── */
 .stage {
   display: grid;
@@ -187,7 +203,7 @@
   height: 1px;
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.05));
   transform-origin: left center;
-  animation: indexPulse 5.2s linear infinite;
+  animation: indexPulse 7s linear infinite;
 }
 
 @keyframes indexPulse {
@@ -276,6 +292,14 @@
   min-width: 0;
 }
 
+.caseHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .caseKicker {
   font-family: var(--font-mono);
   font-size: 0.68rem;
@@ -283,6 +307,15 @@
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.32);
   margin: 0;
+}
+
+.caseHint {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.22);
 }
 
 .case {
@@ -303,6 +336,10 @@
   padding: 0.85rem 1rem 0.7rem;
 }
 
+.caseDense {
+  min-height: 320px;
+}
+
 .caseRail {
   position: absolute;
   top: 0;
@@ -318,7 +355,7 @@
   position: absolute;
   left: 6%;
   right: 6%;
-  bottom: 12%;
+  bottom: 8%;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
   z-index: 1;
@@ -334,81 +371,24 @@
   mix-blend-mode: soft-light;
 }
 
-.caseCeiling {
-  display: grid;
-  gap: 0.75rem;
-  height: 42px;
-  margin-bottom: 0.15rem;
-  position: relative;
-  z-index: 1;
-  flex-shrink: 0;
-}
-
-.spotlight {
-  position: relative;
-  display: block;
-  height: 100%;
-}
-
-.spotlight::before {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 18px;
-  height: 8px;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.12);
-}
-
-.spotlight::after {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 72%;
-  height: 140px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.02) 45%,
-    transparent 100%
-  );
-  clip-path: polygon(35% 0, 65% 0, 100% 100%, 0 100%);
-  opacity: 0.45;
-  transition: opacity 0.35s ease;
-}
-
-.spotlightActive::before {
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow:
-    0 0 16px rgba(255, 255, 255, 0.45),
-    0 0 28px rgba(255, 255, 255, 0.2);
-}
-
-.spotlightActive::after {
-  opacity: 1;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(255, 255, 255, 0.05) 42%,
-    transparent 100%
-  );
-}
-
 .shelf {
   position: relative;
   z-index: 2;
   flex: 1;
   display: grid;
-  gap: 0.65rem;
+  grid-template-columns: repeat(var(--shelf-cols, 4), minmax(0, 1fr));
+  gap: 0.75rem 0.55rem;
   align-items: end;
-  align-content: end;
-  padding: 0.15rem 0.15rem 0.55rem;
+  align-content: center;
+  justify-items: center;
+  padding: 0.55rem 0.15rem 0.65rem;
   min-height: 180px;
+}
+
+.caseDense .shelf {
+  align-content: space-evenly;
+  min-height: 260px;
+  gap: 1rem 0.45rem;
 }
 
 .exhibit {
@@ -418,32 +398,97 @@
   color: inherit;
   cursor: pointer;
   font: inherit;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.35rem 0.2rem 0.15rem;
+  gap: 0.45rem;
+  padding: 1.35rem 0.2rem 0.15rem;
   min-width: 0;
-  opacity: 0.55;
+  width: 100%;
+  max-width: 120px;
+  opacity: 0.5;
   transition:
-    transform 0.28s var(--ease-out-expo, cubic-bezier(0.19, 1, 0.22, 1)),
-    opacity 0.28s ease;
+    transform 0.35s var(--ease-out-expo, cubic-bezier(0.19, 1, 0.22, 1)),
+    opacity 0.45s ease;
 }
 
 .exhibit:hover,
 .exhibit:focus-visible {
   opacity: 0.9;
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   outline: none;
 }
 
 .exhibitActive {
   opacity: 1;
-  transform: translateY(-6px);
+  transform: translateY(-5px);
+}
+
+/* Per-card spotlight — moves by activating; cards stay fixed */
+.spotlight {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.spotlight::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 7px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.08);
+  transition:
+    background 0.45s ease,
+    box-shadow 0.45s ease,
+    opacity 0.45s ease;
+  opacity: 0.55;
+}
+
+.spotlight::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 78%;
+  height: 120px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.03) 42%,
+    transparent 100%
+  );
+  clip-path: polygon(34% 0, 66% 0, 100% 100%, 0 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.spotlightActive::before {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 0 16px rgba(255, 255, 255, 0.5),
+    0 0 28px rgba(255, 255, 255, 0.22);
+  opacity: 1;
+}
+
+.spotlightActive::after {
+  opacity: 1;
 }
 
 .artifact {
   position: relative;
+  z-index: 1;
   width: min(100%, 88px);
   aspect-ratio: 1;
   border-radius: 14px;
@@ -712,14 +757,17 @@
     display: contents;
   }
 
-  .caseKicker {
+  .caseHead {
     order: 1;
-    margin: 0 0 -0.35rem;
   }
 
   .case {
     order: 2;
     min-height: 220px;
+  }
+
+  .caseDense {
+    min-height: 280px;
   }
 
   .indexPane {
@@ -742,6 +790,10 @@
   .shelf {
     min-height: 160px;
   }
+
+  .caseDense .shelf {
+    min-height: 220px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -753,21 +805,30 @@
     font-size: 1.7rem;
   }
 
-  .caseCeiling {
-    height: 34px;
+  .caseHint {
+    display: none;
   }
 
   .spotlight::after {
-    height: 110px;
+    height: 96px;
   }
 
   .shelf {
-    gap: 0.35rem;
+    gap: 0.55rem 0.3rem;
     min-height: 148px;
   }
 
+  .caseDense .shelf {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .exhibit {
+    max-width: 96px;
+    padding-top: 1.1rem;
+  }
+
   .artifact {
-    width: min(100%, 68px);
+    width: min(100%, 64px);
     border-radius: 10px;
   }
 
