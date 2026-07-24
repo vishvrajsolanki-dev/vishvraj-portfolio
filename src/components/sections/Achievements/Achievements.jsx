@@ -89,12 +89,11 @@ function padAchievementsForStress(base) {
   return [...base, ...extras]
 }
 
+/** Active exhibit leads the case; remaining slots follow chronologically. */
 function windowAround(list, activeIndex, size) {
   if (list.length <= size) return list.map((item, i) => ({ item, absoluteIndex: i }))
-  const half = Math.floor(size / 2)
-  const start = (activeIndex - half + list.length) % list.length
   return Array.from({ length: size }, (_, offset) => {
-    const absoluteIndex = (start + offset) % list.length
+    const absoluteIndex = (activeIndex + offset) % list.length
     return { item: list[absoluteIndex], absoluteIndex }
   })
 }
@@ -184,6 +183,34 @@ export default function Achievements() {
     row.scrollIntoView({ block: 'nearest', behavior: reducedMotion.current ? 'auto' : 'smooth' })
   }, [activeId])
 
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return undefined
+
+    const onKey = (event) => {
+      if (!catalog.length) return
+      const tag = event.target?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || event.target?.isContentEditable) return
+
+      const inSection = section.contains(document.activeElement) || section.matches(':hover')
+      if (!inSection) return
+
+      if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+        event.preventDefault()
+        const next = catalog[(activeIndex + 1) % catalog.length]
+        if (next) selectAchievement(next.id)
+      }
+      if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+        event.preventDefault()
+        const prev = catalog[(activeIndex - 1 + catalog.length) % catalog.length]
+        if (prev) selectAchievement(prev.id)
+      }
+    }
+
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [catalog, activeIndex, selectAchievement])
+
   useGSAP(() => {
     const section = sectionRef.current
     if (!section) return
@@ -235,7 +262,7 @@ export default function Achievements() {
           </p>
         </header>
 
-        <div className={styles.stage}>
+        <div className={styles.stage} tabIndex={0}>
           <aside className={styles.indexPane} aria-label="Collection index">
             <p className={styles.indexKicker}>Collection Index</p>
             <div className={styles.indexShell}>
@@ -266,17 +293,23 @@ export default function Achievements() {
                   )
                 })}
               </ul>
-              {catalog.length > 6 && (
-                <p className={styles.indexMore} aria-hidden="true">
-                  and many more…
+              <div className={styles.indexFooter}>
+                <p className={styles.indexFootNote}>
+                  {catalog.length > 6 ? 'and many more…' : 'Archive of milestones'}
                 </p>
-              )}
+                <p className={styles.indexCount}>{catalog.length} cataloged</p>
+              </div>
             </div>
           </aside>
 
           <div className={styles.showcase} aria-live="polite">
             <div className={styles.case}>
-              <div className={styles.caseCeiling} aria-hidden="true">
+              <div className={styles.caseRail} aria-hidden="true" />
+              <div
+                className={styles.caseCeiling}
+                style={{ gridTemplateColumns: `repeat(${displaySlots.length}, 1fr)` }}
+                aria-hidden="true"
+              >
                 {displaySlots.map(({ item }) => (
                   <span
                     key={`spot-${item.id}`}
@@ -285,7 +318,11 @@ export default function Achievements() {
                 ))}
               </div>
 
-              <div className={styles.shelf} role="list">
+              <div
+                className={styles.shelf}
+                style={{ gridTemplateColumns: `repeat(${displaySlots.length}, minmax(0, 1fr))` }}
+                role="list"
+              >
                 {displaySlots.map(({ item, absoluteIndex }) => {
                   const selected = item.id === activeId
                   return (
@@ -319,6 +356,7 @@ export default function Achievements() {
               </div>
 
               <div className={styles.caseGlass} aria-hidden="true" />
+              <div className={styles.caseFloor} aria-hidden="true" />
             </div>
 
             {active && (
