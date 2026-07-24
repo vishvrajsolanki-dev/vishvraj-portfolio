@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, useEffect } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -14,34 +14,74 @@ const stats = [
   { countTo: 1, suffix: '', label: 'Recognised by\nSSIP', focus: false },
 ]
 
+/** Degrees from upright (0) toward pulled-down */
+const MAX_PULL = 95
+const PULL_THRESHOLD = 32
+
 export default function StatsBar() {
   const sectionRef = useRef(null)
-  const stripRef = useRef(null)
-  const leverArmRef = useRef(null)
+  const rackRef = useRef(null)
+  const shaftRef = useRef(null)
   const tweenRefs = useRef([])
   const hasAutoPlayed = useRef(false)
+  const spinningRef = useRef(false)
+  const dragRef = useRef({
+    active: false,
+    startY: 0,
+    angle: 0,
+    moved: false,
+    pointerId: null,
+  })
   const [spinning, setSpinning] = useState(false)
+
+  const setBusy = (busy) => {
+    spinningRef.current = busy
+    setSpinning(busy)
+  }
 
   const killTweens = () => {
     tweenRefs.current.forEach((t) => t?.kill?.())
     tweenRefs.current = []
   }
 
-  const runCountUp = useCallback((fromZero = true) => {
+  const armVars = { transformOrigin: '50% 100%' }
+
+  const setArmAngle = (deg) => {
+    const shaft = shaftRef.current
+    if (!shaft) return
+    gsap.set(shaft, { rotate: deg, ...armVars })
+  }
+
+  const springHome = (onDone) => {
+    const shaft = shaftRef.current
+    if (!shaft) {
+      onDone?.()
+      return
+    }
+    const tween = gsap.to(shaft, {
+      rotate: 0,
+      duration: 0.7,
+      ease: 'elastic.out(1, 0.5)',
+      ...armVars,
+      onComplete: () => onDone?.(),
+    })
+    tweenRefs.current.push(tween)
+  }
+
+  const runCountUp = useCallback(() => {
     const section = sectionRef.current
     if (!section) return
 
     killTweens()
-    setSpinning(true)
+    setBusy(true)
 
     const valueEls = section.querySelectorAll(`.${styles.value}`)
     let remaining = valueEls.length
 
     valueEls.forEach((el, i) => {
       const stat = stats[i]
-      if (fromZero) el.textContent = `0${stat.suffix}`
-
-      const obj = { val: fromZero ? 0 : Number.parseInt(el.textContent, 10) || 0 }
+      el.textContent = `0${stat.suffix}`
+      const obj = { val: 0 }
 
       const tween = gsap.to(obj, {
         val: stat.countTo,
@@ -54,52 +94,109 @@ export default function StatsBar() {
         onComplete() {
           el.textContent = `${stat.countTo}${stat.suffix}`
           remaining -= 1
-          if (remaining <= 0) setSpinning(false)
+          if (remaining <= 0) setBusy(false)
         },
       })
       tweenRefs.current.push(tween)
     })
   }, [])
 
-  const pullLever = useCallback(() => {
-    if (spinning) return
-    const arm = leverArmRef.current
-    if (!arm) return
+  const triggerPull = useCallback((fromAngle = 0) => {
+    if (spinningRef.current) return
+    setBusy(true)
 
-    setSpinning(true)
-
-    const tl = gsap.timeline({
-      onComplete: () => {
-        runCountUp(true)
-      },
-    })
-
-    tl.to(arm, {
-      rotate: 48,
-      duration: 0.28,
-      ease: 'power3.in',
-      transformOrigin: '50% 12%',
-    })
-      .to(arm, {
-        rotate: 0,
-        duration: 0.55,
-        ease: 'elastic.out(1, 0.55)',
-        transformOrigin: '50% 12%',
-      })
-
-    // Reset digits immediately on pull
     const section = sectionRef.current
     section?.querySelectorAll(`.${styles.value}`).forEach((el, i) => {
       el.textContent = `0${stats[i].suffix}`
     })
 
+    const shaft = shaftRef.current
+    const tl = gsap.timeline({
+      onComplete: () => runCountUp(),
+    })
+
+    if (fromAngle < MAX_PULL - 6) {
+      tl.to(shaft, {
+        rotate: MAX_PULL,
+        duration: 0.24,
+        ease: 'power3.in',
+        ...armVars,
+      })
+    }
+    tl.to(shaft, {
+      rotate: 0,
+      duration: 0.75,
+      ease: 'elastic.out(1, 0.5)',
+      ...armVars,
+    })
+
     tweenRefs.current.push(tl)
-  }, [spinning, runCountUp])
+  }, [runCountUp])
+
+  const onPointerDown = (e) => {
+    if (spinningRef.current) return
+    e.preventDefault()
+    e.currentTarget.setPointerCapture?.(e.pointerId)
+    dragRef.current = {
+      active: true,
+      startY: e.clientY,
+      angle: 0,
+      moved: false,
+      pointerId: e.pointerId,
+    }
+  }
+
+  const onPointerMove = (e) => {
+    const d = dragRef.current
+    if (!d.active || spinningRef.current) return
+    const dy = e.clientY - d.startY
+    if (Math.abs(dy) > 3) d.moved = true
+    // Drag down → positive angle (handle tips forward/down)
+    const angle = Math.max(0, Math.min(MAX_PULL, dy * 0.65))
+    d.angle = angle
+    setArmAngle(angle)
+  }
+
+  const finishGesture = useCallback(() => {
+    const d = dragRef.current
+    if (!d.active) return
+    d.active = false
+
+    if (spinningRef.current) {
+      springHome()
+      return
+    }
+
+    if (!d.moved || d.angle >= PULL_THRESHOLD) {
+      triggerPull(d.angle)
+    } else {
+      springHome()
+    }
+  }, [triggerPull])
+
+  const onPointerUp = (e) => {
+    try {
+      e.currentTarget.releasePointerCapture?.(dragRef.current.pointerId)
+    } catch {
+      /* ignore */
+    }
+    finishGesture()
+  }
+
+  useEffect(() => {
+    const onWinUp = () => finishGesture()
+    window.addEventListener('pointerup', onWinUp)
+    window.addEventListener('pointercancel', onWinUp)
+    return () => {
+      window.removeEventListener('pointerup', onWinUp)
+      window.removeEventListener('pointercancel', onWinUp)
+    }
+  }, [finishGesture])
 
   useGSAP(() => {
     const section = sectionRef.current
-    const strip = stripRef.current
-    if (!section || !strip) return
+    const rack = rackRef.current
+    if (!section || !rack) return
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -107,12 +204,14 @@ export default function StatsBar() {
       section.querySelectorAll(`.${styles.value}`).forEach((el, i) => {
         el.textContent = `${stats[i].countTo}${stats[i].suffix}`
       })
-      gsap.set(strip, { opacity: 1, y: 0 })
+      gsap.set(rack, { opacity: 1, y: 0 })
       return
     }
 
+    gsap.set(shaftRef.current, { rotate: 0, ...armVars })
+
     gsap.fromTo(
-      strip,
+      rack,
       { opacity: 0, y: 28 },
       {
         opacity: 1,
@@ -126,7 +225,7 @@ export default function StatsBar() {
           onEnter: () => {
             if (hasAutoPlayed.current) return
             hasAutoPlayed.current = true
-            runCountUp(true)
+            runCountUp()
           },
         },
       },
@@ -147,34 +246,44 @@ export default function StatsBar() {
           <span>01 — Impact</span>
           <span className={styles.eyebrowLine} aria-hidden="true" />
         </p>
-        <button
-          type="button"
-          className={styles.leverBtn}
-          onClick={pullLever}
-          disabled={spinning}
-          aria-label={spinning ? 'Counting in progress' : 'Pull lever to replay count-up'}
-          title="Pull to replay"
-        >
-          <span className={styles.leverHint}>{spinning ? 'Spinning' : 'Replay'}</span>
-          <span className={styles.leverBody} aria-hidden="true">
-            <span className={styles.leverBase} />
-            <span className={styles.leverArm} ref={leverArmRef}>
-              <span className={styles.leverKnob} />
-            </span>
-          </span>
-        </button>
       </div>
 
-      <div className={styles.strip} ref={stripRef}>
-        {stats.map((s) => (
-          <div
-            key={s.label}
-            className={`${styles.stat} ${s.focus ? styles.statFocus : ''}`}
-          >
-            <span className={styles.value}>0{s.suffix}</span>
-            <span className={styles.label}>{s.label}</span>
-          </div>
-        ))}
+      <div className={styles.rack} ref={rackRef}>
+        <div className={styles.strip}>
+          {stats.map((s) => (
+            <div
+              key={s.label}
+              className={`${styles.stat} ${s.focus ? styles.statFocus : ''}`}
+            >
+              <span className={styles.value}>0{s.suffix}</span>
+              <span className={styles.label}>{s.label}</span>
+            </div>
+          ))}
+        </div>
+
+        <div
+          className={`${styles.handle} ${spinning ? styles.handleBusy : ''}`}
+          role="button"
+          tabIndex={spinning ? -1 : 0}
+          aria-label={spinning ? 'Counting in progress' : 'Pull handle down to replay count-up'}
+          aria-disabled={spinning}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              triggerPull(0)
+            }
+          }}
+        >
+          <span className={styles.handleMount} aria-hidden="true" />
+          <span className={styles.handleShaft} ref={shaftRef} aria-hidden="true">
+            <span className={styles.handleRod} />
+            <span className={styles.handleKnob} />
+          </span>
+        </div>
       </div>
     </section>
   )

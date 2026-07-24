@@ -1,9 +1,8 @@
-/* Mock A — instrument strip. Clear of hero R3F (no overlap / negative pull). */
+/* Instrument strip + vertical slot handle on the right edge */
 
 .section {
   position: relative;
   z-index: 2;
-  /* Sit fully below 100vh hero — no negative margin into R3F */
   margin: 0 0 5.5rem;
   padding:
     clamp(2.5rem, 6vh, 4.5rem)
@@ -16,12 +15,9 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  margin: 0 auto 1rem;
   max-width: 1100px;
-  margin-left: auto;
-  margin-right: auto;
+  padding-right: 2.75rem;
 }
 
 .eyebrow {
@@ -42,91 +38,18 @@
   background: rgba(255, 255, 255, 0.18);
 }
 
-/* ── Casino lever ── */
-.leverBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.35rem 0.55rem 0.35rem 0.75rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.55);
-  cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
-}
-
-.leverBtn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.22);
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.leverBtn:disabled {
-  cursor: wait;
-  opacity: 0.7;
-}
-
-.leverHint {
-  font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.leverBody {
+.rack {
   position: relative;
-  width: 28px;
-  height: 36px;
-  flex-shrink: 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  /* room for upright handle + pull arc */
+  padding: 2.75rem 2.75rem 2.75rem 0;
 }
 
-.leverBase {
-  position: absolute;
-  left: 50%;
-  bottom: 2px;
-  transform: translateX(-50%);
-  width: 16px;
-  height: 10px;
-  border-radius: 3px;
-  background: linear-gradient(180deg, #d8dde4 0%, #8a929e 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-.leverArm {
-  position: absolute;
-  left: 50%;
-  top: 2px;
-  width: 4px;
-  height: 26px;
-  margin-left: -2px;
-  border-radius: 2px;
-  background: linear-gradient(180deg, #c8ced6, #6a7280);
-  transform-origin: 50% 12%;
-  will-change: transform;
-}
-
-.leverKnob {
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  width: 12px;
-  height: 12px;
-  margin-left: -6px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #ff6b6b, #b91c1c 70%);
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
-}
-
-/* ── Instrument strip ── */
 .strip {
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  max-width: 1100px;
-  margin: 0 auto;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
   overflow: hidden;
@@ -191,6 +114,109 @@
   white-space: pre-line;
 }
 
+/* ── Vertical casino handle on strip’s right edge ── */
+.handle {
+  position: absolute;
+  right: 0.15rem;
+  top: 50%;
+  width: 44px;
+  height: 140px;
+  transform: translateY(-50%);
+  z-index: 4;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+
+.handle:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.45);
+  outline-offset: 6px;
+  border-radius: 10px;
+}
+
+.handle:active {
+  cursor: grabbing;
+}
+
+.handleBusy {
+  cursor: wait;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.handleMount {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 22px;
+  height: 34px;
+  margin-top: -17px;
+  border-radius: 5px;
+  background:
+    linear-gradient(145deg, #d4dae2 0%, #9aa3ae 42%, #5e666f 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 6px 14px rgba(0, 0, 0, 0.4);
+  /* tuck into the strip */
+  margin-left: -8px;
+}
+
+.handleMount::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f0f3f6, #4a525a);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.45);
+}
+
+.handleShaft {
+  position: absolute;
+  left: 50%;
+  bottom: calc(50% - 4px);
+  width: 14px;
+  height: 78px;
+  margin-left: -7px;
+  transform-origin: 50% 100%;
+  will-change: transform;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.handleRod {
+  display: block;
+  width: 6px;
+  flex: 1;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #b8c0c8, #e8ecf0 40%, #7a828c);
+  box-shadow:
+    1px 0 0 rgba(0, 0, 0, 0.25),
+    inset 1px 0 0 rgba(255, 255, 255, 0.35);
+}
+
+.handleKnob {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #ff9a9a 0%, #e11d48 45%, #7f1d1d 100%);
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.35);
+}
+
 @media (max-width: 900px) {
   .stat {
     padding: 1.35rem 1.1rem;
@@ -210,6 +236,11 @@
 
   .header {
     margin-bottom: 0.85rem;
+    padding-right: 2.25rem;
+  }
+
+  .rack {
+    padding: 2.4rem 2.25rem 2.4rem 0;
   }
 
   .strip {
@@ -252,10 +283,26 @@
   .label {
     font-size: 0.68rem;
   }
+
+  .handle {
+    width: 40px;
+    height: 120px;
+  }
+
+  .handleShaft {
+    height: 68px;
+  }
+
+  .handleKnob {
+    width: 18px;
+    height: 18px;
+    margin-left: -9px;
+    top: -12px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .leverArm {
+  .handleShaft {
     transition: none;
   }
 }
