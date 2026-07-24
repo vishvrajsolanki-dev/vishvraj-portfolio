@@ -147,26 +147,21 @@
 
 .rail {
   position: relative;
-  display: flex;
-  gap: 1.65rem;
-  overflow-x: auto;
-  overflow-y: visible;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: max(6vw, calc((100vw - 1240px) / 2 + 1.25rem));
-  padding: 0.35rem max(6vw, calc((100vw - 1240px) / 2 + 1.25rem)) 1.35rem;
+  overflow: hidden;
+  padding: 0.35rem 0 1.35rem;
   cursor: grab;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  touch-action: pan-x;
-}
-
-.rail::-webkit-scrollbar {
-  display: none;
+  touch-action: pan-y;
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 3.5%,
+    #000 96.5%,
+    transparent 100%
+  );
 }
 
 .railDragging {
   cursor: grabbing;
-  scroll-snap-type: none;
   user-select: none;
 }
 
@@ -175,11 +170,19 @@
   outline-offset: 6px;
 }
 
+.track {
+  display: flex;
+  gap: 1.65rem;
+  width: max-content;
+  padding-inline: max(6vw, calc((100vw - 1240px) / 2 + 1.25rem));
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
 /* ── Pinned card ── */
 .card {
   position: relative;
   flex: 0 0 min(78vw, 340px);
-  scroll-snap-align: start;
   padding-top: 1.15rem;
 }
 

@@ -188,74 +188,183 @@ function ArrowRight() {
   )
 }
 
+const SEC_PER_CARD = 10
+const GAP_PX = 26.4 // 1.65rem
+
+function BuildCard({ build, ghost = false, setId, onCardClick }) {
+  return (
+    <article
+      className={styles.card}
+      aria-hidden={ghost || undefined}
+      data-build-id={build.id}
+      data-set={setId}
+      onClick={onCardClick}
+    >
+      <Pin />
+
+      <div className={styles.cardSheet}>
+        <div className={styles.cardHead}>
+          <span className={styles.cardNum}>{build.num}</span>
+          <h3 className={styles.cardTitle}>{build.title}</h3>
+        </div>
+
+        <div className={styles.sketchWell}>
+          <Sketch kind={build.sketch} />
+        </div>
+
+        <div className={styles.specTable}>
+          <div className={styles.specRow}>
+            <span className={styles.specLabel}>Project</span>
+            <span className={styles.specValue}>{build.fullName}</span>
+            <span className={styles.specMeta}>
+              <Crosshair />
+            </span>
+          </div>
+          <div className={styles.specRow}>
+            <span className={styles.specLabel}>Status</span>
+            <span className={styles.specValue}>
+              <span className={`${styles.stamp} ${styles[`stamp_${build.statusTone}`]}`}>
+                {build.status}
+              </span>
+            </span>
+            <span className={styles.specMeta} />
+          </div>
+          <div className={styles.specRow}>
+            <span className={styles.specLabel}>Spec</span>
+            <span className={styles.specValue}>{build.spec}</span>
+            <span className={styles.specMeta}>{build.rev}</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  )
+}
+
 export default function CurrentlyBuilding() {
   const sectionRef = useRef(null)
-  const railRef = useRef(null)
-  const drag = useRef({ active: false, startX: 0, startScroll: 0, moved: false })
+  const viewportRef = useRef(null)
+  const trackRef = useRef(null)
+  const offsetRef = useRef(0)
+  const setWidthRef = useRef(0)
+  const speedRef = useRef(0)
+  const pausedRef = useRef(false)
+  const reducedRef = useRef(false)
+  const drag = useRef({ active: false, startX: 0, startOffset: 0, moved: false })
+  const rafRef = useRef(0)
 
-  const scrollByCard = useCallback((dir) => {
-    const rail = railRef.current
-    if (!rail) return
-    const card = rail.querySelector(`.${styles.card}`)
-    const step = card ? card.getBoundingClientRect().width + 28 : 320
-    rail.scrollBy({ left: dir * step, behavior: 'smooth' })
+  const applyOffset = useCallback(() => {
+    const track = trackRef.current
+    if (!track) return
+    const loop = setWidthRef.current
+    let x = offsetRef.current
+    if (loop > 0) {
+      // Keep offset in [0, loop) — content moves left; cards exit left, re-enter from right
+      x = ((x % loop) + loop) % loop
+      offsetRef.current = x
+    }
+    track.style.transform = `translate3d(${-x}px, 0, 0)`
   }, [])
 
-  useEffect(() => {
-    const rail = railRef.current
-    if (!rail) return undefined
+  const measure = useCallback(() => {
+    const track = trackRef.current
+    if (!track) return
+    const cards = track.querySelectorAll(`.${styles.card}[data-set="a"]`)
+    if (!cards.length) return
 
-    const onWheel = (event) => {
-      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return
-      if (rail.scrollWidth <= rail.clientWidth + 2) return
-      event.preventDefault()
-      rail.scrollLeft += event.deltaY
+    let width = 0
+    cards.forEach((card, index) => {
+      width += card.getBoundingClientRect().width
+      if (index < cards.length - 1) width += GAP_PX
+    })
+    // Include trailing gap so the duplicate set butts cleanly
+    width += GAP_PX
+    setWidthRef.current = width
+    speedRef.current = width / builds.length / SEC_PER_CARD
+    applyOffset()
+  }, [applyOffset])
+
+  const nudge = useCallback((dir) => {
+    const card = trackRef.current?.querySelector(`.${styles.card}`)
+    const step = card ? card.getBoundingClientRect().width + GAP_PX : 360
+    offsetRef.current += dir * step
+    applyOffset()
+  }, [applyOffset])
+
+  useEffect(() => {
+    reducedRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    measure()
+
+    const onResize = () => measure()
+    window.addEventListener('resize', onResize)
+
+    let last = performance.now()
+    const tick = (now) => {
+      const dt = Math.min(0.05, (now - last) / 1000)
+      last = now
+
+      if (!reducedRef.current && !pausedRef.current && !drag.current.active && speedRef.current > 0) {
+        offsetRef.current += speedRef.current * dt
+        applyOffset()
+      }
+
+      rafRef.current = requestAnimationFrame(tick)
     }
+    rafRef.current = requestAnimationFrame(tick)
+
+    return () => {
+      window.removeEventListener('resize', onResize)
+      cancelAnimationFrame(rafRef.current)
+    }
+  }, [applyOffset, measure])
+
+  useEffect(() => {
+    const viewport = viewportRef.current
+    if (!viewport) return undefined
 
     const onPointerDown = (event) => {
       if (event.button !== 0) return
       drag.current = {
         active: true,
         startX: event.clientX,
-        startScroll: rail.scrollLeft,
+        startOffset: offsetRef.current,
         moved: false,
       }
-      rail.classList.add(styles.railDragging)
-      rail.setPointerCapture?.(event.pointerId)
+      viewport.classList.add(styles.railDragging)
+      viewport.setPointerCapture?.(event.pointerId)
     }
 
     const onPointerMove = (event) => {
       if (!drag.current.active) return
       const dx = event.clientX - drag.current.startX
       if (Math.abs(dx) > 4) drag.current.moved = true
-      rail.scrollLeft = drag.current.startScroll - dx
+      // Dragging right should reveal earlier cards (decrease offset)
+      offsetRef.current = drag.current.startOffset - dx
+      applyOffset()
     }
 
     const endDrag = (event) => {
       if (!drag.current.active) return
       drag.current.active = false
-      rail.classList.remove(styles.railDragging)
+      viewport.classList.remove(styles.railDragging)
       try {
-        rail.releasePointerCapture?.(event.pointerId)
+        viewport.releasePointerCapture?.(event.pointerId)
       } catch {
         /* ignore */
       }
     }
 
-    rail.addEventListener('wheel', onWheel, { passive: false })
-    rail.addEventListener('pointerdown', onPointerDown)
-    rail.addEventListener('pointermove', onPointerMove)
-    rail.addEventListener('pointerup', endDrag)
-    rail.addEventListener('pointercancel', endDrag)
+    viewport.addEventListener('pointerdown', onPointerDown)
+    viewport.addEventListener('pointermove', onPointerMove)
+    viewport.addEventListener('pointerup', endDrag)
+    viewport.addEventListener('pointercancel', endDrag)
 
     return () => {
-      rail.removeEventListener('wheel', onWheel)
-      rail.removeEventListener('pointerdown', onPointerDown)
-      rail.removeEventListener('pointermove', onPointerMove)
-      rail.removeEventListener('pointerup', endDrag)
-      rail.removeEventListener('pointercancel', endDrag)
+      viewport.removeEventListener('pointerdown', onPointerDown)
+      viewport.removeEventListener('pointermove', onPointerMove)
+      viewport.removeEventListener('pointerup', endDrag)
+      viewport.removeEventListener('pointercancel', endDrag)
     }
-  }, [])
+  }, [applyOffset])
 
   useGSAP(() => {
     const section = sectionRef.current
@@ -264,7 +373,6 @@ export default function CurrentlyBuilding() {
 
     const header = section.querySelector(`.${styles.header}`)
     const strip = section.querySelector(`.${styles.strip}`)
-    const cards = section.querySelectorAll(`.${styles.card}`)
 
     gsap.from(header, {
       opacity: 0,
@@ -281,17 +389,14 @@ export default function CurrentlyBuilding() {
       ease: 'power3.out',
       scrollTrigger: { trigger: section, start: 'top 78%', once: true },
     })
-
-    gsap.from(cards, {
-      opacity: 0,
-      y: 36,
-      rotate: -1.2,
-      duration: 0.65,
-      stagger: 0.1,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: section, start: 'top 76%', once: true },
-    })
   }, { scope: sectionRef })
+
+  const onCardClick = (event) => {
+    if (drag.current.moved) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+  }
 
   return (
     <section
@@ -299,6 +404,7 @@ export default function CurrentlyBuilding() {
       id="currently-building"
       ref={sectionRef}
       aria-labelledby="whats-next-heading"
+      data-loop-sec={SEC_PER_CARD}
     >
       <div className={styles.gridBg} aria-hidden="true" />
 
@@ -313,11 +419,11 @@ export default function CurrentlyBuilding() {
             <p className={styles.subhead}>A look ahead at in-progress builds.</p>
           </div>
 
-          <div className={styles.headerNav} aria-hidden="false">
+          <div className={styles.headerNav}>
             <button
               type="button"
               className={styles.navBtn}
-              onClick={() => scrollByCard(-1)}
+              onClick={() => nudge(-1)}
               aria-label="Previous builds"
             >
               <ArrowLeft />
@@ -325,12 +431,12 @@ export default function CurrentlyBuilding() {
             <button
               type="button"
               className={styles.navBtn}
-              onClick={() => scrollByCard(1)}
+              onClick={() => nudge(1)}
               aria-label="Next builds"
             >
               <ArrowRight />
             </button>
-            <span className={styles.navHint}>Scroll / drag for more builds</span>
+            <span className={styles.navHint}>Continuous loop · {SEC_PER_CARD}s / card</span>
           </div>
         </header>
       </div>
@@ -339,60 +445,30 @@ export default function CurrentlyBuilding() {
         <div className={styles.stripBand} aria-hidden="true" />
         <div
           className={styles.rail}
-          ref={railRef}
+          ref={viewportRef}
           tabIndex={0}
           role="region"
-          aria-label="In-progress builds"
+          aria-label="In-progress builds, continuous loop"
         >
-          {builds.map((build) => (
-            <article
-              key={build.id}
-              className={styles.card}
-              onClick={(event) => {
-                if (drag.current.moved) {
-                  event.preventDefault()
-                  event.stopPropagation()
-                }
-              }}
-            >
-              <Pin />
-
-              <div className={styles.cardSheet}>
-                <div className={styles.cardHead}>
-                  <span className={styles.cardNum}>{build.num}</span>
-                  <h3 className={styles.cardTitle}>{build.title}</h3>
-                </div>
-
-                <div className={styles.sketchWell}>
-                  <Sketch kind={build.sketch} />
-                </div>
-
-                <div className={styles.specTable}>
-                  <div className={styles.specRow}>
-                    <span className={styles.specLabel}>Project</span>
-                    <span className={styles.specValue}>{build.fullName}</span>
-                    <span className={styles.specMeta}>
-                      <Crosshair />
-                    </span>
-                  </div>
-                  <div className={styles.specRow}>
-                    <span className={styles.specLabel}>Status</span>
-                    <span className={styles.specValue}>
-                      <span className={`${styles.stamp} ${styles[`stamp_${build.statusTone}`]}`}>
-                        {build.status}
-                      </span>
-                    </span>
-                    <span className={styles.specMeta} />
-                  </div>
-                  <div className={styles.specRow}>
-                    <span className={styles.specLabel}>Spec</span>
-                    <span className={styles.specValue}>{build.spec}</span>
-                    <span className={styles.specMeta}>{build.rev}</span>
-                  </div>
-                </div>
-              </div>
-            </article>
-          ))}
+          <div className={styles.track} ref={trackRef}>
+            {builds.map((build) => (
+              <BuildCard
+                key={`a-${build.id}`}
+                build={build}
+                setId="a"
+                onCardClick={onCardClick}
+              />
+            ))}
+            {builds.map((build) => (
+              <BuildCard
+                key={`b-${build.id}`}
+                build={build}
+                setId="b"
+                ghost
+                onCardClick={onCardClick}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
