@@ -4,11 +4,11 @@ import styles from './ProjectPage.module.css'
 
 function ArchDiagram({ layers, accentColor }) {
   const count = layers.length
-  const NODE_W = 120
+  const NODE_W = 118
   const NODE_H = 52
-  const ARROW_W = 32
-  const PADDING_X = 24
-  const PADDING_Y = 24
+  const ARROW_W = 28
+  const PADDING_X = 16
+  const PADDING_Y = 18
   const totalW = PADDING_X * 2 + count * NODE_W + (count - 1) * ARROW_W
   const totalH = NODE_H + PADDING_Y * 2
 
@@ -79,7 +79,7 @@ function ArchDiagram({ layers, accentColor }) {
               fontSize="8.5"
               fill="rgba(255,255,255,0.38)"
             >
-              {summarize(a.detail, 22)}
+              {summarize(a.detail, 20)}
             </text>
           </g>
         )
@@ -151,6 +151,9 @@ export default function ProjectPage() {
   const d = project.details
   const accent = project.canvasColor
   const tx = d.transformation
+  const statusLive =
+    d.status.toLowerCase().includes('live') || d.status.toLowerCase().includes('funded')
+  const hasLive = project.live && project.live !== '#'
 
   return (
     <div className={styles.page} style={{ '--accent': accent }}>
@@ -165,40 +168,35 @@ export default function ProjectPage() {
           {project.github && (
             <a href={project.github} target="_blank" rel="noreferrer" className={styles.navLink}>GitHub ↗</a>
           )}
-          {project.live && project.live !== '#' && (
+          {hasLive && (
             <a href={project.live} target="_blank" rel="noreferrer" className={styles.navLink}>Live Demo ↗</a>
           )}
         </div>
       </nav>
 
-      {/* Case study masthead */}
+      {/* Split masthead — title left, metrics right */}
       <header className={styles.masthead}>
-        <p className={styles.caseEyebrow}>
-          <span>Case Study</span>
-          <span className={styles.caseRule} aria-hidden="true" />
-          <span>{d.category}</span>
-        </p>
-        <h1 className={styles.caseTitle}>{project.title}</h1>
-        <p className={styles.caseSub}>{project.subtitle}</p>
-        <div className={styles.caseMeta}>
-          <span>{d.duration}</span>
-          <span className={styles.metaDot}>·</span>
-          <span
-            className={styles.caseStatus}
-            style={{
-              color:
-                d.status.toLowerCase().includes('live') || d.status.toLowerCase().includes('funded')
-                  ? '#4ade80'
-                  : 'rgba(255,255,255,0.45)',
-            }}
-          >
-            {d.status}
-          </span>
+        <div className={styles.mastLeft}>
+          <p className={styles.caseEyebrow}>
+            <span>Case Study</span>
+            <span className={styles.caseRule} aria-hidden="true" />
+            <span>{d.category}</span>
+          </p>
+          <h1 className={styles.caseTitle}>{project.title}</h1>
+          <p className={styles.caseSub}>{project.subtitle}</p>
+          <p className={styles.caseBrief}>{d.brief}</p>
         </div>
-        <p className={styles.caseBrief}>{d.brief}</p>
+        <aside className={styles.mastMetrics} aria-label="Key metrics">
+          {d.metrics.slice(0, 4).map((m) => (
+            <div key={m.label} className={styles.mastMetric}>
+              <span className={styles.metricValue}>{m.value}</span>
+              <span className={styles.metricLabel}>{m.label}</span>
+            </div>
+          ))}
+        </aside>
       </header>
 
-      {/* Before / After — Option H structure */}
+      {/* LOCKED — Before / After visuals + outcomes */}
       {tx && (
         <section className={styles.transform} aria-label="Before and after">
           <div className={styles.transformGrid}>
@@ -252,32 +250,96 @@ export default function ProjectPage() {
         </section>
       )}
 
-      {/* Metric strip */}
-      <section className={styles.metricStrip} aria-label="Key metrics">
-        {d.metrics.map((m) => (
-          <div key={m.label} className={styles.metricItem}>
-            <span className={styles.metricValue}>{m.value}</span>
-            <span className={styles.metricLabel}>{m.label}</span>
+      {/* Dossier plates */}
+      <div className={styles.dossier}>
+        {/* Specs row */}
+        <section className={styles.plate} aria-labelledby="specs-label">
+          <div className={styles.plateHead}>
+            <span className={styles.plateIndex}>01</span>
+            <h2 id="specs-label" className={styles.plateLabel}>Specs</h2>
           </div>
-        ))}
-      </section>
-
-      <div className={styles.body}>
-        <section className={styles.section}>
-          <h2 className={styles.sectionLabel}>Overview</h2>
-          <p className={styles.overviewText}>{project.description}</p>
-          <p className={styles.techQuote}>{d.headline}</p>
-          <div className={styles.tagRow}>
-            {project.tags.map((t) => (
-              <span key={t} className={styles.tag}>{t}</span>
-            ))}
+          <div className={styles.specsBody}>
+            <p className={styles.overviewText}>{project.description}</p>
+            <p className={styles.techQuote}>{d.headline}</p>
+            <div className={styles.specsMeta}>
+              <div className={styles.specChip}>
+                <span className={styles.specKey}>Duration</span>
+                <span className={styles.specVal}>{d.duration}</span>
+              </div>
+              <div className={styles.specChip}>
+                <span className={styles.specKey}>Status</span>
+                <span
+                  className={styles.specVal}
+                  style={{ color: statusLive ? '#4ade80' : undefined }}
+                >
+                  {d.status}
+                </span>
+              </div>
+              {project.metric && (
+                <div className={styles.specChip}>
+                  <span className={styles.specKey}>Signal</span>
+                  <span className={styles.specVal}>{project.metric}</span>
+                </div>
+              )}
+            </div>
+            <div className={styles.tagRow}>
+              {project.tags.map((t) => (
+                <span key={t} className={styles.tag}>{t}</span>
+              ))}
+            </div>
+            {d.liveNote && <p className={styles.liveNote}>⚠ {d.liveNote}</p>}
           </div>
-          {d.liveNote && <p className={styles.liveNote}>⚠ {d.liveNote}</p>}
         </section>
 
+        {/* Pipeline row */}
+        {d.architecture.length > 0 && (
+          <section className={styles.plate} aria-labelledby="pipeline-label">
+            <div className={styles.plateHead}>
+              <span className={styles.plateIndex}>02</span>
+              <h2 id="pipeline-label" className={styles.plateLabel}>Pipeline</h2>
+            </div>
+            <div className={styles.pipelineBody}>
+              <div className={styles.archDiagramWrap}>
+                <ArchDiagram layers={d.architecture} accentColor={accent} />
+              </div>
+              <div className={styles.archGrid}>
+                {d.architecture.map((a) => (
+                  <div key={a.layer} className={styles.archRow}>
+                    <span className={styles.archLayer}>{a.layer}</span>
+                    <span className={styles.archDetail}>{a.detail}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Field notes row */}
+        {d.challenges.length > 0 && (
+          <section className={styles.plate} aria-labelledby="notes-label">
+            <div className={styles.plateHead}>
+              <span className={styles.plateIndex}>03</span>
+              <h2 id="notes-label" className={styles.plateLabel}>Field Notes</h2>
+            </div>
+            <div className={styles.notesGrid}>
+              {d.challenges.map((c, i) => (
+                <article key={c.problem} className={styles.noteCard}>
+                  <span className={styles.noteStamp}>Note {String(i + 1).padStart(2, '0')}</span>
+                  <h3 className={styles.noteProblem}>{c.problem}</h3>
+                  <p className={styles.noteSolution}>{c.solution}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Highlights list */}
         {d.highlights.length > 0 && (
-          <section className={styles.section}>
-            <h2 className={styles.sectionLabel}>Key Highlights</h2>
+          <section className={styles.plate} aria-labelledby="highlights-label">
+            <div className={styles.plateHead}>
+              <span className={styles.plateIndex}>04</span>
+              <h2 id="highlights-label" className={styles.plateLabel}>Highlights</h2>
+            </div>
             <ul className={styles.highlights}>
               {d.highlights.map((h) => (
                 <li key={h} className={styles.highlight}>{h}</li>
@@ -285,61 +347,25 @@ export default function ProjectPage() {
             </ul>
           </section>
         )}
+      </div>
 
-        {d.architecture.length > 0 && (
-          <section className={styles.section}>
-            <h2 className={styles.sectionLabel}>Architecture</h2>
-            <div className={styles.archDiagramWrap}>
-              <ArchDiagram layers={d.architecture} accentColor={accent} />
-            </div>
-            <div className={styles.archGrid}>
-              {d.architecture.map((a) => (
-                <div key={a.layer} className={styles.archRow}>
-                  <span className={styles.archLayer}>{a.layer}</span>
-                  <span className={styles.archDetail}>{a.detail}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {d.challenges.length > 0 && (
-          <section className={styles.section}>
-            <h2 className={styles.sectionLabel}>Challenges & Solutions</h2>
-            <div className={styles.challenges}>
-              {d.challenges.map((c) => (
-                <div key={c.problem} className={styles.challenge}>
-                  <div className={styles.challengeProblem}>
-                    <span className={styles.challengeIcon}>⟶</span>
-                    <span>{c.problem}</span>
-                  </div>
-                  <p className={styles.challengeSolution}>{c.solution}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionLabel}>Links</h2>
-          <div className={styles.linkRow}>
-            {project.github && (
-              <a href={project.github} target="_blank" rel="noreferrer" className={styles.linkBtn}>
-                GitHub ↗
-              </a>
-            )}
-            {project.live && project.live !== '#' && (
-              <a
-                href={project.live}
-                target="_blank"
-                rel="noreferrer"
-                className={styles.linkBtnPrimary}
-              >
-                Live Demo ↗
-              </a>
-            )}
-          </div>
-        </section>
+      {/* Sticky dock */}
+      <div className={styles.dock} role="navigation" aria-label="Project actions">
+        <button type="button" className={styles.dockBack} onClick={() => navigate('/')}>
+          ← Work
+        </button>
+        <div className={styles.dockActions}>
+          {project.github && (
+            <a href={project.github} target="_blank" rel="noreferrer" className={styles.dockGhost}>
+              GitHub ↗
+            </a>
+          )}
+          {hasLive && (
+            <a href={project.live} target="_blank" rel="noreferrer" className={styles.dockPrimary}>
+              Live Demo ↗
+            </a>
+          )}
+        </div>
       </div>
     </div>
   )
