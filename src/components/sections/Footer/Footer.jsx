@@ -1,4 +1,4 @@
-import styles from './Footer.module.css';
+import styles from './Footer.module.css'
 
 const navLinks = [
   { label: 'About', href: '/#about' },
@@ -6,19 +6,22 @@ const navLinks = [
   { label: 'Projects', href: '/#projects' },
   { label: 'Skills', href: '/#skills' },
   { label: 'Contact', href: '/#contact' },
-];
+]
 
 const socials = [
   { label: 'GitHub', href: 'https://github.com/vishvrajsolanki-dev' },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/vishvrajsinh-solanki-1396ab37a/' },
-];
+]
 
 export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.top}>
-        <span className={styles.logo}>VS.dev</span>
-        <nav className={styles.nav}>
+        <div className={styles.brand}>
+          <span className={styles.logo}>VS.dev</span>
+          <span className={styles.tag}>ML &amp; Robotics Engineer</span>
+        </div>
+        <nav className={styles.nav} aria-label="Footer">
           {navLinks.map((link) => (
             <a key={link.label} href={link.href} className={styles.navLink}>
               {link.label}
@@ -27,7 +30,13 @@ export default function Footer() {
         </nav>
         <div className={styles.socials}>
           {socials.map((s) => (
-            <a key={s.label} href={s.href} target="_blank" rel="noreferrer" className={styles.socialLink}>
+            <a
+              key={s.label}
+              href={s.href}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.socialLink}
+            >
               {s.label}
             </a>
           ))}
@@ -38,5 +47,5 @@ export default function Footer() {
         <span className={styles.built}>Built with React + R3F</span>
       </div>
     </footer>
-  );
+  )
 }
