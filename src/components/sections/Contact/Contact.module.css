@@ -32,7 +32,7 @@
     linear-gradient(var(--desk-line) 1px, transparent 1px),
     linear-gradient(90deg, var(--desk-line) 1px, transparent 1px);
   background-size: 32px 32px;
-  mask-image: radial-gradient(ellipse 85% 75% at 50% 48%, #000 18%, transparent 80%);
+  mask-image: radial-gradient(ellipse 95% 80% at 48% 48%, #000 25%, transparent 85%);
   opacity: 0.9;
 }
 
@@ -70,7 +70,7 @@
   gap: 1rem;
   padding:
     calc(4.75rem + env(safe-area-inset-top, 0px))
-    var(--section-x, clamp(1.25rem, 5vw, 4rem))
+    clamp(1rem, 2.5vw, 2rem)
     0;
 }
 
@@ -120,20 +120,21 @@
   display: flex;
   align-items: center;
   min-height: 0;
+  width: 100%;
   padding:
     1.25rem
-    var(--section-x, clamp(1.25rem, 5vw, 4rem))
+    clamp(1rem, 2.5vw, 2rem)
     2.25rem;
 }
 
 .layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(200px, 0.55fr);
+  display: flex;
   align-items: center;
-  gap: clamp(1.5rem, 5vw, 4rem);
+  justify-content: space-between;
+  gap: clamp(1.25rem, 4vw, 3rem);
   width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
 }
 
 .primary {
@@ -141,7 +142,9 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 1.25rem;
+  flex: 1 1 auto;
   min-width: 0;
+  max-width: min(640px, 58vw);
   will-change: transform;
 }
 
@@ -152,7 +155,6 @@
   display: flex;
   align-items: flex-start;
   width: 100%;
-  max-width: 560px;
 }
 
 .plate {
@@ -432,17 +434,19 @@
 .spine {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: flex-end;
   gap: 0.85rem;
-  padding: 0.5rem 0;
-  justify-self: end;
-  width: 100%;
-  max-width: 220px;
+  padding: 0.5rem 0.25rem 0.5rem 0;
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 180px;
+  margin-left: auto;
 }
 
 .spineLabel {
   margin: 0 0 0.15rem;
-  padding-left: 0.35rem;
+  padding-right: 0.5rem;
+  align-self: flex-end;
   font-family: var(--font-mono);
   font-size: 0.6rem;
   letter-spacing: 0.18em;
@@ -560,8 +564,9 @@
 }
 
 .propRuler {
-  top: 10%;
-  left: 2%;
+  top: 12%;
+  left: clamp(0.5rem, 1.5vw, 1.25rem);
+  opacity: 0.28;
 }
 
 .ruler {
@@ -603,21 +608,28 @@
 
 @media (max-width: 900px) {
   .layout {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
     gap: 1.75rem;
-    align-items: start;
+  }
+
+  .primary {
+    max-width: 100%;
   }
 
   .spine {
     flex-direction: row;
     flex-wrap: wrap;
-    max-width: 100%;
-    justify-self: start;
+    align-items: center;
+    width: 100%;
+    margin-left: 0;
     gap: 0.65rem;
   }
 
   .spineLabel {
     width: 100%;
+    align-self: flex-start;
+    padding-right: 0;
     margin-bottom: 0.1rem;
   }
 
@@ -631,7 +643,7 @@
   }
 
   .propRuler {
-    opacity: 0.3;
+    opacity: 0.22;
   }
 }
 

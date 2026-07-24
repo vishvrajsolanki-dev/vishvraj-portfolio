@@ -20,9 +20,9 @@ const SOCIALS = [
   { id: 'leetcode', label: 'LeetCode', href: null },
 ]
 
-/** Alternating tilts for the vertical spine (mockup B) */
+/** Alternating tilts; negative shift pulls chips left into the mid gap */
 const CHIP_TILTS = [-6.5, 5.2, -4.8, 7.1, -5.6, 4.4, -6.0]
-const CHIP_SHIFTS = [0, 18, 4, 22, 8, 16, 2]
+const CHIP_SHIFTS = [-8, -28, -12, -36, -16, -30, -10]
 
 function MailIcon() {
   return (
