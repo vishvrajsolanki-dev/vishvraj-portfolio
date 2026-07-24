@@ -106,23 +106,23 @@
 .issuerSpine {
   position: absolute;
   left: 0;
-  top: 0.15rem;
-  width: 36px;
+  top: 0.1rem;
+  width: 48px;
   pointer-events: none;
   z-index: 0;
   overflow: visible;
 }
 
 .issuerSpineStroke {
-  stroke: rgba(255, 255, 255, 0.28);
-  stroke-width: 1.35;
+  stroke: rgba(255, 255, 255, 0.34);
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .issuerSpineGlow {
-  stroke: rgba(255, 255, 255, 0.1);
-  stroke-width: 6;
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 7;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -140,17 +140,17 @@
 
 .issuerItemEven,
 .issuerItemOdd {
-  min-height: 72px;
+  min-height: 76px;
   display: flex;
   align-items: flex-start;
 }
 
 .issuerItemEven {
-  padding-left: 0;
+  padding-left: 0.15rem;
 }
 
 .issuerItemOdd {
-  padding-left: 0.85rem;
+  padding-left: 1.35rem;
 }
 
 .issuerBtn {
@@ -327,7 +327,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.09;
+  opacity: 0.16;
   pointer-events: none;
   z-index: 0;
   user-select: none;
@@ -335,22 +335,24 @@
 }
 
 .cardLogoWashImg {
-  width: 118%;
-  height: 118%;
+  width: 128%;
+  height: 128%;
   max-width: none;
   object-fit: contain;
+  object-position: center;
   display: block;
   transform: scale(1.12);
   opacity: 1;
 }
 
 .cardLogoWashSvg {
-  width: 118%;
-  height: 118%;
+  width: 128%;
+  height: 128%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: scale(1.1);
+  transform: scale(1.15);
+  color: #fff;
 }
 
 .cardLogoWashSvg svg {

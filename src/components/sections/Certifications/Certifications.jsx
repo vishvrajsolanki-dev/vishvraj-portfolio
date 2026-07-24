@@ -24,6 +24,7 @@ const issuers = [
     fullName: 'Anthropic Academy',
     logoUrl: '/logos/anthropic.png',
     washUrl: '/logos/anthropic-mark.png',
+    washOpacity: 0.15,
     logoAlt: 'Anthropic',
     invertLogo: true,
     mark: 'AI',
@@ -33,6 +34,8 @@ const issuers = [
     name: 'Google Cloud',
     fullName: 'Google Cloud',
     logoUrl: '/logos/gcloud.png',
+    washUrl: '/logos/gcloud-mark.png',
+    washOpacity: 0.16,
     logoAlt: 'Google Cloud',
     invertLogo: false,
     mark: 'GC',
@@ -43,6 +46,8 @@ const issuers = [
     fullName: 'Microsoft',
     logoUrl: null,
     logoSvg: true,
+    washSvg: 'microsoft',
+    washOpacity: 0.09,
     logoAlt: 'Microsoft',
     invertLogo: false,
     mark: 'MS',
@@ -52,6 +57,8 @@ const issuers = [
     name: 'IIT Hyderabad',
     fullName: 'IIT Hyderabad × My Job Grow',
     logoUrl: '/logos/iith.png',
+    washUrl: '/logos/iith-mark.png',
+    washOpacity: 0.14,
     logoAlt: 'IIT Hyderabad',
     invertLogo: false,
     mark: 'IIT',
@@ -170,7 +177,7 @@ function IssuerLogo({ issuer, className, size = 22 }) {
 }
 
 function CardLogoWash({ issuer }) {
-  if (issuer.logoSvg) {
+  if (issuer.washSvg === 'microsoft' || issuer.logoSvg) {
     return (
       <span className={styles.cardLogoWashSvg}>
         <MicrosoftLogo size={280} />
@@ -194,24 +201,25 @@ function CardLogoWash({ issuer }) {
 
 /** Serpentine spine connecting issuer nodes — scales with item count. */
 function IssuerSpine({ count }) {
-  const h = Math.max(count, 2) * 72
-  const mid = 18
-  // Alternating left/right control points for a soft curly ribbon
-  let d = `M ${mid} 12`
+  const step = 76
+  const h = Math.max(count, 2) * step
+  const mid = 22
+  // Pronounced left/right curls so the rail never reads as a straight timeline
+  let d = `M ${mid} 14`
   for (let i = 0; i < count - 1; i += 1) {
-    const y0 = 12 + i * 72
-    const y1 = 12 + (i + 1) * 72
-    const bulge = i % 2 === 0 ? mid + 16 : mid - 14
-    const c1y = y0 + 28
-    const c2y = y1 - 28
+    const y0 = 14 + i * step
+    const y1 = 14 + (i + 1) * step
+    const bulge = i % 2 === 0 ? mid + 28 : mid - 24
+    const c1y = y0 + 30
+    const c2y = y1 - 30
     d += ` C ${bulge} ${c1y}, ${bulge} ${c2y}, ${mid} ${y1}`
   }
 
   return (
     <svg
       className={styles.issuerSpine}
-      viewBox={`0 0 36 ${h}`}
-      width="36"
+      viewBox={`0 0 48 ${h}`}
+      width="48"
       height={h}
       aria-hidden="true"
       preserveAspectRatio="none"
@@ -423,7 +431,11 @@ export default function Certifications() {
                       />
                     )}
 
-                    <div className={styles.cardLogoWash} aria-hidden="true">
+                    <div
+                      className={styles.cardLogoWash}
+                      style={{ opacity: issuer.washOpacity ?? 0.16 }}
+                      aria-hidden="true"
+                    >
                       <CardLogoWash issuer={issuer} />
                     </div>
 
