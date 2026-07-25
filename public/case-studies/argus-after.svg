@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 400 250">
+  <rect width="400" height="250" fill="#0a0810"/>
+  <rect x="1" y="1" width="398" height="248" fill="none" stroke="#C45C26" stroke-width="0.5" opacity="0.25"/>
+
+  <rect x="140" y="70" width="140" height="140" rx="8" fill="none" stroke="#C45C26" stroke-width="1.5"/>
+  <line x1="140" y1="115" x2="280" y2="115" stroke="#C45C26" stroke-width="1" opacity="0.4"/>
+  <line x1="140" y1="160" x2="280" y2="160" stroke="#C45C26" stroke-width="1" opacity="0.4"/>
+  <text x="175" y="100" fill="#C45C26" font-family="monospace" font-size="12">ASK</text>
+  <text x="175" y="145" fill="#C45C26" font-family="monospace" font-size="12">SEE</text>
+  <text x="165" y="190" fill="#C45C26" font-family="monospace" font-size="12">PREDICT</text>
+  <text x="40" y="40" fill="#C45C26" font-family="monospace" font-size="12" opacity="0.5">ONE INTELLIGENCE LAYER</text>
+
+  <text x="40" y="230" fill="#ffffff" font-family="system-ui,sans-serif" font-size="14" font-weight="600">One intelligence layer</text>
+  <text x="40" y="246" fill="#ffffff" font-family="system-ui,sans-serif" font-size="10" opacity="0.45">Ask · See · Predict</text>
+</svg>

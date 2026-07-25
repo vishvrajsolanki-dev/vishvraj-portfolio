@@ -21,6 +21,21 @@ const WORDMARKS = {
     tagline: 'Know your money',
     motif: 'chart',
   },
+  arc: {
+    word: 'ARC',
+    tagline: 'Decide in distributions',
+    motif: 'chart',
+  },
+  argus: {
+    word: 'ARGUS',
+    tagline: 'Ask · See · Predict',
+    motif: 'grid',
+  },
+  fore: {
+    word: 'FORE',
+    tagline: 'Past · Decide · Ahead',
+    motif: 'chart',
+  },
   plotsense: {
     word: 'PLOTSENSE',
     tagline: 'Genre, guessed right',
@@ -80,6 +95,30 @@ function ProjectIcon({ type, className }) {
       <svg {...common}>
         <path d="M12 19l7-7 2 2-7 7H9v-2z" />
         <path d="M16 7l2 2M14.5 5.5l2-2a1.5 1.5 0 012 2l-2 2" />
+      </svg>
+    )
+  }
+  if (type === 'shield') {
+    return (
+      <svg {...common}>
+        <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
+        <path d="M9 12l2 2 4-4" />
+      </svg>
+    )
+  }
+  if (type === 'eye') {
+    return (
+      <svg {...common}>
+        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" />
+        <circle cx="12" cy="12" r="2.5" />
+      </svg>
+    )
+  }
+  if (type === 'compass') {
+    return (
+      <svg {...common}>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M14.5 9.5L10 14l4.5-1.5L16 9.5 14.5 9.5z" />
       </svg>
     )
   }
@@ -429,7 +468,9 @@ export default function Projects() {
           ariaLabel="Select project"
           className={styles.zoneB}
           getCardClassName={(project, isActive) =>
-            `${styles.filmCard} ${isActive ? styles.filmCardActive : styles.filmCardInactive}`
+            `${styles.filmCard} ${isActive ? styles.filmCardActive : styles.filmCardInactive}${
+              project.compact ? ` ${styles.filmCardCompact}` : ''
+            }`
           }
           getCardStyle={(project, isActive) => {
             const cardAccent = project.accentColor || {
@@ -456,13 +497,15 @@ export default function Projects() {
             }
             return (
               <>
-                <span
-                  className={styles.iconWatermark}
-                  style={{ color: cardAccent.base }}
-                  aria-hidden="true"
-                >
-                  <ProjectIcon type={project.icon} />
-                </span>
+                {!project.compact && (
+                  <span
+                    className={styles.iconWatermark}
+                    style={{ color: cardAccent.base }}
+                    aria-hidden="true"
+                  >
+                    <ProjectIcon type={project.icon} />
+                  </span>
+                )}
 
                 {project.recommended && (
                   <span

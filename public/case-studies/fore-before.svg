@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 400 250">
+  <rect width="400" height="250" fill="#0a0810"/>
+  <rect x="1" y="1" width="398" height="248" fill="none" stroke="#2DD4BF" stroke-width="0.5" opacity="0.25"/>
+
+  <text x="100" y="130" fill="#2DD4BF" font-family="monospace" font-size="48" opacity="0.25">?</text>
+  <text x="180" y="150" fill="#2DD4BF" font-family="monospace" font-size="28" opacity="0.35">₹???</text>
+  <text x="40" y="40" fill="#2DD4BF" font-family="monospace" font-size="12" opacity="0.5">HALLUCINATED AFFORDABILITY</text>
+
+  <text x="40" y="230" fill="#ffffff" font-family="system-ui,sans-serif" font-size="14" font-weight="600">Guessed affordability</text>
+  <text x="40" y="246" fill="#ffffff" font-family="system-ui,sans-serif" font-size="10" opacity="0.45">Invented numbers</text>
+</svg>

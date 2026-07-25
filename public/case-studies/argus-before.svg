@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 400 250">
+  <rect width="400" height="250" fill="#0a0810"/>
+  <rect x="1" y="1" width="398" height="248" fill="none" stroke="#C45C26" stroke-width="0.5" opacity="0.25"/>
+
+  <rect x="50" y="70" width="90" height="60" rx="4" fill="none" stroke="#C45C26" stroke-width="1.2" opacity="0.4"/>
+  <rect x="170" y="120" width="90" height="60" rx="4" fill="none" stroke="#C45C26" stroke-width="1.2" opacity="0.4"/>
+  <rect x="290" y="80" width="90" height="60" rx="4" fill="none" stroke="#C45C26" stroke-width="1.2" opacity="0.4"/>
+  <text x="62" y="105" fill="#C45C26" font-family="monospace" font-size="11" opacity="0.55">CHAT</text>
+  <text x="188" y="155" fill="#C45C26" font-family="monospace" font-size="11" opacity="0.55">MAP</text>
+  <text x="300" y="115" fill="#C45C26" font-family="monospace" font-size="11" opacity="0.55">RISK</text>
+  <text x="40" y="40" fill="#C45C26" font-family="monospace" font-size="12" opacity="0.5">FRAGMENTED TOOLS</text>
+
+  <text x="40" y="230" fill="#ffffff" font-family="system-ui,sans-serif" font-size="14" font-weight="600">Scattered intel tools</text>
+  <text x="40" y="246" fill="#ffffff" font-family="system-ui,sans-serif" font-size="10" opacity="0.45">Chat · Map · Risk disconnected</text>
+</svg>
