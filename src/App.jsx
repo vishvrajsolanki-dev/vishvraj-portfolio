@@ -13,6 +13,7 @@ import CurrentlyBuilding from './components/sections/CurrentlyBuilding/Currently
 import Contact from './components/sections/Contact/Contact'
 import Footer from './components/sections/Footer/Footer';
 import ProjectPage from './pages/ProjectPage';
+import Mascot from './components/Mascot/Mascot.jsx'
 
 function MainPage() {
   return (
@@ -30,6 +31,7 @@ function MainPage() {
       <CurrentlyBuilding />
       <Contact />
       <Footer />
+      <Mascot />
     </>
   )
 }
