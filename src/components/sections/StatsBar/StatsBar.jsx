@@ -64,8 +64,8 @@ export default function StatsBar() {
     if (!pin) return
     const tween = gsap.to(pin, {
       y: 0,
-      duration: 0.45,
-      ease: 'elastic.out(1, 0.55)',
+      duration: 0.28,
+      ease: 'power3.out',
     })
     pinTweens.current.push(tween)
   }
@@ -122,14 +122,14 @@ export default function StatsBar() {
     if (fromDepth < MAX_PRESS - 1) {
       tl.to(pin, {
         y: MAX_PRESS,
-        duration: 0.12,
-        ease: 'power3.in',
+        duration: 0.1,
+        ease: 'power2.in',
       })
     }
     tl.to(pin, {
       y: 0,
-      duration: 0.5,
-      ease: 'elastic.out(1, 0.55)',
+      duration: 0.32,
+      ease: 'power3.out',
     })
     pinTweens.current.push(tl)
   }, [runCountUp])
@@ -276,10 +276,13 @@ export default function StatsBar() {
             }
           }}
         >
-          <span className={styles.pinBezel} aria-hidden="true" />
-          <span className={styles.pinWell} aria-hidden="true">
-            <span className={styles.pinPlunger} ref={pinRef}>
-              <span className={styles.pinFace} />
+          <span className={styles.pinPlate} aria-hidden="true">
+            <span className={styles.pinCollar}>
+              <span className={styles.pinWell}>
+                <span className={styles.pinPlunger} ref={pinRef}>
+                  <span className={styles.pinFace} />
+                </span>
+              </span>
             </span>
           </span>
           <span className={styles.pinCaption} aria-hidden="true">RST</span>

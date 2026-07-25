@@ -14,8 +14,8 @@
   width: 100%;
   max-width: none;
   margin: 0;
-  /* equal L/R — pin sits in the right inset */
-  padding: 1.35rem 2.1rem;
+  /* equal L/R — pin plate sits in the right inset */
+  padding: 1.1rem 1.85rem;
 }
 
 .strip {
@@ -87,13 +87,17 @@
   white-space: pre-line;
 }
 
-/* Recessed reset pin — press / drag to replay */
+/* Panel-mounted reset pin — concentric, machined, quiet */
 .pin {
+  --pin-size: 40px;
+  --collar-size: 28px;
+  --well-size: 18px;
+  --face-size: 11px;
+
   position: absolute;
-  right: 0.15rem;
+  right: 0.35rem;
   top: 50%;
-  width: 44px;
-  height: 72px;
+  width: var(--pin-size);
   margin: 0;
   padding: 0;
   border: none;
@@ -108,62 +112,86 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   font: inherit;
   color: inherit;
 }
 
 .pin:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.4);
-  outline-offset: 4px;
-  border-radius: 10px;
+  outline: 1px solid rgba(255, 255, 255, 0.45);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.pin:hover .pinPlate {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.pin:hover .pinCollar {
+  border-color: rgba(255, 255, 255, 0.34);
+}
+
+.pin:hover .pinCaption {
+  color: rgba(255, 255, 255, 0.42);
 }
 
 .pinBusy {
   cursor: wait;
   pointer-events: none;
-  opacity: 0.85;
+  opacity: 0.72;
 }
 
-.pinBezel {
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  width: 34px;
-  height: 34px;
-  margin-left: -17px;
+.pinPlate {
+  position: relative;
+  width: var(--pin-size);
+  height: var(--pin-size);
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.045) 0%, transparent 48%),
+    linear-gradient(180deg, #14121a 0%, #0c0b11 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 8px 18px rgba(0, 0, 0, 0.35);
+  display: grid;
+  place-items: center;
+  transition: border-color 0.2s ease;
+}
+
+.pinCollar {
+  width: var(--collar-size);
+  height: var(--collar-size);
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.06), transparent 55%),
+    #0a0910;
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  pointer-events: none;
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  display: grid;
+  place-items: center;
+  transition: border-color 0.2s ease;
 }
 
 .pinWell {
   position: relative;
-  z-index: 1;
-  width: 22px;
-  height: 22px;
-  margin-top: 0;
+  width: var(--well-size);
+  height: var(--well-size);
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 40%, #1a1822 0%, #0c0b12 70%, #050508 100%);
+  background: radial-gradient(circle at 50% 30%, #16141e 0%, #07060b 100%);
   box-shadow:
-    inset 0 3px 6px rgba(0, 0, 0, 0.65),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
-    0 1px 0 rgba(255, 255, 255, 0.05);
+    inset 0 2px 4px rgba(0, 0, 0, 0.75),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.03);
   overflow: hidden;
+  display: grid;
+  place-items: center;
 }
 
 .pinPlunger {
-  position: absolute;
-  left: 50%;
-  top: 2px;
-  width: 14px;
-  height: 14px;
-  margin-left: -7px;
+  position: relative;
+  width: var(--face-size);
+  height: var(--face-size);
   will-change: transform;
 }
 
@@ -173,22 +201,37 @@
   height: 100%;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 35% 28%, #9a9eaa 0%, #6a6f7a 38%, #3a3e48 78%, #22252c 100%);
+    radial-gradient(circle at 32% 28%, #c4c8d0 0%, #8b909c 42%, #4a4f5a 100%);
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 -2px 3px rgba(0, 0, 0, 0.35);
+    0 1px 1px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.35);
+  position: relative;
+}
+
+/* Center dimple — real reset-pin cue */
+.pinFace::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  margin: -1.5px 0 0 -1.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #2a2e36, #0d0e12);
+  box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.15);
 }
 
 .pinCaption {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 0.55rem;
+  font-size: 0.58rem;
   font-weight: 500;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.28);
   line-height: 1;
-  margin-top: 1.55rem;
+  transition: color 0.2s ease;
 }
 
 @media (max-width: 640px) {
@@ -198,7 +241,7 @@
   }
 
   .rack {
-    padding: 1.25rem 1.85rem;
+    padding: 1.1rem 1.65rem;
   }
 
   .strip {
@@ -243,25 +286,19 @@
   }
 
   .pin {
-    width: 40px;
-    height: 68px;
+    --pin-size: 36px;
+    --collar-size: 24px;
+    --well-size: 16px;
+    --face-size: 10px;
+    right: 0.2rem;
   }
 
-  .pinBezel {
-    width: 30px;
-    height: 30px;
-    margin-left: -15px;
+  .pinPlate {
+    border-radius: 8px;
   }
 
-  .pinWell {
-    width: 20px;
-    height: 20px;
-  }
-
-  .pinPlunger {
-    width: 12px;
-    height: 12px;
-    margin-left: -6px;
+  .pinCaption {
+    font-size: 0.52rem;
   }
 }
 
