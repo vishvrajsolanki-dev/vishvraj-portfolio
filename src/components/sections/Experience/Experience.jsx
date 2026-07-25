@@ -9,18 +9,18 @@ gsap.registerPlugin(ScrollTrigger)
 const experiences = [
   {
     id: 'ssip-trackbot',
-    role: 'SSIP Funded Project — TrackBot AGV',
+    role: 'SSIP Applicant Project — TrackBot AGV',
     company: 'SSIP Cell · Gujarat Government',
     logo: '/logos/ssip.png',
-    badge: 'Institutionally Funded',
+    badge: 'Under SSIP Review',
     lorAvailable: false,
-    period: '2024 — Present',
+    period: '2024 – Present',
     location: 'ADIT, Gujarat',
     employmentType: 'Funded Project',
     about:
       'Building and scaling an RFID-guided autonomous ground vehicle — from hackathon deployment to a dual-core ESP32-S3 platform with pathfinding, multi-sensor fusion, and a live telemetry dashboard.',
     bullets: [
-      'Deployed an RFID-guided AGV at CVM Hackathon 2026 (ESP32, PWM motor control, IR line-following, HTTP telemetry); recognized by the SSIP Cell for institutional-funded redevelopment.',
+      'Deployed an RFID-guided AGV at CVM Hackathon 2026 (ESP32, PWM motor control, IR line-following, HTTP telemetry); selected for SSIP Cell review for institutional funding.',
       'Scaling to dual-core ESP32-S3 with mecanum drive, A* pathfinding, multi-sensor fusion (encoder odometry + RFID + MPU6050 IMU), and WebSocket dashboard with sub-50ms latency.',
       'Layered an AI/ML/DS stack on the robot — logged per-run sensor telemetry (Python + SQLite); trained a KNN floor-surface classifier on IR logs; path deviation analysis on planned A* vs encoder paths.',
     ],
@@ -35,7 +35,7 @@ const experiences = [
     logo: '/logos/iith.png',
     badge: 'Letter of Recommendation Awarded',
     lorAvailable: true,
-    period: 'Feb 2026 — Apr 2026',
+    period: 'Feb – Apr 2026',
     location: 'India (Remote)',
     employmentType: 'Internship',
     about:

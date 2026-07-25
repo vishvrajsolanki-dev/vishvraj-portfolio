@@ -9,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger)
 const facts = [
     { num: '3', label: 'Internships' },
     { num: '5', label: 'Live Production Deploys' },
-    { num: '0.98', label: 'Fraud Model AUC' },
+    { num: '0.9771', label: 'Fraud Model AUC' },
     { num: '2029', label: 'B.Tech Graduation' },
 ]
 
