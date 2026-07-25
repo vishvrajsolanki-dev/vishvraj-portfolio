@@ -1,13 +1,11 @@
-/* Compact instrument strip under hero — full-bleed width, side slot handle */
+/* Compact instrument strip under hero — recessed reset pin on the right */
 
 .section {
   position: relative;
   z-index: 2;
-  /* Keep strip close to About — previous 4.5rem margin + About's 8rem pad
-     created a large empty void (color banding showed through). */
-  margin: 0;
-  padding: 0.85rem clamp(0.75rem, 2vw, 1.25rem) 0;
-  background: transparent;
+  margin: 0 0 4.5rem;
+  padding: 1.1rem clamp(0.75rem, 2vw, 1.25rem) 0;
+  background: var(--color-bg, #0a0810);
   isolation: isolate;
 }
 
@@ -16,8 +14,8 @@
   width: 100%;
   max-width: none;
   margin: 0;
-  /* equal L/R inset so the strip isn’t skewed by the side handle */
-  padding: 1.35rem 2.6rem 0.35rem;
+  /* equal L/R — pin sits in the right inset */
+  padding: 1.35rem 2.1rem;
 }
 
 .strip {
@@ -89,116 +87,118 @@
   white-space: pre-line;
 }
 
-/* Vertical casino handle on strip’s right edge */
-.handle {
+/* Recessed reset pin — press / drag to replay */
+.pin {
   position: absolute;
-  right: 0.1rem;
+  right: 0.15rem;
   top: 50%;
   width: 44px;
-  height: 140px;
+  height: 72px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
   transform: translateY(-50%);
   z-index: 4;
-  cursor: grab;
+  cursor: pointer;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
   outline: none;
-}
-
-.handle:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.45);
-  outline-offset: 6px;
-  border-radius: 10px;
-}
-
-.handle:active {
-  cursor: grabbing;
-}
-
-.handleBusy {
-  cursor: wait;
-  pointer-events: none;
-  opacity: 0.9;
-}
-
-.handleMount {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 22px;
-  height: 34px;
-  margin-top: -17px;
-  margin-left: -8px;
-  border-radius: 5px;
-  background:
-    linear-gradient(145deg, #d4dae2 0%, #9aa3ae 42%, #5e666f 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
-    0 6px 14px rgba(0, 0, 0, 0.4);
-}
-
-.handleMount::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 9px;
-  height: 9px;
-  margin: -4.5px 0 0 -4.5px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #f0f3f6, #4a525a);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.45);
-}
-
-.handleShaft {
-  position: absolute;
-  left: 50%;
-  bottom: calc(50% - 4px);
-  width: 14px;
-  height: 78px;
-  margin-left: -7px;
-  transform-origin: 50% 100%;
-  will-change: transform;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font: inherit;
+  color: inherit;
 }
 
-.handleRod {
-  display: block;
-  width: 6px;
-  flex: 1;
-  border-radius: 3px;
-  background: linear-gradient(90deg, #b8c0c8, #e8ecf0 40%, #7a828c);
-  box-shadow:
-    1px 0 0 rgba(0, 0, 0, 0.25),
-    inset 1px 0 0 rgba(255, 255, 255, 0.35);
+.pin:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.4);
+  outline-offset: 4px;
+  border-radius: 10px;
 }
 
-.handleKnob {
+.pinBusy {
+  cursor: wait;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.pinBezel {
   position: absolute;
-  top: -14px;
+  top: 6px;
   left: 50%;
+  width: 34px;
+  height: 34px;
+  margin-left: -17px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+
+.pinWell {
+  position: relative;
+  z-index: 1;
   width: 22px;
   height: 22px;
-  margin-left: -11px;
+  margin-top: 0;
   border-radius: 50%;
-  background: radial-gradient(circle at 32% 28%, #ff9a9a 0%, #e11d48 45%, #7f1d1d 100%);
+  background:
+    radial-gradient(circle at 50% 40%, #1a1822 0%, #0c0b12 70%, #050508 100%);
   box-shadow:
-    0 4px 10px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.35);
+    inset 0 3px 6px rgba(0, 0, 0, 0.65),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.pinPlunger {
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  will-change: transform;
+}
+
+.pinFace {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 28%, #9a9eaa 0%, #6a6f7a 38%, #3a3e48 78%, #22252c 100%);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.35);
+}
+
+.pinCaption {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.28);
+  line-height: 1;
+  margin-top: 1.55rem;
 }
 
 @media (max-width: 640px) {
   .section {
-    margin-bottom: 0;
-    padding: 0.65rem 0.85rem 0;
+    margin-bottom: 3.5rem;
+    padding: 1rem 0.85rem 0;
   }
 
   .rack {
-    padding: 1.15rem 2.15rem 0.25rem;
+    padding: 1.25rem 1.85rem;
   }
 
   .strip {
@@ -242,25 +242,31 @@
     font-size: 0.68rem;
   }
 
-  .handle {
+  .pin {
     width: 40px;
-    height: 120px;
-  }
-
-  .handleShaft {
     height: 68px;
   }
 
-  .handleKnob {
-    width: 18px;
-    height: 18px;
-    margin-left: -9px;
-    top: -12px;
+  .pinBezel {
+    width: 30px;
+    height: 30px;
+    margin-left: -15px;
+  }
+
+  .pinWell {
+    width: 20px;
+    height: 20px;
+  }
+
+  .pinPlunger {
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .handleShaft {
+  .pinPlunger {
     transition: none;
   }
 }

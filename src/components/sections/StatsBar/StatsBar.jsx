@@ -14,9 +14,8 @@ const stats = [
   { countTo: 1, suffix: '', label: 'Recognised by\nSSIP', focus: false },
 ]
 
-const MAX_PULL = 95
-const PULL_THRESHOLD = 32
-const armVars = { transformOrigin: '50% 100%' }
+const MAX_PRESS = 9
+const PRESS_THRESHOLD = 3
 
 /** Low targets linger; high targets scramble through faster. */
 const durationFor = (n) => {
@@ -30,15 +29,15 @@ const durationFor = (n) => {
 export default function StatsBar() {
   const sectionRef = useRef(null)
   const rackRef = useRef(null)
-  const shaftRef = useRef(null)
+  const pinRef = useRef(null)
   const countTweens = useRef([])
-  const leverTweens = useRef([])
+  const pinTweens = useRef([])
   const hasAutoPlayed = useRef(false)
   const spinningRef = useRef(false)
   const dragRef = useRef({
     active: false,
     startY: 0,
-    angle: 0,
+    depth: 0,
     moved: false,
     pointerId: null,
   })
@@ -54,22 +53,21 @@ export default function StatsBar() {
     countTweens.current = []
   }
 
-  const setArmAngle = (deg) => {
-    const shaft = shaftRef.current
-    if (!shaft) return
-    gsap.set(shaft, { rotate: deg, ...armVars })
+  const setPinDepth = (px) => {
+    const pin = pinRef.current
+    if (!pin) return
+    gsap.set(pin, { y: px })
   }
 
   const springHome = () => {
-    const shaft = shaftRef.current
-    if (!shaft) return
-    const tween = gsap.to(shaft, {
-      rotate: 0,
-      duration: 0.65,
-      ease: 'elastic.out(1, 0.5)',
-      ...armVars,
+    const pin = pinRef.current
+    if (!pin) return
+    const tween = gsap.to(pin, {
+      y: 0,
+      duration: 0.45,
+      ease: 'elastic.out(1, 0.55)',
     })
-    leverTweens.current.push(tween)
+    pinTweens.current.push(tween)
   }
 
   const runCountUp = useCallback(() => {
@@ -88,7 +86,6 @@ export default function StatsBar() {
       el.textContent = `0${stat.suffix}`
 
       const duration = durationFor(stat.countTo)
-      // Small ints ease through slowly; big ints race with a soft landing
       const ease = stat.countTo <= 5 ? 'power1.inOut' : 'power2.out'
 
       const tween = gsap.to(obj, {
@@ -110,33 +107,31 @@ export default function StatsBar() {
     })
   }, [])
 
-  const triggerPull = useCallback((fromAngle = 0) => {
+  const triggerPress = useCallback((fromDepth = 0) => {
     if (spinningRef.current) return
 
-    const shaft = shaftRef.current
+    const pin = pinRef.current
 
-    // Count-up starts immediately — lever motion runs in parallel
+    // Count-up starts immediately — pin motion is parallel feedback
     runCountUp()
 
-    leverTweens.current.forEach((t) => t?.kill?.())
-    leverTweens.current = []
+    pinTweens.current.forEach((t) => t?.kill?.())
+    pinTweens.current = []
 
     const tl = gsap.timeline()
-    if (fromAngle < MAX_PULL - 6) {
-      tl.to(shaft, {
-        rotate: MAX_PULL,
-        duration: 0.18,
+    if (fromDepth < MAX_PRESS - 1) {
+      tl.to(pin, {
+        y: MAX_PRESS,
+        duration: 0.12,
         ease: 'power3.in',
-        ...armVars,
       })
     }
-    tl.to(shaft, {
-      rotate: 0,
-      duration: 0.65,
-      ease: 'elastic.out(1, 0.5)',
-      ...armVars,
+    tl.to(pin, {
+      y: 0,
+      duration: 0.5,
+      ease: 'elastic.out(1, 0.55)',
     })
-    leverTweens.current.push(tl)
+    pinTweens.current.push(tl)
   }, [runCountUp])
 
   const onPointerDown = (e) => {
@@ -146,7 +141,7 @@ export default function StatsBar() {
     dragRef.current = {
       active: true,
       startY: e.clientY,
-      angle: 0,
+      depth: 0,
       moved: false,
       pointerId: e.pointerId,
     }
@@ -156,10 +151,10 @@ export default function StatsBar() {
     const d = dragRef.current
     if (!d.active || spinningRef.current) return
     const dy = e.clientY - d.startY
-    if (Math.abs(dy) > 3) d.moved = true
-    const angle = Math.max(0, Math.min(MAX_PULL, dy * 0.65))
-    d.angle = angle
-    setArmAngle(angle)
+    if (Math.abs(dy) > 2) d.moved = true
+    const depth = Math.max(0, Math.min(MAX_PRESS, dy * 0.45))
+    d.depth = depth
+    setPinDepth(depth)
   }
 
   const finishGesture = useCallback(() => {
@@ -172,12 +167,13 @@ export default function StatsBar() {
       return
     }
 
-    if (!d.moved || d.angle >= PULL_THRESHOLD) {
-      triggerPull(d.angle)
+    // Tap or press past threshold → replay
+    if (!d.moved || d.depth >= PRESS_THRESHOLD) {
+      triggerPress(d.depth)
     } else {
       springHome()
     }
-  }, [triggerPull])
+  }, [triggerPress])
 
   const onPointerUp = (e) => {
     try {
@@ -213,7 +209,7 @@ export default function StatsBar() {
       return
     }
 
-    gsap.set(shaftRef.current, { rotate: 0, ...armVars })
+    gsap.set(pinRef.current, { y: 0 })
 
     gsap.fromTo(
       rack,
@@ -238,8 +234,8 @@ export default function StatsBar() {
 
     return () => {
       killCountTweens()
-      leverTweens.current.forEach((t) => t?.kill?.())
-      leverTweens.current = []
+      pinTweens.current.forEach((t) => t?.kill?.())
+      pinTweens.current = []
     }
   }, { scope: sectionRef, dependencies: [runCountUp] })
 
@@ -262,12 +258,13 @@ export default function StatsBar() {
           ))}
         </div>
 
-        <div
-          className={`${styles.handle} ${spinning ? styles.handleBusy : ''}`}
-          role="button"
+        <button
+          type="button"
+          className={`${styles.pin} ${spinning ? styles.pinBusy : ''}`}
           tabIndex={spinning ? -1 : 0}
-          aria-label={spinning ? 'Counting in progress' : 'Pull handle down to replay count-up'}
+          aria-label={spinning ? 'Counting in progress' : 'Press reset pin to replay count-up'}
           aria-disabled={spinning}
+          disabled={spinning}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
@@ -275,16 +272,18 @@ export default function StatsBar() {
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault()
-              triggerPull(0)
+              triggerPress(0)
             }
           }}
         >
-          <span className={styles.handleMount} aria-hidden="true" />
-          <span className={styles.handleShaft} ref={shaftRef} aria-hidden="true">
-            <span className={styles.handleRod} />
-            <span className={styles.handleKnob} />
+          <span className={styles.pinBezel} aria-hidden="true" />
+          <span className={styles.pinWell} aria-hidden="true">
+            <span className={styles.pinPlunger} ref={pinRef}>
+              <span className={styles.pinFace} />
+            </span>
           </span>
-        </div>
+          <span className={styles.pinCaption} aria-hidden="true">RST</span>
+        </button>
       </div>
     </section>
   )
