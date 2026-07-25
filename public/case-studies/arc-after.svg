@@ -1,12 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 400 250">
-  <rect width="400" height="250" fill="#0a0810"/>
-  <rect x="1" y="1" width="398" height="248" fill="none" stroke="#5B8DEF" stroke-width="0.5" opacity="0.25"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0810"/>
+      <stop offset="100%" stop-color="#12101a"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4F46E5" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#4F46E5" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#4F46E5" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#4F46E5" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+  </defs>
+  <rect width="960" height="720" fill="url(#bg)"/>
+  <circle cx="780" cy="120" r="180" fill="#4F46E5" opacity="0.08" filter="url(#soft)"/>
+  <circle cx="140" cy="620" r="160" fill="#4F46E5" opacity="0.05" filter="url(#soft)"/>
 
-  <path d="M60 180 C100 160 120 80 160 90 C200 100 220 150 260 120 C300 90 320 70 360 60" fill="none" stroke="#5B8DEF" stroke-width="2"/>
-  <path d="M60 200 C100 190 140 140 180 150 C220 160 260 110 300 100 C340 90 360 85 380 80" fill="none" stroke="#5B8DEF" stroke-width="1" opacity="0.35"/>
-  <path d="M60 160 C100 130 140 60 180 70 C220 80 260 130 300 100 C340 70 360 50 380 40" fill="none" stroke="#5B8DEF" stroke-width="1" opacity="0.35"/>
-  <text x="40" y="40" fill="#5B8DEF" font-family="monospace" font-size="12" opacity="0.5">10,000 SCENARIOS · DISTRIBUTION</text>
+  <rect x="80" y="100" width="800" height="520" rx="24" fill="url(#panel)" stroke="#A5B4FC" stroke-opacity="0.3" stroke-width="1.5"/>
+  <text x="112" y="145" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="14" letter-spacing="0.18em">10,000 MONTE CARLO PATHS</text>
+  <text x="112" y="180" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="28" font-weight="600">Probability band · not a guess</text>
+  <!-- fan -->
+  <g transform="translate(0,10)">
+    <path d="M120 348 L120 348.0 L140 341.2 L160 334.5 L180 327.9 L200 321.5 L220 315.3 L240 309.3 L260 303.7 L280 298.4 L300 293.5 L320 289.1 L340 285.2 L360 281.7 L380 278.9 L400 276.6 L420 274.9 L440 273.9 L460 273.4 L480 273.6 L500 274.5 L520 276.0 L540 278.2 L560 281.0 L580 284.4 L600 288.4 L620 293.0 L640 298.1 L660 303.8 L680 309.9 L700 316.5 L720 323.5 L740 330.9 L760 338.6 L780 346.6 L800 354.7 L820 363.1 L840 371.5" stroke="#A5B4FC" stroke-width="1.2" opacity="0.18" fill="none"/><path d="M120 366 L120 366.0 L140 359.0 L160 352.1 L180 345.3 L200 338.6 L220 332.2 L240 326.0 L260 320.1 L280 314.6 L300 309.6 L320 304.9 L340 300.8 L360 297.1 L380 294.1 L400 291.6 L420 289.7 L440 288.4 L460 287.8 L480 287.8 L500 288.4 L520 289.7 L540 291.6 L560 294.2 L580 297.4 L600 301.2 L620 305.6 L640 310.5 L660 316.0 L680 321.9 L700 328.3 L720 335.1 L740 342.2 L760 349.7 L780 357.4 L800 365.4 L820 373.5 L840 381.7" stroke="#A5B4FC" stroke-width="1.2" opacity="0.28" fill="none"/><path d="M120 384 L120 384.0 L140 376.8 L160 369.7 L180 362.6 L200 355.7 L220 349.1 L240 342.7 L260 336.6 L280 330.9 L300 325.6 L320 320.8 L340 316.4 L360 312.6 L380 309.3 L400 306.5 L420 304.4 L440 302.9 L460 302.1 L480 301.9 L500 302.3 L520 303.4 L540 305.1 L560 307.5 L580 310.4 L600 314.0 L620 318.2 L640 322.9 L660 328.1 L680 333.8 L700 340.0 L720 346.6 L740 353.5 L760 360.8 L780 368.3 L800 376.0 L820 383.9 L840 391.9" stroke="#A5B4FC" stroke-width="1.2" opacity="0.4" fill="none"/><path d="M120 402 L120 402.0 L140 394.6 L160 387.2 L180 380.0 L200 372.9 L220 366.0 L240 359.4 L260 353.1 L280 347.2 L300 341.7 L320 336.6 L340 332.0 L360 328.0 L380 324.4 L400 321.5 L420 319.2 L440 317.5 L460 316.4 L480 316.0 L500 316.2 L520 317.1 L540 318.6 L560 320.7 L580 323.5 L600 326.8 L620 330.8 L640 335.3 L660 340.3 L680 345.8 L700 351.7 L720 358.1 L740 364.8 L760 371.8 L780 379.2 L800 386.7 L820 394.4 L840 402.2" stroke="#A5B4FC" stroke-width="1.2" opacity="0.55" fill="none"/><path d="M120 420 L120 420.0 L140 412.4 L160 404.8 L180 397.3 L200 390.0 L220 382.9 L240 376.1 L260 369.6 L280 363.5 L300 357.7 L320 352.4 L340 347.6 L360 343.4 L380 339.6 L400 336.5 L420 333.9 L440 332.0 L460 330.7 L480 330.1 L500 330.1 L520 330.7 L540 332.0 L560 333.9 L580 336.5 L600 339.6 L620 343.4 L640 347.6 L660 352.4 L680 357.7 L700 363.5 L720 369.6 L740 376.1 L760 382.9 L780 390.0 L800 397.3 L820 404.8 L840 412.4" stroke="#A5B4FC" stroke-width="2.2" opacity="0.7" fill="none"/><path d="M120 438 L120 438.0 L140 430.2 L160 422.4 L180 414.7 L200 407.2 L220 399.8 L240 392.8 L260 386.1 L280 379.7 L300 373.8 L320 368.3 L340 363.3 L360 358.8 L380 354.8 L400 351.5 L420 348.7 L440 346.6 L460 345.1 L480 344.2 L500 344.0 L520 344.4 L540 345.5 L560 347.2 L580 349.5 L600 352.4 L620 356.0 L640 360.0 L660 364.6 L680 369.7 L700 375.2 L720 381.1 L740 387.4 L760 394.0 L780 400.9 L800 408.0 L820 415.2 L840 422.6" stroke="#A5B4FC" stroke-width="1.2" opacity="0.55" fill="none"/><path d="M120 456 L120 456.0 L140 447.9 L160 439.9 L180 432.0 L200 424.3 L220 416.8 L240 409.5 L260 402.6 L280 396.0 L300 389.8 L320 384.1 L340 378.9 L360 374.2 L380 370.0 L400 366.4 L420 363.5 L440 361.1 L460 359.4 L480 358.3 L500 357.9 L520 358.1 L540 358.9 L560 360.4 L580 362.5 L600 365.3 L620 368.6 L640 372.4 L660 376.8 L680 381.6 L700 386.9 L720 392.6 L740 398.7 L760 405.1 L780 411.7 L800 418.6 L820 425.7 L840 432.8" stroke="#A5B4FC" stroke-width="1.2" opacity="0.4" fill="none"/><path d="M120 474 L120 474.0 L140 465.7 L160 457.5 L180 449.4 L200 441.4 L220 433.7 L240 426.2 L260 419.1 L280 412.3 L300 405.9 L320 400.0 L340 394.5 L360 389.6 L380 385.2 L400 381.4 L420 378.2 L440 375.6 L460 373.7 L480 372.4 L500 371.8 L520 371.8 L540 372.4 L560 373.7 L580 375.6 L600 378.1 L620 381.1 L640 384.8 L660 388.9 L680 393.6 L700 398.6 L720 404.1 L740 410.0 L760 416.2 L780 422.6 L800 429.3 L820 436.1 L840 443.0" stroke="#A5B4FC" stroke-width="1.2" opacity="0.28" fill="none"/><path d="M120 492 L120 492.0 L140 483.5 L160 475.1 L180 466.7 L200 458.6 L220 450.6 L240 442.9 L260 435.5 L280 428.5 L300 421.9 L320 415.8 L340 410.1 L360 405.0 L380 400.4 L400 396.4 L420 393.0 L440 390.2 L460 388.0 L480 386.5 L500 385.6 L520 385.4 L540 385.9 L560 386.9 L580 388.6 L600 390.9 L620 393.7 L640 397.2 L660 401.1 L680 405.5 L700 410.4 L720 415.7 L740 421.3 L760 427.3 L780 433.5 L800 439.9 L820 446.5 L840 453.2" stroke="#A5B4FC" stroke-width="1.2" opacity="0.18" fill="none"/>
+  </g>
+  <!-- band fill suggestion -->
+  <path d="M120 500 C280 420 420 300 560 280 C700 260 780 240 840 220 L840 520 L120 520 Z" fill="url(#glow)" opacity="0.55"/>
+  <!-- percentile labels -->
+  <text x="850" y="230" text-anchor="end" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="12">P90</text>
+  <text x="850" y="320" text-anchor="end" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="12">P50</text>
+  <text x="850" y="420" text-anchor="end" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="12" opacity="0.7">P10</text>
+  <rect x="112" y="560" width="180" height="36" rx="8" fill="#4F46E5" fill-opacity="0.25" stroke="#A5B4FC" stroke-opacity="0.4"/>
+  <text x="202" y="583" text-anchor="middle" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="12">ADVISOR + CRITIC · RBI/SEBI</text>
 
-  <text x="40" y="230" fill="#ffffff" font-family="system-ui,sans-serif" font-size="14" font-weight="600">Distribution-first clarity</text>
-  <text x="40" y="246" fill="#ffffff" font-family="system-ui,sans-serif" font-size="10" opacity="0.45">10,000 scenarios · grounded advice</text>
 </svg>

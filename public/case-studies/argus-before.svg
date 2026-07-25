@@ -1,15 +1,46 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 400 250">
-  <rect width="400" height="250" fill="#0a0810"/>
-  <rect x="1" y="1" width="398" height="248" fill="none" stroke="#C45C26" stroke-width="0.5" opacity="0.25"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0810"/>
+      <stop offset="100%" stop-color="#12101a"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E11D48" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#E11D48" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#E11D48" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#E11D48" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+  </defs>
+  <rect width="960" height="720" fill="url(#bg)"/>
+  <circle cx="780" cy="120" r="180" fill="#E11D48" opacity="0.08" filter="url(#soft)"/>
+  <circle cx="140" cy="620" r="160" fill="#E11D48" opacity="0.05" filter="url(#soft)"/>
 
-  <rect x="50" y="70" width="90" height="60" rx="4" fill="none" stroke="#C45C26" stroke-width="1.2" opacity="0.4"/>
-  <rect x="170" y="120" width="90" height="60" rx="4" fill="none" stroke="#C45C26" stroke-width="1.2" opacity="0.4"/>
-  <rect x="290" y="80" width="90" height="60" rx="4" fill="none" stroke="#C45C26" stroke-width="1.2" opacity="0.4"/>
-  <text x="62" y="105" fill="#C45C26" font-family="monospace" font-size="11" opacity="0.55">CHAT</text>
-  <text x="188" y="155" fill="#C45C26" font-family="monospace" font-size="11" opacity="0.55">MAP</text>
-  <text x="300" y="115" fill="#C45C26" font-family="monospace" font-size="11" opacity="0.55">RISK</text>
-  <text x="40" y="40" fill="#C45C26" font-family="monospace" font-size="12" opacity="0.5">FRAGMENTED TOOLS</text>
+  <text x="80" y="90" fill="#FB7185" font-family="ui-monospace,Menlo,monospace" font-size="14" letter-spacing="0.18em">DISCONNECTED INTEL</text>
+  <!-- scattered cards -->
+  <g transform="translate(90,140) rotate(-8)">
+    <rect width="220" height="160" rx="14" fill="url(#panel)" stroke="#FB7185" stroke-opacity="0.4"/>
+    <text x="24" y="40" fill="#FFFFFF" font-family="system-ui" font-size="16" font-weight="600">Case File #1842</text>
+    <text x="24" y="70" fill="#FB7185" font-family="ui-monospace" font-size="12" opacity="0.7">CHAT LOG ONLY</text>
+    <rect x="24" y="95" width="160" height="8" rx="4" fill="#FB7185" opacity="0.25"/>
+    <rect x="24" y="115" width="120" height="8" rx="4" fill="#FB7185" opacity="0.15"/>
+  </g>
+  <g transform="translate(380,220) rotate(6)">
+    <rect width="240" height="180" rx="14" fill="url(#panel)" stroke="#FB7185" stroke-opacity="0.4"/>
+    <text x="24" y="40" fill="#FFFFFF" font-family="system-ui" font-size="16" font-weight="600">District Map Export</text>
+    <text x="24" y="70" fill="#FB7185" font-family="ui-monospace" font-size="12" opacity="0.7">STATIC PNG · NO LINKS</text>
+    <circle cx="80" cy="120" r="6" fill="#E11D48"/><circle cx="140" cy="105" r="6" fill="#E11D48" opacity="0.6"/><circle cx="170" cy="140" r="6" fill="#E11D48" opacity="0.4"/>
+  </g>
+  <g transform="translate(620,120) rotate(-4)">
+    <rect width="230" height="150" rx="14" fill="url(#panel)" stroke="#FB7185" stroke-opacity="0.4"/>
+    <text x="24" y="40" fill="#FFFFFF" font-family="system-ui" font-size="16" font-weight="600">Risk Spreadsheet</text>
+    <text x="24" y="70" fill="#FB7185" font-family="ui-monospace" font-size="12" opacity="0.7">MANUAL SCORE · NO SHAP</text>
+    <text x="24" y="115" fill="#FFFFFF" font-family="Space Grotesk" font-size="36" font-weight="700" opacity="0.35">???</text>
+  </g>
+  <text x="480" y="620" text-anchor="middle" fill="#FFFFFF" font-family="ui-monospace" font-size="14" opacity="0.45">THREE TOOLS · ZERO SHARED SPINE</text>
 
-  <text x="40" y="230" fill="#ffffff" font-family="system-ui,sans-serif" font-size="14" font-weight="600">Scattered intel tools</text>
-  <text x="40" y="246" fill="#ffffff" font-family="system-ui,sans-serif" font-size="10" opacity="0.45">Chat · Map · Risk disconnected</text>
 </svg>
