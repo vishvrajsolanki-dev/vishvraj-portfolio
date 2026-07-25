@@ -39,7 +39,8 @@
   display: grid;
   grid-template-columns: minmax(260px, 0.95fr) minmax(0, 1.05fr);
   gap: clamp(1.75rem, 4vw, 3.5rem);
-  align-items: center;
+  /* Start-align so domain switches never vertically re-center the dial */
+  align-items: start;
 }
 
 .mapPane {
@@ -94,6 +95,8 @@
   width: min(100%, 520px);
   aspect-ratio: 1;
   margin: 0 auto;
+  /* Isolate dial layout from sibling reflows in the skills grid */
+  contain: layout;
 }
 
 .mapSvg {
@@ -224,8 +227,10 @@
 }
 
 .node {
+  /* Anchor on the icon center so active label weight never nudges ring seats */
+  --node-icon-size: 48px;
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, calc(var(--node-icon-size) / -2));
   z-index: 3;
   display: flex;
   flex-direction: column;
@@ -241,8 +246,8 @@
 }
 
 .nodeIcon {
-  width: 48px;
-  height: 48px;
+  width: var(--node-icon-size);
+  height: var(--node-icon-size);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -295,7 +300,7 @@
   padding: 0.25rem 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   max-width: 34rem;
   margin-left: auto;
   margin-right: 0;
@@ -305,6 +310,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  /* Reserve 2 title lines so 1-line domains don't lift the tools block */
+  min-height: calc(0.68rem + 0.3rem + 2.1em * 2);
 }
 
 .detailNum {
@@ -342,6 +349,8 @@
   line-height: 1.65;
   margin: 0 0 1.35rem;
   max-width: 38ch;
+  /* Longest domain blurbs ~3–4 lines — keep Tools pinned */
+  min-height: calc(1.65em * 4);
 }
 
 .toolsLabel {
@@ -356,7 +365,10 @@
 .skillTags {
   display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
   gap: 0.45rem;
+  /* ML has the densest tag set — reserve space so cards don't reflow seats */
+  min-height: 7.5rem;
 }
 
 .tag {
@@ -475,12 +487,8 @@
   }
 
   .node {
+    --node-icon-size: 42px;
     width: 56px;
-  }
-
-  .nodeIcon {
-    width: 42px;
-    height: 42px;
   }
 
   .nodeLabel {

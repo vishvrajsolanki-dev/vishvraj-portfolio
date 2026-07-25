@@ -258,7 +258,7 @@ export default function Skills() {
             <p className={styles.toolsLabel}>Tools</p>
             <div className={styles.skillTags}>
               {active.skills.map((sk) => (
-                <span key={sk} className={styles.tag}>
+                <span key={`${active.id}-${sk}`} className={styles.tag}>
                   {sk}
                 </span>
               ))}
