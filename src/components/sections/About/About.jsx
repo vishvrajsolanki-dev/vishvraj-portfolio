@@ -60,14 +60,6 @@ export default function About() {
             '-=0.2'
         )
 
-        // Skill clusters stagger
-        tl.fromTo(
-            section.querySelectorAll(`.${styles.cluster}`),
-            { opacity: 0, y: 20 },
-            { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out' },
-            '-=0.2'
-        )
-
         // Photo
         tl.fromTo(
             section.querySelector(`.${styles.photoWrap}`),
@@ -120,34 +112,6 @@ export default function About() {
                                     <span className={styles.statLabel}>{f.label}</span>
                                 </div>
                             ))}
-                        </div>
-
-                        {/* Skill clusters */}
-                        <div className={styles.clusters}>
-                            <div className={styles.cluster}>
-                                <span className={styles.clusterLabel}>ML / AI</span>
-                                <div className={styles.tags}>
-                                    {['XGBoost', 'PyTorch', 'SHAP', 'RAG', 'LLMs', 'Scikit-learn'].map(t => (
-                                        <span key={t} className={styles.tag}>{t}</span>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className={styles.cluster}>
-                                <span className={styles.clusterLabel}>Infra & Deploy</span>
-                                <div className={styles.tags}>
-                                    {['Streamlit', 'Docker', 'Render', 'ChromaDB', 'SQLite', 'GCP'].map(t => (
-                                        <span key={t} className={styles.tag}>{t}</span>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className={styles.cluster}>
-                                <span className={styles.clusterLabel}>Hardware</span>
-                                <div className={styles.tags}>
-                                    {['ESP32', 'C++', 'RFID', 'IMU', 'FreeRTOS', 'A*'].map(t => (
-                                        <span key={t} className={styles.tag}>{t}</span>
-                                    ))}
-                                </div>
-                            </div>
                         </div>
                     </div>
 
