@@ -1,51 +1,90 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" fill="none">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0a0810"/>
-      <stop offset="100%" stop-color="#12101a"/>
+      <stop offset="0%" stop-color="#07060c"/>
+      <stop offset="100%" stop-color="#160a10"/>
     </linearGradient>
     <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#E11D48" stop-opacity="0.14"/>
-      <stop offset="100%" stop-color="#E11D48" stop-opacity="0.03"/>
+      <stop offset="0%" stop-color="#1c0e14"/>
+      <stop offset="100%" stop-color="#0e070a"/>
     </linearGradient>
-    <linearGradient id="glow" x1="0.5" y1="0" x2="0.5" y2="1">
-      <stop offset="0%" stop-color="#E11D48" stop-opacity="0.35"/>
-      <stop offset="100%" stop-color="#E11D48" stop-opacity="0"/>
+    <linearGradient id="rose" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E11D48"/>
+      <stop offset="100%" stop-color="#9F1239"/>
     </linearGradient>
-    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="12"/>
+    <filter id="blur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="24"/>
     </filter>
+    <radialGradient id="hot" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#E11D48" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#E11D48" stop-opacity="0"/>
+    </radialGradient>
   </defs>
   <rect width="960" height="720" fill="url(#bg)"/>
-  <circle cx="780" cy="120" r="180" fill="#E11D48" opacity="0.08" filter="url(#soft)"/>
-  <circle cx="140" cy="620" r="160" fill="#E11D48" opacity="0.05" filter="url(#soft)"/>
+  <circle cx="860" cy="80" r="170" fill="#E11D48" opacity="0.12" filter="url(#blur)"/>
+  <circle cx="60" cy="660" r="150" fill="#BE123C" opacity="0.1" filter="url(#blur)"/>
 
-  <rect x="70" y="80" width="820" height="560" rx="24" fill="url(#panel)" stroke="#FB7185" stroke-opacity="0.35" stroke-width="1.5"/>
-  <text x="100" y="125" fill="#FB7185" font-family="ui-monospace" font-size="14" letter-spacing="0.18em">ONE INTELLIGENCE LAYER</text>
-  <!-- ASK -->
-  <rect x="100" y="160" width="240" height="420" rx="18" fill="#0a0810" fill-opacity="0.55" stroke="#FB7185" stroke-opacity="0.3"/>
-  <text x="124" y="200" fill="#FB7185" font-family="ui-monospace" font-size="12" letter-spacing="0.16em">ASK</text>
-  <text x="124" y="235" fill="#FFFFFF" font-family="system-ui" font-size="15">“Hotspots near Zone 7 tonight?”</text>
-  <rect x="124" y="270" width="190" height="70" rx="10" fill="#E11D48" fill-opacity="0.15"/>
-  <text x="140" y="300" fill="#FFFFFF" font-family="system-ui" font-size="13">Cited answer</text>
-  <text x="140" y="322" fill="#FB7185" font-family="ui-monospace" font-size="11">Advisor + Critic</text>
-  <!-- SEE -->
-  <rect x="360" y="160" width="240" height="420" rx="18" fill="#0a0810" fill-opacity="0.55" stroke="#FB7185" stroke-opacity="0.3"/>
-  <text x="384" y="200" fill="#FB7185" font-family="ui-monospace" font-size="12" letter-spacing="0.16em">SEE</text>
-  <rect x="384" y="230" width="192" height="160" rx="12" fill="#E11D48" fill-opacity="0.08" stroke="#FB7185" stroke-opacity="0.25"/>
-  <circle cx="450" cy="300" r="8" fill="#E11D48"/><circle cx="500" cy="280" r="6" fill="#FB7185"/><circle cx="520" cy="330" r="7" fill="#E11D48" opacity="0.7"/>
-  <path d="M450 300 L500 280 L520 330" stroke="#FB7185" stroke-width="1.5" opacity="0.5"/>
-  <text x="384" y="430" fill="#FFFFFF" font-family="system-ui" font-size="14">Hotspot map</text>
-  <text x="384" y="455" fill="#FB7185" font-family="ui-monospace" font-size="12">Case link graph</text>
-  <!-- PREDICT -->
-  <rect x="620" y="160" width="240" height="420" rx="18" fill="#0a0810" fill-opacity="0.55" stroke="#FB7185" stroke-opacity="0.3"/>
-  <text x="644" y="200" fill="#FB7185" font-family="ui-monospace" font-size="12" letter-spacing="0.16em">PREDICT</text>
-  <text x="644" y="250" fill="#FFFFFF" font-family="Space Grotesk" font-size="42" font-weight="700">0.72</text>
-  <text x="644" y="280" fill="#FB7185" font-family="ui-monospace" font-size="12">ZONE-TIME RISK</text>
-  <rect x="644" y="320" width="180" height="10" rx="5" fill="#E11D48" opacity="0.25"/>
-  <rect x="644" y="320" width="130" height="10" rx="5" fill="#E11D48"/>
-  <text x="644" y="370" fill="#FFFFFF" font-family="system-ui" font-size="13">SHAP drivers</text>
-  <text x="644" y="400" fill="#FB7185" font-family="ui-monospace" font-size="11">hour · density · prior</text>
-  <text x="644" y="520" fill="#FFFFFF" font-family="ui-monospace" font-size="12" opacity="0.5">0 PERSON-LEVEL SCORES</text>
+  <rect x="40" y="40" width="880" height="640" rx="24" fill="url(#panel)" stroke="#FB7185" stroke-opacity="0.3" stroke-width="1.5"/>
+  <!-- header -->
+  <rect x="40" y="40" width="880" height="58" rx="24" fill="#E11D48" fill-opacity="0.14"/>
+  <text x="68" y="76" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="18" font-weight="700" letter-spacing="0.16em">ARGUS</text>
+  <text x="160" y="76" fill="#FB7185" font-family="ui-monospace,Menlo,monospace" font-size="12" letter-spacing="0.1em">UNIFIED CRIME INTELLIGENCE</text>
+  <rect x="700" y="54" width="196" height="30" rx="8" fill="#E11D48" fill-opacity="0.25" stroke="#FB7185" stroke-opacity="0.4"/>
+  <text x="798" y="74" text-anchor="middle" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="11">ZONE-TIME ONLY · 0 PII</text>
 
+  <!-- ASK column -->
+  <rect x="60" y="120" width="260" height="530" rx="18" fill="#0a0608" fill-opacity="0.75" stroke="#FB7185" stroke-opacity="0.25"/>
+  <rect x="60" y="120" width="260" height="44" rx="18" fill="url(#rose)" fill-opacity="0.85"/>
+  <text x="84" y="148" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="13" letter-spacing="0.18em">ASK</text>
+  <text x="84" y="198" fill="#FB7185" font-family="ui-monospace,Menlo,monospace" font-size="11">GROUNDED CHAT</text>
+  <rect x="84" y="220" width="212" height="52" rx="12" fill="#FFFFFF" fill-opacity="0.05"/>
+  <text x="98" y="252" fill="#FFFFFF" font-family="system-ui,sans-serif" font-size="13">Hotspots near Zone 7 tonight?</text>
+  <rect x="84" y="290" width="212" height="120" rx="12" fill="#E11D48" fill-opacity="0.12" stroke="#FB7185" stroke-opacity="0.25"/>
+  <text x="100" y="322" fill="#FFFFFF" font-family="system-ui,sans-serif" font-size="14" font-weight="600">Cited answer</text>
+  <text x="100" y="348" fill="#FB7185" font-family="ui-monospace,Menlo,monospace" font-size="11">Advisor · 3 sources</text>
+  <text x="100" y="372" fill="#FB7185" font-family="ui-monospace,Menlo,monospace" font-size="11">Critic · confidence 0.86</text>
+  <rect x="84" y="440" width="212" height="36" rx="8" fill="#E11D48" fill-opacity="0.18"/>
+  <text x="190" y="463" text-anchor="middle" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="11">CASE #1842 LINKED</text>
+  <text x="84" y="520" fill="#FFFFFF" font-family="system-ui,sans-serif" font-size="13" opacity="0.55">Same spine as See + Predict</text>
+  <text x="84" y="560" fill="#FB7185" font-family="ui-monospace,Menlo,monospace" font-size="11">pgvector retrieval</text>
+
+  <!-- SEE column -->
+  <rect x="350" y="120" width="260" height="530" rx="18" fill="#0a0608" fill-opacity="0.75" stroke="#FB7185" stroke-opacity="0.25"/>
+  <rect x="350" y="120" width="260" height="44" rx="18" fill="url(#rose)" fill-opacity="0.85"/>
+  <text x="374" y="148" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="13" letter-spacing="0.18em">SEE</text>
+  <text x="374" y="198" fill="#FB7185" font-family="ui-monospace,Menlo,monospace" font-size="11">LIVE HOTSPOT MAP</text>
+  <rect x="374" y="220" width="212" height="200" rx="14" fill="#E11D48" fill-opacity="0.08" stroke="#FB7185" stroke-opacity="0.25"/>
+  <circle cx="430" cy="300" r="36" fill="url(#hot)"/>
+  <circle cx="500" cy="270" r="28" fill="url(#hot)"/>
+  <circle cx="520" cy="340" r="24" fill="url(#hot)"/>
+  <circle cx="450" cy="360" r="18" fill="url(#hot)"/>
+  <circle cx="440" cy="290" r="5" fill="#FB7185"/>
+  <circle cx="505" cy="275" r="4" fill="#FFFFFF"/>
+  <circle cx="515" cy="345" r="4" fill="#FB7185"/>
+  <path d="M440 290 L505 275 L515 345 L450 360 Z" stroke="#FB7185" stroke-width="1.2" fill="none" opacity="0.5"/>
+  <text x="374" y="460" fill="#FFFFFF" font-family="system-ui,sans-serif" font-size="14" font-weight="600">Case link graph</text>
+  <text x="374" y="488" fill="#FB7185" font-family="ui-monospace,Menlo,monospace" font-size="11">12 nodes · 19 edges live</text>
+  <rect x="374" y="520" width="212" height="70" rx="12" fill="#E11D48" fill-opacity="0.1"/>
+  <text x="390" y="552" fill="#FFFFFF" font-family="system-ui,sans-serif" font-size="13">Zone 7 · elevated</text>
+  <text x="390" y="574" fill="#FB7185" font-family="ui-monospace,Menlo,monospace" font-size="11">TimescaleDB stream</text>
+
+  <!-- PREDICT column -->
+  <rect x="640" y="120" width="260" height="530" rx="18" fill="#0a0608" fill-opacity="0.75" stroke="#FB7185" stroke-opacity="0.25"/>
+  <rect x="640" y="120" width="260" height="44" rx="18" fill="url(#rose)" fill-opacity="0.85"/>
+  <text x="664" y="148" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="13" letter-spacing="0.18em">PREDICT</text>
+  <text x="664" y="198" fill="#FB7185" font-family="ui-monospace,Menlo,monospace" font-size="11">ZONE-TIME RISK</text>
+  <text x="664" y="250" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="56" font-weight="700">0.72</text>
+  <text x="664" y="282" fill="#FB7185" font-family="ui-monospace,Menlo,monospace" font-size="12">RISK SCORE · ZONE 7 · 21:00</text>
+  <rect x="664" y="310" width="212" height="12" rx="6" fill="#E11D48" opacity="0.2"/>
+  <rect x="664" y="310" width="152" height="12" rx="6" fill="#E11D48"/>
+  <text x="664" y="360" fill="#FFFFFF" font-family="system-ui,sans-serif" font-size="14" font-weight="600">SHAP drivers</text>
+  <rect x="664" y="380" width="212" height="28" rx="8" fill="#E11D48" fill-opacity="0.12"/>
+  <text x="680" y="399" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="12">hour-of-day · +0.21</text>
+  <rect x="664" y="418" width="212" height="28" rx="8" fill="#E11D48" fill-opacity="0.12"/>
+  <text x="680" y="437" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="12">prior density · +0.18</text>
+  <rect x="664" y="456" width="212" height="28" rx="8" fill="#E11D48" fill-opacity="0.12"/>
+  <text x="680" y="475" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="12">event lag · +0.11</text>
+  <rect x="664" y="520" width="212" height="70" rx="12" fill="#E11D48" fill-opacity="0.18" stroke="#FB7185" stroke-opacity="0.35"/>
+  <text x="770" y="552" text-anchor="middle" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="14" font-weight="650">0 person-level scores</text>
+  <text x="770" y="576" text-anchor="middle" fill="#FB7185" font-family="ui-monospace,Menlo,monospace" font-size="11">HARD PRODUCT RULE</text>
 </svg>

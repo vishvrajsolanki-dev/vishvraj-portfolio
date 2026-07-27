@@ -1,44 +1,68 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" fill="none">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0a0810"/>
-      <stop offset="100%" stop-color="#12101a"/>
+      <stop offset="0%" stop-color="#060c10"/>
+      <stop offset="100%" stop-color="#0a1520"/>
     </linearGradient>
     <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0891B2" stop-opacity="0.14"/>
-      <stop offset="100%" stop-color="#0891B2" stop-opacity="0.03"/>
+      <stop offset="0%" stop-color="#0f2430"/>
+      <stop offset="100%" stop-color="#0a151c"/>
     </linearGradient>
-    <linearGradient id="glow" x1="0.5" y1="0" x2="0.5" y2="1">
-      <stop offset="0%" stop-color="#0891B2" stop-opacity="0.35"/>
-      <stop offset="100%" stop-color="#0891B2" stop-opacity="0"/>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0891B2"/>
+      <stop offset="100%" stop-color="#0E7490"/>
     </linearGradient>
-    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="12"/>
+    <filter id="blur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="24"/>
     </filter>
   </defs>
   <rect width="960" height="720" fill="url(#bg)"/>
-  <circle cx="780" cy="120" r="180" fill="#0891B2" opacity="0.08" filter="url(#soft)"/>
-  <circle cx="140" cy="620" r="160" fill="#0891B2" opacity="0.05" filter="url(#soft)"/>
+  <circle cx="840" cy="80" r="170" fill="#0891B2" opacity="0.14" filter="url(#blur)"/>
+  <circle cx="80" cy="640" r="150" fill="#0E7490" opacity="0.12" filter="url(#blur)"/>
 
-  <rect x="120" y="80" width="720" height="560" rx="24" fill="url(#panel)" stroke="#67E8F9" stroke-opacity="0.35" stroke-width="1.5"/>
-  <rect x="120" y="80" width="720" height="56" rx="24" fill="#0891B2" fill-opacity="0.15"/>
-  <circle cx="154" cy="108" r="6" fill="#f87171"/><circle cx="178" cy="108" r="6" fill="#fbbf24"/><circle cx="202" cy="108" r="6" fill="#4ade80"/>
-  <text x="240" y="114" fill="#FFFFFF" font-family="ui-monospace" font-size="13">FORE · Decide</text>
-  <!-- three faces tabs -->
-  <g font-family="ui-monospace" font-size="12">
-    <rect x="160" y="160" width="90" height="32" rx="8" fill="#0891B2" fill-opacity="0.15"/><text x="205" y="180" text-anchor="middle" fill="#67E8F9">PAST</text>
-    <rect x="260" y="160" width="100" height="32" rx="8" fill="#0891B2"/><text x="310" y="180" text-anchor="middle" fill="#0a0810" font-weight="700">DECIDE</text>
-    <rect x="370" y="160" width="100" height="32" rx="8" fill="#0891B2" fill-opacity="0.15"/><text x="420" y="180" text-anchor="middle" fill="#67E8F9">AHEAD</text>
-  </g>
-  <rect x="160" y="220" width="400" height="52" rx="14" fill="#FFFFFF" fill-opacity="0.06"/>
-  <text x="180" y="252" fill="#FFFFFF" font-family="system-ui" font-size="16">Can I afford ₹15,000 this month?</text>
-  <!-- tool call chip -->
-  <rect x="160" y="300" width="280" height="36" rx="8" fill="#0891B2" fill-opacity="0.2" stroke="#67E8F9" stroke-opacity="0.45"/>
-  <text x="178" y="323" fill="#67E8F9" font-family="ui-monospace" font-size="12">⚙ tool_call · affordability()</text>
-  <rect x="160" y="360" width="640" height="160" rx="16" fill="#0a0810" fill-opacity="0.55" stroke="#67E8F9" stroke-opacity="0.25"/>
-  <text x="184" y="410" fill="#67E8F9" font-family="ui-monospace" font-size="12">COMPUTED RESULT</text>
-  <text x="184" y="460" fill="#FFFFFF" font-family="Space Grotesk" font-size="40" font-weight="700">Yes · ₹15,000</text>
-  <text x="184" y="495" fill="#67E8F9" font-family="system-ui" font-size="14">Narrated from a real number — not invented.</text>
-  <text x="480" y="600" text-anchor="middle" fill="#FFFFFF" font-family="ui-monospace" font-size="12" opacity="0.45">ONE financial_context · THREE FACES · LIVE ON VERCEL</text>
+  <rect x="48" y="48" width="864" height="624" rx="24" fill="url(#panel)" stroke="#67E8F9" stroke-opacity="0.3" stroke-width="1.5"/>
+  <rect x="48" y="48" width="864" height="56" rx="24" fill="#0891B2" fill-opacity="0.16"/>
+  <text x="76" y="82" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="18" font-weight="700" letter-spacing="0.16em">FORE</text>
+  <text x="150" y="82" fill="#67E8F9" font-family="ui-monospace,Menlo,monospace" font-size="12" letter-spacing="0.1em">FINANCIAL FORESIGHT ENGINE</text>
+  <rect x="700" y="62" width="184" height="28" rx="8" fill="#0891B2" fill-opacity="0.3" stroke="#67E8F9" stroke-opacity="0.4"/>
+  <text x="792" y="81" text-anchor="middle" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="11">LIVE ON VERCEL</text>
 
+  <!-- face tabs -->
+  <rect x="76" y="128" width="100" height="36" rx="10" fill="#0891B2" fill-opacity="0.15" stroke="#67E8F9" stroke-opacity="0.25"/>
+  <text x="126" y="151" text-anchor="middle" fill="#67E8F9" font-family="ui-monospace,Menlo,monospace" font-size="12">PAST</text>
+  <rect x="188" y="128" width="120" height="36" rx="10" fill="url(#cyan)"/>
+  <text x="248" y="151" text-anchor="middle" fill="#062028" font-family="ui-monospace,Menlo,monospace" font-size="12" font-weight="700">DECIDE</text>
+  <rect x="320" y="128" width="110" height="36" rx="10" fill="#0891B2" fill-opacity="0.15" stroke="#67E8F9" stroke-opacity="0.25"/>
+  <text x="375" y="151" text-anchor="middle" fill="#67E8F9" font-family="ui-monospace,Menlo,monospace" font-size="12">AHEAD</text>
+
+  <!-- left context -->
+  <rect x="76" y="188" width="280" height="440" rx="18" fill="#061016" fill-opacity="0.75" stroke="#67E8F9" stroke-opacity="0.22"/>
+  <text x="100" y="228" fill="#67E8F9" font-family="ui-monospace,Menlo,monospace" font-size="11" letter-spacing="0.14em">financial_context</text>
+  <text x="100" y="268" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="20" font-weight="650">Archetype</text>
+  <text x="100" y="296" fill="#67E8F9" font-family="system-ui,sans-serif" font-size="14">Steady Spender</text>
+  <rect x="100" y="324" width="232" height="70" rx="12" fill="#0891B2" fill-opacity="0.12"/>
+  <text x="116" y="354" fill="#67E8F9" font-family="ui-monospace,Menlo,monospace" font-size="11">BURN RATE</text>
+  <text x="116" y="382" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="22" font-weight="700">₹8,400 / wk</text>
+  <rect x="100" y="416" width="232" height="70" rx="12" fill="#0891B2" fill-opacity="0.12"/>
+  <text x="116" y="446" fill="#67E8F9" font-family="ui-monospace,Menlo,monospace" font-size="11">SAFE TO SPEND</text>
+  <text x="116" y="474" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="22" font-weight="700">₹12,750</text>
+  <rect x="100" y="512" width="232" height="70" rx="12" fill="#0891B2" fill-opacity="0.12"/>
+  <text x="116" y="542" fill="#67E8F9" font-family="ui-monospace,Menlo,monospace" font-size="11">GOAL PACE</text>
+  <text x="116" y="570" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="22" font-weight="700">64th %ile</text>
+
+  <!-- decide panel -->
+  <rect x="380" y="188" width="508" height="440" rx="18" fill="#061016" fill-opacity="0.75" stroke="#67E8F9" stroke-opacity="0.22"/>
+  <text x="408" y="228" fill="#67E8F9" font-family="ui-monospace,Menlo,monospace" font-size="11" letter-spacing="0.14em">DECIDE · TOOL-CALL TRUTH</text>
+  <rect x="408" y="252" width="452" height="56" rx="14" fill="#FFFFFF" fill-opacity="0.06"/>
+  <text x="428" y="286" fill="#FFFFFF" font-family="system-ui,sans-serif" font-size="16">Can I afford ₹15,000 this month?</text>
+
+  <rect x="408" y="332" width="300" height="40" rx="10" fill="#0891B2" fill-opacity="0.2" stroke="#67E8F9" stroke-opacity="0.45"/>
+  <text x="428" y="358" fill="#67E8F9" font-family="ui-monospace,Menlo,monospace" font-size="13">⚙ tool_call · affordability()</text>
+
+  <rect x="408" y="396" width="452" height="160" rx="16" fill="#0891B2" fill-opacity="0.1" stroke="#67E8F9" stroke-opacity="0.3"/>
+  <text x="432" y="440" fill="#67E8F9" font-family="ui-monospace,Menlo,monospace" font-size="12">COMPUTED RESULT</text>
+  <text x="432" y="490" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="40" font-weight="700">Yes · ₹15,000</text>
+  <text x="432" y="528" fill="#67E8F9" font-family="system-ui,sans-serif" font-size="14">Narrated from a real number — not invented.</text>
+
+  <text x="634" y="600" text-anchor="middle" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="12" opacity="0.45">ONE SPINE · THREE FACES · GROQ LLAMA 3.1</text>
 </svg>

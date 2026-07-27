@@ -580,6 +580,12 @@
     pointer-events: none;
     z-index: 4;
     animation: filmProgress 6s linear forwards;
+    /* Duration overridden inline per project spotlightMs */
+}
+
+.brandMark {
+    margin-bottom: 0.35rem;
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--accent-glow, #fff) 45%, transparent));
 }
 
 @keyframes filmProgress {

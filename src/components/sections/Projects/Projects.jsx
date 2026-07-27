@@ -6,9 +6,18 @@ import BeltCarousel from '../../shared/BeltCarousel/BeltCarousel'
 import styles from './Projects.module.css'
 
 const AUTOPLAY_MS = 6000
+const FEATURED_SPOTLIGHT_MS = 10000
+const COMPACT_SPOTLIGHT_MS = 2800
 
 const defaultProject =
   projects.find((p) => p.featured) || projects[0]
+
+function projectSpotlightMs(project) {
+  if (project?.spotlightMs) return project.spotlightMs
+  if (project?.featured) return FEATURED_SPOTLIGHT_MS
+  if (project?.compact) return COMPACT_SPOTLIGHT_MS
+  return AUTOPLAY_MS
+}
 
 const WORDMARKS = {
   lexis: {
@@ -24,17 +33,20 @@ const WORDMARKS = {
   arc: {
     word: 'ARC',
     tagline: 'Decide in distributions',
-    motif: 'chart',
+    motif: 'montecarlo',
+    mark: 'arc',
   },
   argus: {
     word: 'ARGUS',
     tagline: 'Ask · See · Predict',
-    motif: 'grid',
+    motif: 'radar',
+    mark: 'argus',
   },
   fore: {
     word: 'FORE',
     tagline: 'Past · Decide · Ahead',
-    motif: 'chart',
+    motif: 'foresight',
+    mark: 'fore',
   },
   plotsense: {
     word: 'PLOTSENSE',
@@ -46,6 +58,72 @@ const WORDMARKS = {
     tagline: 'Handwriting, understood',
     motif: 'grid',
   },
+}
+
+/** Distinctive brand marks for Zone A covers */
+function BrandMark({ type, color }) {
+  const common = {
+    viewBox: '0 0 64 64',
+    width: 72,
+    height: 72,
+    fill: 'none',
+    'aria-hidden': true,
+    className: styles.brandMark,
+  }
+  if (type === 'arc') {
+    return (
+      <svg {...common}>
+        <circle cx="32" cy="32" r="28" stroke={color} strokeWidth="1.2" opacity="0.35" />
+        <path
+          d="M14 40c6-14 14-22 18-24 4 2 12 10 18 24"
+          stroke={color}
+          strokeWidth="2.4"
+          strokeLinecap="round"
+        />
+        <path
+          d="M18 40c5-10 11-16 14-18 3 2 9 8 14 18"
+          stroke={color}
+          strokeWidth="1.4"
+          opacity="0.55"
+          strokeLinecap="round"
+        />
+        <circle cx="32" cy="40" r="3" fill={color} />
+        <circle cx="22" cy="40" r="1.6" fill={color} opacity="0.55" />
+        <circle cx="42" cy="40" r="1.6" fill={color} opacity="0.55" />
+      </svg>
+    )
+  }
+  if (type === 'argus') {
+    return (
+      <svg {...common}>
+        <circle cx="32" cy="32" r="28" stroke={color} strokeWidth="1.2" opacity="0.3" />
+        <circle cx="32" cy="32" r="18" stroke={color} strokeWidth="1.2" opacity="0.45" />
+        <path
+          d="M10 32c6-10 14-16 22-16s16 6 22 16c-6 10-14 16-22 16S16 42 10 32z"
+          stroke={color}
+          strokeWidth="2"
+        />
+        <circle cx="32" cy="32" r="6" stroke={color} strokeWidth="2" />
+        <circle cx="32" cy="32" r="2.5" fill={color} />
+      </svg>
+    )
+  }
+  if (type === 'fore') {
+    return (
+      <svg {...common}>
+        <circle cx="32" cy="32" r="28" stroke={color} strokeWidth="1.2" opacity="0.3" />
+        <circle cx="32" cy="32" r="20" stroke={color} strokeWidth="1.4" />
+        <path d="M32 12v8M32 44v8M12 32h8M44 32h8" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+        <path
+          d="M32 32l10-14 2 6-8 10z"
+          fill={color}
+          opacity="0.9"
+        />
+        <circle cx="32" cy="32" r="3" fill={color} />
+      </svg>
+    )
+  }
+  return null
 }
 
 function hasLiveUrl(live) {
@@ -99,26 +177,33 @@ function ProjectIcon({ type, className }) {
     )
   }
   if (type === 'shield') {
+    // ARC — probability arc inside a clarity shield
     return (
       <svg {...common}>
         <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
-        <path d="M9 12l2 2 4-4" />
+        <path d="M7.5 14c2.2-4.2 4.6-6.2 4.5-6.2S14.3 9.8 16.5 14" />
+        <circle cx="12" cy="14" r="1.1" fill="currentColor" stroke="none" />
       </svg>
     )
   }
   if (type === 'eye') {
+    // ARGUS — all-seeing lens with scan ticks
     return (
       <svg {...common}>
         <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" />
         <circle cx="12" cy="12" r="2.5" />
+        <path d="M12 6.2v1.4M12 16.4v1.4M6.2 12h1.4M16.4 12h1.4" />
       </svg>
     )
   }
   if (type === 'compass') {
+    // FORE — foresight compass needle
     return (
       <svg {...common}>
         <circle cx="12" cy="12" r="9" />
-        <path d="M14.5 9.5L10 14l4.5-1.5L16 9.5 14.5 9.5z" />
+        <path d="M12 4.5v2M12 17.5v2M4.5 12h2M17.5 12h2" />
+        <path d="M12 12l5-7 1 3-4 5z" fill="currentColor" stroke="none" opacity="0.9" />
+        <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
       </svg>
     )
   }
@@ -163,6 +248,61 @@ function Motif({ type, color }) {
           stroke={color}
           strokeWidth="1"
           opacity="0.5"
+        />
+      </svg>
+    )
+  }
+  if (type === 'montecarlo') {
+    return (
+      <svg className={`${styles.motif} ${styles.motifChart}`} viewBox="0 0 400 280" aria-hidden="true">
+        {[0, 1, 2, 3, 4, 5].map((i) => {
+          const y = 70 + i * 22
+          const mid = 150 - i * 8
+          return (
+            <path
+              key={i}
+              d={`M40 ${y + 40} C120 ${mid} 220 ${mid + 30} 360 ${y}`}
+              fill="none"
+              stroke={color}
+              strokeWidth={i === 3 ? 2 : 1}
+              opacity={0.2 + i * 0.1}
+            />
+          )
+        })}
+        <circle cx="200" cy="150" r="4" fill={color} opacity="0.7" />
+        <circle cx="140" cy="170" r="2.5" fill={color} opacity="0.4" />
+        <circle cx="270" cy="130" r="2.5" fill={color} opacity="0.4" />
+      </svg>
+    )
+  }
+  if (type === 'radar') {
+    return (
+      <svg className={`${styles.motif} ${styles.motifGrid}`} viewBox="0 0 400 280" aria-hidden="true">
+        <circle cx="200" cy="140" r="90" fill="none" stroke={color} strokeWidth="1" opacity="0.35" />
+        <circle cx="200" cy="140" r="60" fill="none" stroke={color} strokeWidth="1" opacity="0.45" />
+        <circle cx="200" cy="140" r="30" fill="none" stroke={color} strokeWidth="1" opacity="0.55" />
+        <line x1="200" y1="40" x2="200" y2="240" stroke={color} strokeWidth="0.8" opacity="0.3" />
+        <line x1="90" y1="140" x2="310" y2="140" stroke={color} strokeWidth="0.8" opacity="0.3" />
+        <path d="M200 140 L280 90" stroke={color} strokeWidth="1.5" className={styles.scanLine} />
+        <circle cx="250" cy="110" r="4" fill={color} opacity="0.7" />
+        <circle cx="170" cy="165" r="3" fill={color} opacity="0.5" />
+        <circle cx="230" cy="180" r="3.5" fill={color} opacity="0.55" />
+      </svg>
+    )
+  }
+  if (type === 'foresight') {
+    return (
+      <svg className={`${styles.motif} ${styles.motifChart}`} viewBox="0 0 400 280" aria-hidden="true">
+        <circle cx="200" cy="140" r="70" fill="none" stroke={color} strokeWidth="1.2" opacity="0.4" />
+        <circle cx="200" cy="140" r="40" fill="none" stroke={color} strokeWidth="1" opacity="0.5" />
+        <path d="M200 70v20M200 190v20M130 140h20M250 140h20" stroke={color} strokeWidth="1.2" opacity="0.45" />
+        <path d="M200 140 L250 85 L255 105 L220 145 Z" fill={color} opacity="0.35" />
+        <polyline
+          points="40,200 100,180 160,190 220,140 280,150 360,100"
+          fill="none"
+          stroke={color}
+          strokeWidth="1.4"
+          opacity="0.55"
         />
       </svg>
     )
@@ -261,6 +401,9 @@ function ProjectFrame({ project }) {
         {wordmark && <Motif type={wordmark.motif} color={project.canvasColor} />}
       </div>
       <div className={styles.wordmarkContent}>
+        {wordmark?.mark && (
+          <BrandMark type={wordmark.mark} color={project.canvasColor} />
+        )}
         <span className={styles.wordmarkWord}>
           {wordmark?.word || project.title}
         </span>
@@ -462,6 +605,7 @@ export default function Projects() {
         <BeltCarousel
           items={projects}
           autoAdvanceMs={AUTOPLAY_MS}
+          getAutoAdvanceMs={projectSpotlightMs}
           loop
           initialActiveId={defaultProject.id}
           onActiveChange={setActiveProjectId}
@@ -490,11 +634,12 @@ export default function Projects() {
               '--card-accent': cardAccent.base,
             }
           }}
-          renderCard={(project, isActive, { cycleKey, showProgress }) => {
+          renderCard={(project, isActive, { cycleKey, showProgress, autoAdvanceMs }) => {
             const cardAccent = project.accentColor || {
               base: '#FFFFFF',
               glow: project.canvasColor,
             }
+            const dwellMs = autoAdvanceMs || projectSpotlightMs(project)
             return (
               <>
                 {!project.compact && (
@@ -537,7 +682,10 @@ export default function Projects() {
                   <span
                     key={cycleKey}
                     className={styles.progressSliver}
-                    style={{ background: cardAccent.base }}
+                    style={{
+                      background: cardAccent.base,
+                      animationDuration: `${dwellMs}ms`,
+                    }}
                     aria-hidden="true"
                   />
                 )}
