@@ -8,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const stats = [
   { countTo: 3, suffix: '', label: 'Internships', focus: false },
-  { countTo: 8, suffix: '', label: 'Certifications\nEarned', focus: false },
+  { countTo: 9, suffix: '', label: 'Certifications\nEarned', focus: false },
   { countTo: 6, suffix: '', label: 'ML Systems\nShipped', focus: true },
   { countTo: 99, suffix: '%', label: 'CNN accuracy\non MNIST', focus: false },
   { countTo: 1, suffix: '', label: 'Recognised by\nSSIP', focus: false },

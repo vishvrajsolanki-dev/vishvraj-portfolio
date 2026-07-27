@@ -47,6 +47,18 @@ const IithLogo = ({ className }) => (
 
 const issuers = [
   {
+    id: 'harvard',
+    name: 'Harvard',
+    shortName: 'Harvard',
+    fullName: 'HarvardX / CS50',
+    logoKind: 'image',
+    logoUrl: '/logos/harvard-mark.png',
+    washUrl: '/logos/harvard-wash.svg',
+    washOpacity: 0.11,
+    logoAlt: 'Harvard',
+    mark: 'HV',
+  },
+  {
     id: 'anthropic',
     name: 'Anthropic',
     shortName: 'Anthropic',
@@ -58,18 +70,6 @@ const issuers = [
     washOpacity: 0.12,
     logoAlt: 'Anthropic',
     mark: 'AI',
-  },
-  {
-    id: 'simplilearn',
-    name: 'Simplilearn',
-    shortName: 'Simplilearn',
-    fullName: 'Simplilearn',
-    logoKind: 'image',
-    logoUrl: '/logos/simplilearn-mark.png',
-    washUrl: '/logos/simplilearn-wash.svg',
-    washOpacity: 0.12,
-    logoAlt: 'Simplilearn',
-    mark: 'SL',
   },
   {
     id: 'forage',
@@ -84,18 +84,6 @@ const issuers = [
     mark: 'FG',
   },
   {
-    id: 'harvard',
-    name: 'Harvard',
-    shortName: 'Harvard',
-    fullName: 'HarvardX / CS50',
-    logoKind: 'image',
-    logoUrl: '/logos/harvard-mark.png',
-    washUrl: '/logos/harvard-wash.svg',
-    washOpacity: 0.11,
-    logoAlt: 'Harvard',
-    mark: 'HV',
-  },
-  {
     id: 'iith',
     name: 'IIT Hyderabad',
     shortName: 'IIT',
@@ -107,9 +95,31 @@ const issuers = [
     logoAlt: 'IIT Hyderabad',
     mark: 'IIT',
   },
+  {
+    id: 'simplilearn',
+    name: 'Simplilearn',
+    shortName: 'Simplilearn',
+    fullName: 'Simplilearn',
+    logoKind: 'image',
+    logoUrl: '/logos/simplilearn-mark.png',
+    washUrl: '/logos/simplilearn-wash.svg',
+    washOpacity: 0.12,
+    logoAlt: 'Simplilearn',
+    mark: 'SL',
+  },
 ]
 
 const certifications = [
+  {
+    id: 'harvard-cs50-python',
+    issuerId: 'harvard',
+    title: "CS50's Introduction to Programming with Python",
+    subtitle: 'HarvardX / CS50',
+    date: 'Jul 2026',
+    href: 'https://cs50.harvard.edu/certificates/c4212f95-4e90-4c27-b031-3b1b6a48de8d',
+    description:
+      "Harvard’s introductory computer science course, focused on Python fundamentals, algorithms, and problem-solving.",
+  },
   {
     id: 'claude-101',
     issuerId: 'anthropic',
@@ -151,6 +161,26 @@ const certifications = [
       'Deeper MCP architecture — advanced tool design, context strategies, and production-ready protocol patterns.',
   },
   {
+    id: 'forage-deloitte-da',
+    issuerId: 'forage',
+    title: 'Deloitte Australia — Data Analytics Job Simulation',
+    subtitle: 'Virtual experience program',
+    date: 'Jun 21, 2026',
+    href: 'https://www.theforage.com/completion-certificates/9PBTqmSxAf6zZTseP/io9DzWKe3PTsiS6GG_9PBTqmSxAf6zZTseP_6a37bb0ab98eb1a7666fa26b_1782039614489_completion_certificate.pdf',
+    description:
+      'Completed Deloitte Australia’s data analytics job simulation on Forage — practical analyst workflows across coding, data, and stakeholder communication.',
+  },
+  {
+    id: 'iith-ai',
+    issuerId: 'iith',
+    title: 'AI Upskilling & Internship Completion',
+    subtitle: 'IIT Hyderabad × My Job Grow',
+    date: 'Apr 2026',
+    href: 'https://drive.google.com/file/d/1TOmQwsgZIQgY43x3p8x_hA3RaTk6fgdr/view?usp=sharing',
+    description:
+      'Completed AI upskilling and internship requirements spanning applied ML, generative AI, and project delivery.',
+  },
+  {
     id: 'simplilearn-llm',
     issuerId: 'simplilearn',
     title: 'Introduction to Large Language Models',
@@ -171,37 +201,6 @@ const certifications = [
     poweredBy: { label: 'Powered by Microsoft', kind: 'microsoft' },
     description:
       'Foundational data analysis practice — cleaning, exploring, and communicating insights with analyst workflows — via Simplilearn, powered by Microsoft.',
-  },
-  {
-    id: 'forage-deloitte-da',
-    issuerId: 'forage',
-    title: 'Deloitte Australia — Data Analytics Job Simulation',
-    subtitle: 'Virtual experience program',
-    date: 'Jun 21, 2026',
-    href: 'https://www.theforage.com/completion-certificates/9PBTqmSxAf6zZTseP/io9DzWKe3PTsiS6GG_9PBTqmSxAf6zZTseP_6a37bb0ab98eb1a7666fa26b_1782039614489_completion_certificate.pdf',
-    description:
-      'Completed Deloitte Australia’s data analytics job simulation on Forage — practical analyst workflows across coding, data, and stakeholder communication.',
-  },
-  {
-    id: 'harvard-cs50-python',
-    issuerId: 'harvard',
-    title: "CS50's Introduction to Programming with Python",
-    subtitle: 'HarvardX / CS50',
-    date: 'In Progress',
-    href: null,
-    status: 'in-progress',
-    description:
-      "Harvard’s introductory computer science course, focused on Python fundamentals, algorithms, and problem-solving.",
-  },
-  {
-    id: 'iith-ai',
-    issuerId: 'iith',
-    title: 'AI Upskilling & Internship Completion',
-    subtitle: 'IIT Hyderabad × My Job Grow',
-    date: 'Apr 2026',
-    href: 'https://drive.google.com/file/d/1TOmQwsgZIQgY43x3p8x_hA3RaTk6fgdr/view?usp=sharing',
-    description:
-      'Completed AI upskilling and internship requirements spanning applied ML, generative AI, and project delivery.',
   },
 ]
 
@@ -414,7 +413,7 @@ function IssuerGrid({ items, activeId, onSelect }) {
 export default function Certifications() {
   const sectionRef = useRef(null)
   const reducedMotion = useRef(false)
-  const [activeIssuerId, setActiveIssuerId] = useState('anthropic')
+  const [activeIssuerId, setActiveIssuerId] = useState('harvard')
   const [activeCertId, setActiveCertId] = useState(certifications[0].id)
 
   const issuerIndex = useMemo(
