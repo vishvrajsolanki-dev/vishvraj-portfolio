@@ -60,27 +60,40 @@ const issuers = [
     mark: 'AI',
   },
   {
-    id: 'gcloud',
-    name: 'Google Cloud',
-    shortName: 'Google Cloud',
-    fullName: 'Google Cloud',
-    logoKind: 'gcloud',
-    logoUrl: '/logos/gcloud.png',
-    washUrl: '/logos/gcloud-wash.svg',
-    invertLogo: false,
-    washOpacity: 0.13,
-    logoAlt: 'Google Cloud',
-    mark: 'GC',
+    id: 'simplilearn',
+    name: 'Simplilearn',
+    shortName: 'Simplilearn',
+    fullName: 'Simplilearn',
+    logoKind: 'image',
+    logoUrl: '/logos/simplilearn-mark.png',
+    washUrl: '/logos/simplilearn-wash.svg',
+    washOpacity: 0.12,
+    logoAlt: 'Simplilearn',
+    mark: 'SL',
   },
   {
-    id: 'microsoft',
-    name: 'Microsoft',
-    shortName: 'Microsoft',
-    fullName: 'Microsoft',
-    logoKind: 'microsoft',
-    washOpacity: 0.085,
-    logoAlt: 'Microsoft',
-    mark: 'MS',
+    id: 'forage',
+    name: 'Forage',
+    shortName: 'Forage',
+    fullName: 'Forage',
+    logoKind: 'image',
+    logoUrl: '/logos/forage.png',
+    washUrl: '/logos/forage-wash.svg',
+    washOpacity: 0.12,
+    logoAlt: 'Forage',
+    mark: 'FG',
+  },
+  {
+    id: 'harvard',
+    name: 'Harvard',
+    shortName: 'Harvard',
+    fullName: 'HarvardX / CS50',
+    logoKind: 'image',
+    logoUrl: '/logos/harvard-mark.png',
+    washUrl: '/logos/harvard-wash.svg',
+    washOpacity: 0.11,
+    logoAlt: 'Harvard',
+    mark: 'HV',
   },
   {
     id: 'iith',
@@ -138,24 +151,47 @@ const certifications = [
       'Deeper MCP architecture — advanced tool design, context strategies, and production-ready protocol patterns.',
   },
   {
-    id: 'gcloud-llm',
-    issuerId: 'gcloud',
+    id: 'simplilearn-llm',
+    issuerId: 'simplilearn',
     title: 'Introduction to Large Language Models',
-    subtitle: 'LLM foundations on Google Cloud',
+    subtitle: 'LLM foundations · Powered by Google Cloud',
     date: 'Jun 2026',
     href: 'https://simpli-web.app.link/e/fyTnSuhRV3b',
+    poweredBy: { label: 'Powered by Google Cloud', kind: 'gcloud' },
     description:
-      'Core LLM concepts on Google Cloud — model families, prompting, and practical paths from prototype to deploy.',
+      'Core LLM concepts — model families, prompting, and practical paths from prototype to deploy — via Simplilearn, powered by Google Cloud.',
   },
   {
-    id: 'ms-da-101',
-    issuerId: 'microsoft',
+    id: 'simplilearn-da-101',
+    issuerId: 'simplilearn',
     title: 'Data Analyst 101',
-    subtitle: 'Microsoft data analysis fundamentals',
+    subtitle: 'Data analysis fundamentals · Powered by Microsoft',
     date: 'Jun 2026',
     href: 'https://simpli-web.app.link/e/05ryeInRV3b',
+    poweredBy: { label: 'Powered by Microsoft', kind: 'microsoft' },
     description:
-      'Foundational data analysis practice — cleaning, exploring, and communicating insights with analyst workflows.',
+      'Foundational data analysis practice — cleaning, exploring, and communicating insights with analyst workflows — via Simplilearn, powered by Microsoft.',
+  },
+  {
+    id: 'forage-deloitte-da',
+    issuerId: 'forage',
+    title: 'Deloitte Australia — Data Analytics Job Simulation',
+    subtitle: 'Virtual experience program',
+    date: 'Jun 21, 2026',
+    href: 'https://www.theforage.com/completion-certificates/9PBTqmSxAf6zZTseP/io9DzWKe3PTsiS6GG_9PBTqmSxAf6zZTseP_6a37bb0ab98eb1a7666fa26b_1782039614489_completion_certificate.pdf',
+    description:
+      'Completed Deloitte Australia’s data analytics job simulation on Forage — practical analyst workflows across coding, data, and stakeholder communication.',
+  },
+  {
+    id: 'harvard-cs50-python',
+    issuerId: 'harvard',
+    title: "CS50's Introduction to Programming with Python",
+    subtitle: 'HarvardX / CS50',
+    date: 'In Progress',
+    href: null,
+    status: 'in-progress',
+    description:
+      "Harvard’s introductory computer science course, focused on Python fundamentals, algorithms, and problem-solving.",
   },
   {
     id: 'iith-ai',
@@ -183,6 +219,22 @@ function CheckIcon() {
     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
       <path d="M5 12.5l5 5L19 7" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
+  )
+}
+
+function PoweredByBadge({ poweredBy }) {
+  if (!poweredBy) return null
+  return (
+    <span className={styles.poweredBy}>
+      <span className={styles.poweredByIcon} aria-hidden="true">
+        {poweredBy.kind === 'microsoft' ? (
+          <MicrosoftLogo size={12} />
+        ) : poweredBy.kind === 'gcloud' ? (
+          <GoogleCloudLogo className={styles.poweredBySvg} />
+        ) : null}
+      </span>
+      {poweredBy.label}
+    </span>
   )
 }
 
@@ -283,7 +335,7 @@ function IssuerGridLogo({ item }) {
   if (item.logoKind === 'gcloud') {
     return <GoogleCloudLogo className={styles.issuerTileLogo} />
   }
-  if (item.logoKind === 'iith' || item.logoUrl) {
+  if (item.logoKind === 'iith' || item.logoKind === 'image' || item.logoUrl) {
     return (
       <img
         src={item.logoUrl || '/logos/iith-icon.png'}
@@ -579,30 +631,42 @@ export default function Certifications() {
                       <h3 className={styles.cardTitle}>{cert.title}</h3>
                       <p className={styles.cardSubtitle}>{cert.subtitle}</p>
 
+                      {cert.poweredBy ? <PoweredByBadge poweredBy={cert.poweredBy} /> : null}
+
                       <div className={styles.cardMeta}>
                         <span className={styles.cardDate}>
                           <CalendarIcon />
                           {cert.date}
                         </span>
-                        <span className={styles.verified}>
-                          <CheckIcon />
-                          Verified
-                        </span>
+                        {cert.status === 'in-progress' ? (
+                          <span className={styles.statusBadge}>In Progress</span>
+                        ) : (
+                          <span className={styles.verified}>
+                            <CheckIcon />
+                            Verified
+                          </span>
+                        )}
                       </div>
 
                       <p className={styles.cardDesc}>{cert.description}</p>
                     </div>
 
-                    <a
-                      href={cert.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.verifyBtn}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <CheckIcon />
-                      Verify Credential
-                    </a>
+                    {cert.href ? (
+                      <a
+                        href={cert.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.verifyBtn}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <CheckIcon />
+                        Verify Credential
+                      </a>
+                    ) : (
+                      <span className={styles.verifyBtnDisabled} aria-disabled="true">
+                        Credential pending
+                      </span>
+                    )}
                   </article>
                 )
               })}
