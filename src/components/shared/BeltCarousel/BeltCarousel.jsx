@@ -57,6 +57,8 @@ export default function BeltCarousel({
   items,
   renderCard,
   autoAdvanceMs = DEFAULT_AUTO_MS,
+  /** Optional per-item dwell override: (item) => ms */
+  getAutoAdvanceMs,
   loop = true,
   getId = (item) => item.id,
   initialActiveId,
@@ -280,13 +282,20 @@ export default function BeltCarousel({
     [getId, notifyActive, scheduleScale]
   )
 
+  const activeItem = useMemo(
+    () => items.find((item) => getId(item) === activeId) || null,
+    [items, getId, activeId]
+  )
+  const activeAdvanceMs =
+    (activeItem && getAutoAdvanceMs?.(activeItem)) || autoAdvanceMs
+
   useEffect(() => {
     if (!autoplayEnabled || isPaused || !useBelt) return undefined
     const timer = setTimeout(() => {
       advanceBelt()
-    }, autoAdvanceMs)
+    }, activeAdvanceMs)
     return () => clearTimeout(timer)
-  }, [autoplayEnabled, isPaused, cycleKey, advanceBelt, autoAdvanceMs, useBelt])
+  }, [autoplayEnabled, isPaused, cycleKey, advanceBelt, activeAdvanceMs, useBelt])
 
   const pauseAutoplay = () => setIsPaused(true)
   const resumeAutoplay = () => {
@@ -414,7 +423,7 @@ export default function BeltCarousel({
               {renderCard(item, isActive, {
                 cycleKey,
                 showProgress: progressVisible && isActive,
-                autoAdvanceMs,
+                autoAdvanceMs: isActive ? activeAdvanceMs : autoAdvanceMs,
                 useBelt,
               })}
             </button>

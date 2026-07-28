@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07060c"/>
+      <stop offset="100%" stop-color="#12101c"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#17152a"/>
+      <stop offset="100%" stop-color="#0e0c18"/>
+    </linearGradient>
+    <linearGradient id="band" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#4F46E5" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#4F46E5" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="indigo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#312E81"/>
+    </linearGradient>
+    <filter id="blur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="24"/>
+    </filter>
+  </defs>
+  <rect width="960" height="720" fill="url(#bg)"/>
+  <circle cx="820" cy="80" r="180" fill="#4F46E5" opacity="0.12" filter="url(#blur)"/>
+  <circle cx="80" cy="640" r="160" fill="#4338CA" opacity="0.1" filter="url(#blur)"/>
+
+  <!-- shell -->
+  <rect x="48" y="48" width="864" height="624" rx="24" fill="url(#panel)" stroke="#A5B4FC" stroke-opacity="0.28" stroke-width="1.5"/>
+  <!-- top bar -->
+  <rect x="48" y="48" width="864" height="56" rx="24" fill="#4F46E5" fill-opacity="0.12"/>
+  <text x="76" y="82" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="18" font-weight="700" letter-spacing="0.14em">ARC</text>
+  <text x="140" y="82" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="12" letter-spacing="0.12em">ADAPTIVE RISK &amp; CLARITY</text>
+  <rect x="700" y="62" width="180" height="28" rx="8" fill="#4F46E5" fill-opacity="0.25" stroke="#A5B4FC" stroke-opacity="0.4"/>
+  <text x="790" y="81" text-anchor="middle" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="11">RBI / SEBI GROUNDED</text>
+
+  <!-- left decision card -->
+  <rect x="72" y="128" width="280" height="510" rx="18" fill="#0a0812" fill-opacity="0.7" stroke="#A5B4FC" stroke-opacity="0.22"/>
+  <text x="96" y="168" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="11" letter-spacing="0.16em">DECISION</text>
+  <text x="96" y="204" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="22" font-weight="650">Home loan</text>
+  <text x="96" y="232" fill="#A5B4FC" font-family="system-ui,sans-serif" font-size="14" opacity="0.7">₹45L · 20 yr · 8.4%</text>
+
+  <rect x="96" y="260" width="232" height="70" rx="12" fill="#4F46E5" fill-opacity="0.15" stroke="#A5B4FC" stroke-opacity="0.25"/>
+  <text x="112" y="290" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="11">P50 OUTCOME</text>
+  <text x="112" y="318" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="24" font-weight="700">₹18.4L EMI capacity</text>
+
+  <text x="96" y="370" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="11" letter-spacing="0.14em">AGENTS</text>
+  <rect x="96" y="388" width="232" height="64" rx="12" fill="#4F46E5" fill-opacity="0.1"/>
+  <text x="112" y="416" fill="#FFFFFF" font-family="system-ui,sans-serif" font-size="14" font-weight="600">Advisor</text>
+  <text x="112" y="438" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="11">Supports proceed · cites RBI LTV</text>
+  <rect x="96" y="464" width="232" height="64" rx="12" fill="#4F46E5" fill-opacity="0.1"/>
+  <text x="112" y="492" fill="#FFFFFF" font-family="system-ui,sans-serif" font-size="14" font-weight="600">Critic</text>
+  <text x="112" y="514" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="11">Flags rate-shock tail risk</text>
+
+  <rect x="96" y="556" width="232" height="54" rx="12" fill="url(#indigo)"/>
+  <text x="212" y="589" text-anchor="middle" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="14" font-weight="650">Run 10,000 scenarios</text>
+
+  <!-- main distribution panel -->
+  <rect x="372" y="128" width="516" height="340" rx="18" fill="#0a0812" fill-opacity="0.7" stroke="#A5B4FC" stroke-opacity="0.22"/>
+  <text x="396" y="164" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="11" letter-spacing="0.16em">MONTE CARLO DISTRIBUTION</text>
+  <text x="396" y="192" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="20" font-weight="600">Probability band · not a guess</text>
+
+  <!-- fan paths -->
+  <g transform="translate(20,20)" opacity="0.95">
+    <path d="M400 360 C480 300 560 250 700 220 L700 400 L400 400 Z" fill="url(#band)" opacity="0.55"/>
+    <path d="M400 300 C500 250 600 230 700 200" stroke="#A5B4FC" stroke-width="1.2" fill="none" opacity="0.35"/>
+    <path d="M400 330 C500 290 600 270 700 250" stroke="#A5B4FC" stroke-width="1.4" fill="none" opacity="0.5"/>
+    <path d="M400 360 C500 330 600 320 700 300" stroke="#FFFFFF" stroke-width="2.2" fill="none" opacity="0.85"/>
+    <path d="M400 390 C500 370 600 370 700 360" stroke="#A5B4FC" stroke-width="1.4" fill="none" opacity="0.5"/>
+    <path d="M400 420 C500 410 600 420 700 420" stroke="#A5B4FC" stroke-width="1.2" fill="none" opacity="0.35"/>
+  </g>
+  <text x="820" y="230" text-anchor="end" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="11">P90</text>
+  <text x="820" y="320" text-anchor="end" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="11">P50</text>
+  <text x="820" y="410" text-anchor="end" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="11" opacity="0.7">P10</text>
+
+  <!-- bottom metrics -->
+  <rect x="372" y="488" width="160" height="150" rx="16" fill="#0a0812" fill-opacity="0.7" stroke="#A5B4FC" stroke-opacity="0.22"/>
+  <text x="392" y="528" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="11">SCENARIOS</text>
+  <text x="392" y="572" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="32" font-weight="700">10k</text>
+  <text x="392" y="602" fill="#A5B4FC" font-family="system-ui,sans-serif" font-size="13">calibrated paths</text>
+
+  <rect x="550" y="488" width="160" height="150" rx="16" fill="#0a0812" fill-opacity="0.7" stroke="#A5B4FC" stroke-opacity="0.22"/>
+  <text x="570" y="528" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="11">ML MODELS</text>
+  <text x="570" y="572" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="32" font-weight="700">5</text>
+  <text x="570" y="602" fill="#A5B4FC" font-family="system-ui,sans-serif" font-size="13">risk + clarity</text>
+
+  <rect x="728" y="488" width="160" height="150" rx="16" fill="#0a0812" fill-opacity="0.7" stroke="#A5B4FC" stroke-opacity="0.22"/>
+  <text x="748" y="528" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="11">CLARITY</text>
+  <text x="748" y="572" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="32" font-weight="700">P10–P90</text>
+  <text x="748" y="602" fill="#A5B4FC" font-family="system-ui,sans-serif" font-size="13">full range shown</text>
+</svg>

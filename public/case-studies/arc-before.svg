@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07060c"/>
+      <stop offset="100%" stop-color="#12101c"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1830"/>
+      <stop offset="100%" stop-color="#12101c"/>
+    </linearGradient>
+    <filter id="blur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="28"/>
+    </filter>
+  </defs>
+  <rect width="960" height="720" fill="url(#bg)"/>
+  <circle cx="160" cy="120" r="160" fill="#4F46E5" opacity="0.08" filter="url(#blur)"/>
+  <circle cx="820" cy="620" r="180" fill="#4338CA" opacity="0.07" filter="url(#blur)"/>
+
+  <!-- browser chrome -->
+  <rect x="140" y="90" width="680" height="540" rx="22" fill="url(#card)" stroke="#A5B4FC" stroke-opacity="0.22" stroke-width="1.5"/>
+  <rect x="140" y="90" width="680" height="52" rx="22" fill="#4F46E5" fill-opacity="0.1"/>
+  <circle cx="172" cy="116" r="6" fill="#f87171"/><circle cx="194" cy="116" r="6" fill="#fbbf24"/><circle cx="216" cy="116" r="6" fill="#4ade80"/>
+  <text x="250" y="122" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="13" letter-spacing="0.12em">GENERIC ADVISOR · v0</text>
+
+  <text x="480" y="210" text-anchor="middle" fill="#A5B4FC" font-family="ui-monospace,Menlo,monospace" font-size="12" letter-spacing="0.2em">HOME LOAN AFFORDABILITY</text>
+  <text x="480" y="300" text-anchor="middle" fill="#FFFFFF" font-family="Space Grotesk,system-ui,sans-serif" font-size="84" font-weight="700">₹18.4L</text>
+  <text x="480" y="345" text-anchor="middle" fill="#A5B4FC" font-family="system-ui,sans-serif" font-size="18" opacity="0.65">One confident number. Zero uncertainty.</text>
+
+  <!-- sparse axis -->
+  <line x1="260" y1="430" x2="700" y2="430" stroke="#A5B4FC" stroke-width="1.5" opacity="0.25" stroke-dasharray="5 10"/>
+  <circle cx="480" cy="430" r="9" fill="#4F46E5"/>
+  <circle cx="480" cy="430" r="20" fill="none" stroke="#A5B4FC" stroke-width="1.5" opacity="0.45"/>
+
+  <!-- warning chips -->
+  <g font-family="ui-monospace,Menlo,monospace" font-size="12">
+    <rect x="220" y="490" width="150" height="34" rx="8" fill="#4F46E5" fill-opacity="0.12" stroke="#A5B4FC" stroke-opacity="0.3"/>
+    <text x="295" y="512" text-anchor="middle" fill="#A5B4FC">NO RANGE</text>
+    <rect x="390" y="490" width="180" height="34" rx="8" fill="#4F46E5" fill-opacity="0.12" stroke="#A5B4FC" stroke-opacity="0.3"/>
+    <text x="480" y="512" text-anchor="middle" fill="#A5B4FC">NO TAIL RISK</text>
+    <rect x="590" y="490" width="170" height="34" rx="8" fill="#4F46E5" fill-opacity="0.12" stroke="#A5B4FC" stroke-opacity="0.3"/>
+    <text x="675" y="512" text-anchor="middle" fill="#A5B4FC">NO RBI/SEBI</text>
+  </g>
+  <text x="480" y="580" text-anchor="middle" fill="#FFFFFF" font-family="ui-monospace,Menlo,monospace" font-size="13" opacity="0.4">POINT ESTIMATE · GUESSWORK DISGUISED AS ADVICE</text>
+</svg>

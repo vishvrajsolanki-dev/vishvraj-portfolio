@@ -7,10 +7,10 @@ import styles from './About.module.css'
 gsap.registerPlugin(ScrollTrigger)
 
 const facts = [
-    { num: '3+', label: 'ML Internships' },
-    { num: '5', label: 'Production Apps' },
-    { num: '0.9771', label: 'Best AUC Score' },
-    { num: '2029', label: 'Graduation' },
+    { num: '3', label: 'Internships' },
+    { num: '5', label: 'Live Production Deploys' },
+    { num: '0.9771', label: 'Fraud Model AUC' },
+    { num: '2029', label: 'B.Tech Graduation' },
 ]
 
 export default function About() {
@@ -93,9 +93,9 @@ export default function About() {
                                 Not notebooks. Not demos. Deployed, live, production-grade systems.
                             </p>
                             <p>
-                                My stack runs from PyTorch and XGBoost down to ESP32 firmware —
+                                My stack runs from PyTorch and XGBoost down to ESP32 firmware.
                                 I've built RAG pipelines, fraud detection engines on 1.29M rows,
-                                and an RFID-guided robot that earned institutional funding.
+                                and an RFID-guided robot recognized by Gujarat's SSIP Cell.
                                 The through-line is the same: data in, intelligent behaviour out.
                             </p>
                             <p>

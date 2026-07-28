@@ -432,8 +432,36 @@
     opacity: 1;
 }
 
+/* Reduced prominence for secondary/archive entries (PlotSense, LetterLens) */
+.filmCardCompact {
+    opacity: 0.72;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.filmCardCompact.filmCardActive {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.filmCardCompact .ghostNumber {
+    font-size: 26px;
+    color: rgba(255, 255, 255, 0.035);
+}
+
+.filmCardCompact .filmName {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.filmCardCompact.filmCardActive .filmName {
+    color: var(--color-text-primary);
+}
+
 .filmCard:hover {
     background: rgba(255, 255, 255, 0.05);
+}
+
+.filmCardCompact:hover {
+    background: rgba(255, 255, 255, 0.04);
 }
 
 /* Icon badge — Experience-card language */
@@ -552,6 +580,12 @@
     pointer-events: none;
     z-index: 4;
     animation: filmProgress 6s linear forwards;
+    /* Duration overridden inline per project spotlightMs */
+}
+
+.brandMark {
+    margin-bottom: 0.35rem;
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--accent-glow, #fff) 45%, transparent));
 }
 
 @keyframes filmProgress {

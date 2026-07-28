@@ -7,9 +7,9 @@ import styles from './StatsBar.module.css'
 gsap.registerPlugin(ScrollTrigger)
 
 const stats = [
-  { countTo: 1, suffix: '', label: 'AI & Data Science\nInternship', focus: false },
-  { countTo: 5, suffix: '', label: 'Production Apps\nDeployed', focus: false },
-  { countTo: 2, suffix: '', label: 'ML\nInternships', focus: true },
+  { countTo: 3, suffix: '', label: 'Internships', focus: false },
+  { countTo: 9, suffix: '', label: 'Certifications\nEarned', focus: false },
+  { countTo: 6, suffix: '', label: 'ML Systems\nShipped', focus: true },
   { countTo: 99, suffix: '%', label: 'CNN accuracy\non MNIST', focus: false },
   { countTo: 1, suffix: '', label: 'Recognised by\nSSIP', focus: false },
 ]
